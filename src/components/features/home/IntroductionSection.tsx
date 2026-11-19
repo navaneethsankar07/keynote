@@ -6,18 +6,62 @@ import { WaveformIcon, ActivityIcon } from "@/components/ui/Icons";
 
 export function IntroductionSection() {
   return (
-    <section className="relative py-24 sm:py-32 border-t border-white/5 bg-[#07080e] overflow-hidden">
-      {/* Background ambient radial glow */}
+    <section className="relative py-24 sm:py-32 lg:py-36 border-t border-white/5 bg-[#07080e] overflow-hidden">
+      {/* Ambient animated atmospheric lighting across the entire section */}
       <div
-        className="pointer-events-none absolute top-1/4 left-0 w-96 h-96 rounded-full bg-accent-violet/5 blur-3xl -z-10"
+        className="pointer-events-none absolute -top-32 right-1/4 w-[520px] h-[520px] rounded-full bg-accent-violet/15 blur-[130px] animate-pulse"
+        style={{ animationDuration: "7s" }}
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute bottom-1/4 right-0 w-96 h-96 rounded-full bg-accent-cyan/5 blur-3xl -z-10"
+        className="pointer-events-none absolute -bottom-32 right-1/3 w-[460px] h-[460px] rounded-full bg-accent-cyan/10 blur-[120px] animate-pulse"
+        style={{ animationDuration: "9s" }}
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute top-1/2 -left-32 w-[420px] h-[420px] rounded-full bg-accent-violet/10 blur-[110px] animate-pulse"
+        style={{ animationDuration: "8s" }}
         aria-hidden="true"
       />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Subtle floating stage dust & ambient light motes */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div
+          className="absolute top-1/4 right-1/3 w-1.5 h-1.5 rounded-full bg-accent-violet/50 blur-[1px] animate-pulse"
+          style={{ animationDuration: "4s" }}
+        />
+        <div
+          className="absolute top-2/3 right-1/5 w-2 h-2 rounded-full bg-accent-cyan/40 blur-[1px] animate-pulse"
+          style={{ animationDuration: "6s" }}
+        />
+        <div
+          className="absolute top-1/3 right-1/2 w-1 h-1 rounded-full bg-white/40 blur-[0.5px] animate-pulse"
+          style={{ animationDuration: "5s" }}
+        />
+        <div
+          className="absolute bottom-1/3 right-1/4 w-1.5 h-1.5 rounded-full bg-purple-300/40 blur-[1px] animate-pulse"
+          style={{ animationDuration: "7s" }}
+        />
+      </div>
+
+      {/* Subtle background harmonic resonance wave */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 opacity-20 overflow-hidden" aria-hidden="true">
+        <svg
+          className="w-full h-full text-accent-violet/30"
+          viewBox="0 0 1200 120"
+          preserveAspectRatio="none"
+          fill="none"
+        >
+          <path
+            d="M 0,60 C 150,15 350,105 600,60 C 850,15 1050,105 1200,60"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeDasharray="4 6"
+          />
+        </svg>
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Column: Typographic & Editorial Storytelling */}
           <div className="lg:col-span-6 flex flex-col items-start space-y-6">
@@ -58,107 +102,52 @@ export function IntroductionSection() {
             </div>
           </div>
 
-          {/* Right Column: Classy Floating Grand Piano Image Melded with the Page */}
-          <div className="lg:col-span-6 relative flex items-center justify-center py-2 sm:py-6">
-            {/* Ambient Radial Colored Light Behind Piano */}
+          {/* Right Column: Classy Grand Piano - Seamlessly Melted with the Section */}
+          <div className="lg:col-span-6 relative flex items-center justify-center">
+            {/* Ambient Backlight Halo behind the piano keys */}
             <div
-              className="pointer-events-none absolute -inset-6 sm:-inset-10 rounded-full bg-gradient-to-tr from-accent-violet/30 via-indigo-600/20 to-accent-cyan/20 blur-3xl opacity-60 animate-piano-glow -z-10"
+              className="pointer-events-none absolute -inset-4 bg-gradient-to-tr from-accent-violet/30 via-indigo-500/15 to-accent-cyan/20 blur-3xl rounded-full scale-105"
               aria-hidden="true"
             />
 
-            {/* Seamless Melded Piano Stage - No borders, pure organic blend */}
-            <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] max-w-2xl flex items-center justify-center animate-piano-float group">
-              {/* Image Container with Radial Fade Mask */}
-              <div className="relative w-full h-full overflow-hidden select-none [mask-image:radial-gradient(ellipse_94%_84%_at_50%_50%,#000_45%,rgba(0,0,0,0.85)_70%,transparent_98%)] [-webkit-mask-image:radial-gradient(ellipse_94%_84%_at_50%_50%,#000_45%,rgba(0,0,0,0.85)_70%,transparent_98%)]">
-                <Image
-                  src="/images/piano-classy.jpg"
-                  alt="Classy concert grand piano keys with atmospheric violet lighting"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover object-center transform transition-transform duration-1000 ease-out group-hover:scale-105"
-                  priority={false}
-                />
+            {/* Seamless Borderless Piano Image Container */}
+            <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[5/4] xl:aspect-[4/3] flex items-center justify-center select-none">
+              <Image
+                src="/images/piano-classy.jpg"
+                alt="Classy Grand Piano Keys"
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover object-center pointer-events-none"
+                style={{
+                  WebkitMaskImage:
+                    "radial-gradient(ellipse 75% 70% at 50% 50%, rgba(0,0,0,1) 28%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0) 78%)",
+                  maskImage:
+                    "radial-gradient(ellipse 75% 70% at 50% 50%, rgba(0,0,0,1) 28%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0) 78%)",
+                }}
+              />
 
-                {/* Seamless Edge Gradient Melts so the image naturally melts into the section */}
-                <div
-                  className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-[#07080e] via-[#07080e]/70 to-transparent"
-                  aria-hidden="true"
-                />
-                <div
-                  className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#07080e] via-[#07080e]/80 to-transparent"
-                  aria-hidden="true"
-                />
-                <div
-                  className="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-[#07080e] via-[#07080e]/80 to-transparent"
-                  aria-hidden="true"
-                />
-                <div
-                  className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#07080e] via-[#07080e]/80 to-transparent"
-                  aria-hidden="true"
-                />
-
-                {/* Elegant Ethereal Light Sheen Animation that sweeps across keys */}
-                <div
-                  className="pointer-events-none absolute inset-0 z-20 overflow-hidden"
-                  aria-hidden="true"
-                >
-                  <div className="absolute -inset-full w-[250%] h-[200%] bg-gradient-to-r from-transparent via-violet-300/15 to-transparent -rotate-12 animate-piano-sheen mix-blend-screen" />
-                </div>
-              </div>
-
-              {/* Floating musical glow pulse */}
+              {/* Edge fade gradients ensuring flawless melting into section background */}
               <div
-                className="pointer-events-none absolute -bottom-6 left-1/4 right-1/4 h-12 bg-accent-violet/30 blur-2xl rounded-full opacity-40 group-hover:opacity-80 transition-opacity duration-700 -z-10"
+                className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-[#07080e] via-[#07080e]/40 to-transparent"
+                aria-hidden="true"
+              />
+              <div
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#07080e] via-[#07080e]/40 to-transparent"
+                aria-hidden="true"
+              />
+              <div
+                className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-[#07080e] via-[#07080e]/40 to-transparent"
+                aria-hidden="true"
+              />
+              <div
+                className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-[#07080e] via-[#07080e]/40 to-transparent"
                 aria-hidden="true"
               />
             </div>
           </div>
         </div>
       </div>
-
-      {/* Scoped CSS Keyframe Animations */}
-      <style>{`
-        @keyframes pianoFloat {
-          0%, 100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-9px) rotate(0.35deg);
-          }
-        }
-        @keyframes pianoGlow {
-          0%, 100% {
-            opacity: 0.45;
-            transform: scale(0.96);
-          }
-          50% {
-            transform: scale(1.04);
-            opacity: 0.8;
-          }
-        }
-        @keyframes pianoSheen {
-          0% {
-            transform: translateX(-150%) skewX(-20deg);
-            opacity: 0;
-          }
-          15% {
-            opacity: 0.45;
-          }
-          35%, 100% {
-            transform: translateX(250%) skewX(-20deg);
-            opacity: 0;
-          }
-        }
-        .animate-piano-float {
-          animation: pianoFloat 8s ease-in-out infinite;
-        }
-        .animate-piano-glow {
-          animation: pianoGlow 6s ease-in-out infinite;
-        }
-        .animate-piano-sheen {
-          animation: pianoSheen 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
-      `}</style>
     </section>
   );
 }
