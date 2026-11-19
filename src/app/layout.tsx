@@ -33,9 +33,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-text-primary antialiased selection:bg-accent-violet/30 selection:text-white">
+      <body
+        suppressHydrationWarning
+        className="min-h-full flex flex-col bg-background text-text-primary antialiased selection:bg-accent-violet/30 selection:text-white"
+      >
         <Navbar />
         {children}
         <Footer />
