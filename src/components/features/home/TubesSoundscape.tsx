@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import type { TubesApp } from "threejs-components/build/cursors/tubes1.min.js";
 
 // Musical Harmonic Color Palettes mapped to harmonic color moods
@@ -34,6 +34,21 @@ export const HARMONIC_PALETTES = [
     accentColor: "#8b5cf6",
   },
 ];
+
+const SPECTRUM_BAR_COUNT = 64;
+
+// Precomputed harmonic acoustic heights across 64 frequency bands
+const SPECTRUM_BARS_DATA = Array.from({ length: SPECTRUM_BAR_COUNT }, (_, i) => {
+  const norm = i / (SPECTRUM_BAR_COUNT - 1);
+  const sub = Math.sin(norm * Math.PI * 0.9) * 22;
+  const mid1 = Math.sin((norm - 0.22) * Math.PI * 3.2) * 14;
+  const mid2 = Math.sin((norm - 0.58) * Math.PI * 4) * 12;
+  const airTaper = Math.cos(norm * (Math.PI / 2)) * 10;
+  const rawHeight = 18 + sub + (mid1 > 0 ? mid1 : 0) + (mid2 > 0 ? mid2 : 0) + airTaper;
+  const baseH = Math.max(10, Math.min(54, Math.round(rawHeight)));
+  const animIndex = (i % 4) + 1; // 1, 2, 3, 4
+  return { baseH, animClass: `eq-pulse-${animIndex}` };
+});
 
 interface TubesSoundscapeProps {
   className?: string;
@@ -91,6 +106,21 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
       window.removeEventListener("pointerdown", handleGlobalClick);
     };
   }, [cycleHarmonicPalette]);
+
+  // Color assignments for the 64 full-width equalizer bars
+  const spectrumBars = useMemo(() => {
+    return SPECTRUM_BARS_DATA.map((bar, i) => {
+      let color = activePalette.tubes[0];
+      if (i >= 16 && i < 34) {
+        color = activePalette.accentColor;
+      } else if (i >= 34 && i < 50) {
+        color = activePalette.staffColor;
+      } else if (i >= 50) {
+        color = activePalette.tubes[1];
+      }
+      return { ...bar, color };
+    });
+  }, [activePalette]);
 
   // Initialize ThreeJS Tubes
   useEffect(() => {
@@ -172,151 +202,65 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
         className="absolute inset-0 h-full w-full opacity-85 transition-opacity duration-1000 cursor-crosshair pointer-events-auto"
       />
 
-      {/* --- STUDIO ACOUSTIC SOUND RINGS & AMBIENT HARMONIC FREQUENCY SPECTRUM --- */}
+      {/* --- FULL-WIDTH STUDIO EQUALIZER ALL ALONG THE BOTTOM --- */}
       <div
-        className="pointer-events-none absolute inset-0 flex flex-col items-center justify-between overflow-hidden transition-all duration-700"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 w-full flex flex-col justify-end overflow-hidden z-20"
         aria-hidden="true"
       >
         <style>{`
-          @keyframes acousticRingBreathe {
-            0%, 100% {
-              transform: scale(0.97) rotate(0deg);
-              opacity: 0.22;
-            }
-            50% {
-              transform: scale(1.03) rotate(1.5deg);
-              opacity: 0.38;
-            }
+          @keyframes eqPulse1 {
+            0%, 100% { transform: scaleY(0.42); opacity: 0.55; }
+            50% { transform: scaleY(1.0); opacity: 0.95; }
           }
-          @keyframes freqBarPulseA {
-            0%, 100% { transform: scaleY(0.4); opacity: 0.45; }
-            50% { transform: scaleY(1.0); opacity: 0.9; }
+          @keyframes eqPulse2 {
+            0%, 100% { transform: scaleY(0.85); opacity: 0.9; }
+            50% { transform: scaleY(0.38); opacity: 0.5; }
           }
-          @keyframes freqBarPulseB {
-            0%, 100% { transform: scaleY(0.8); opacity: 0.75; }
-            50% { transform: scaleY(0.35); opacity: 0.4; }
+          @keyframes eqPulse3 {
+            0%, 100% { transform: scaleY(0.55); opacity: 0.65; }
+            50% { transform: scaleY(0.96); opacity: 1.0; }
           }
-          @keyframes freqBarPulseC {
-            0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
-            50% { transform: scaleY(0.95); opacity: 0.85; }
+          @keyframes eqPulse4 {
+            0%, 100% { transform: scaleY(0.92); opacity: 0.95; }
+            50% { transform: scaleY(0.46); opacity: 0.55; }
           }
-          .acoustic-ring-group {
-            animation: acousticRingBreathe 8s ease-in-out infinite;
-            transform-origin: center center;
-          }
-          .freq-bar-1 { animation: freqBarPulseA 2.4s ease-in-out infinite; transform-origin: bottom; }
-          .freq-bar-2 { animation: freqBarPulseB 2.8s ease-in-out infinite; transform-origin: bottom; }
-          .freq-bar-3 { animation: freqBarPulseC 2.2s ease-in-out infinite; transform-origin: bottom; }
+          .eq-pulse-1 { animation: eqPulse1 2.2s ease-in-out infinite; transform-origin: bottom; }
+          .eq-pulse-2 { animation: eqPulse2 2.6s ease-in-out infinite; transform-origin: bottom; }
+          .eq-pulse-3 { animation: eqPulse3 1.9s ease-in-out infinite; transform-origin: bottom; }
+          .eq-pulse-4 { animation: eqPulse4 2.4s ease-in-out infinite; transform-origin: bottom; }
           @media (prefers-reduced-motion: reduce) {
-            .acoustic-ring-group, .freq-bar-1, .freq-bar-2, .freq-bar-3 {
+            .eq-pulse-1, .eq-pulse-2, .eq-pulse-3, .eq-pulse-4 {
               animation: none !important;
             }
           }
         `}</style>
 
-        {/* 1. Subtle Concentric Acoustic Sound Rings radiating behind headline */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <svg
-            className="w-[800px] h-[800px] max-w-[130vw] max-h-[130vw] overflow-visible acoustic-ring-group"
-            viewBox="0 0 600 600"
-            fill="none"
-          >
-            <defs>
-              <filter id="acousticGlow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-
-            {/* Inner harmonic circle */}
-            <circle
-              cx="300"
-              cy="300"
-              r="130"
-              stroke={activePalette.staffColor}
-              strokeWidth="1.2"
-              opacity="0.35"
-              filter="url(#acousticGlow)"
+        {/* 64-Band Full Width Equalizer Bars */}
+        <div className="w-full flex items-end justify-between gap-[2px] sm:gap-[3px] md:gap-[4px] px-2 sm:px-6 md:px-10 h-14 sm:h-16">
+          {spectrumBars.map((bar, idx) => (
+            <span
+              key={idx}
+              className={`flex-1 rounded-t-full transition-colors duration-700 ${bar.animClass}`}
+              style={{
+                height: `${bar.baseH}px`,
+                backgroundColor: bar.color,
+                boxShadow: `0 0 10px ${bar.color}`,
+              }}
             />
-
-            {/* Middle acoustic frequency ring with dashed divisions */}
-            <circle
-              cx="300"
-              cy="300"
-              r="210"
-              stroke={activePalette.accentColor}
-              strokeWidth="1.2"
-              strokeDasharray="4 12"
-              opacity="0.3"
-              filter="url(#acousticGlow)"
-            />
-
-            {/* Outer harmonic dispersion ring */}
-            <circle
-              cx="300"
-              cy="300"
-              r="285"
-              stroke={activePalette.staffColor}
-              strokeWidth="1"
-              strokeDasharray="2 18"
-              opacity="0.2"
-            />
-          </svg>
+          ))}
         </div>
 
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* 2. Studio Ambient Frequency Spectrum Strip (flanking the bottom above vignette) */}
-        <div className="relative z-10 mb-8 sm:mb-12 flex flex-col items-center gap-2 pointer-events-none opacity-80 transition-colors duration-700">
-          {/* Audio Equalizer Frequency Bars */}
-          <div className="flex items-end gap-1 sm:gap-1.5 h-10 px-4">
-            {[
-              { h: 14, anim: "freq-bar-1", col: activePalette.tubes[0] },
-              { h: 22, anim: "freq-bar-2", col: activePalette.tubes[0] },
-              { h: 18, anim: "freq-bar-3", col: activePalette.tubes[0] },
-              { h: 28, anim: "freq-bar-1", col: activePalette.accentColor },
-              { h: 36, anim: "freq-bar-2", col: activePalette.accentColor },
-              { h: 24, anim: "freq-bar-3", col: activePalette.accentColor },
-              { h: 32, anim: "freq-bar-1", col: activePalette.staffColor },
-              { h: 40, anim: "freq-bar-2", col: activePalette.staffColor },
-              { h: 30, anim: "freq-bar-3", col: activePalette.staffColor },
-              { h: 26, anim: "freq-bar-1", col: activePalette.tubes[1] },
-              { h: 38, anim: "freq-bar-2", col: activePalette.tubes[1] },
-              { h: 32, anim: "freq-bar-3", col: activePalette.tubes[1] },
-              { h: 22, anim: "freq-bar-1", col: activePalette.accentColor },
-              { h: 35, anim: "freq-bar-2", col: activePalette.accentColor },
-              { h: 26, anim: "freq-bar-3", col: activePalette.accentColor },
-              { h: 16, anim: "freq-bar-1", col: activePalette.staffColor },
-              { h: 28, anim: "freq-bar-2", col: activePalette.staffColor },
-              { h: 20, anim: "freq-bar-3", col: activePalette.staffColor },
-              { h: 12, anim: "freq-bar-1", col: activePalette.tubes[2] },
-              { h: 24, anim: "freq-bar-2", col: activePalette.tubes[2] },
-              { h: 16, anim: "freq-bar-3", col: activePalette.tubes[2] },
-            ].map((bar, idx) => (
-              <span
-                key={idx}
-                className={`w-[2.5px] sm:w-[3px] rounded-full transition-colors duration-700 ${bar.anim}`}
-                style={{
-                  height: `${bar.h}px`,
-                  backgroundColor: bar.col,
-                  boxShadow: `0 0 8px ${bar.col}`,
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Minimal Acoustic Scale Labels */}
-          <div className="flex items-center gap-4 sm:gap-6 text-[10px] font-mono tracking-wider text-text-muted/70">
-            <span>20Hz SUB</span>
-            <span>•</span>
-            <span>1kHz MID</span>
-            <span>•</span>
-            <span>20kHz AIR</span>
-          </div>
+        {/* Minimal Audio Frequency Axis scale running full width */}
+        <div className="w-full border-t border-border/40 bg-background/50 backdrop-blur-sm px-3 sm:px-6 md:px-10 py-1.5 flex items-center justify-between text-[9px] sm:text-[10px] font-mono text-text-muted/70 tracking-widest uppercase">
+          <span>20Hz Sub</span>
+          <span className="hidden sm:inline">60Hz</span>
+          <span>120Hz Low</span>
+          <span className="hidden md:inline">250Hz</span>
+          <span>500Hz Mid</span>
+          <span className="hidden md:inline">1kHz</span>
+          <span>2kHz High</span>
+          <span className="hidden sm:inline">8kHz</span>
+          <span>20kHz Air</span>
         </div>
       </div>
 
@@ -327,7 +271,7 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
 
       {/* Smooth bottom vignette fade into background */}
       <div
-        className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background via-background/60 to-transparent"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-background via-background/40 to-transparent z-10"
         aria-hidden="true"
       />
     </div>
