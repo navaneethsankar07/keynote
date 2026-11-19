@@ -54,7 +54,7 @@ const SPECTRUM_BARS_DATA = Array.from({ length: SPECTRUM_BAR_COUNT }, (_, i) => 
 
 // Custom Luminous Audio Reticle Mouse Cursor (Cyan & Violet, 32x32)
 const CUSTOM_CURSOR_URL =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='8.5' stroke='%2322d3ee' stroke-width='1.2' stroke-opacity='0.8'/%3E%3Cline x1='16' y1='2' x2='16' y2='6' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='16' y1='26' x2='16' y2='30' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='26' y1='16' x2='30' y2='16' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='2' y1='16' x2='6' y2='16' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23ffffff'/%3E%3C/svg%3E\") 16 16, crosshair";
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='8.5' stroke='%2322d3ee' stroke-width='1.2' stroke-opacity='0.8'/%3E%3Cline x1='16' y1='2' x2='16' y2='6' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='16' y1='26' x2='16' y2='30' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='2' y1='16' x2='6' y2='16' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='26' y1='16' x2='30' y2='16' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23ffffff'/%3E%3C/svg%3E\") 16 16, crosshair";
 
 interface TubeMeshEntry {
   mesh: THREE.Mesh;
@@ -70,13 +70,20 @@ interface TubesSoundscapeProps {
 }
 
 export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
   const { isAnimationActive } = useAnimation();
   const isAnimationActiveRef = useRef(isAnimationActive);
 
-  // Sync ref with state for animation loop access without restarting effect
+  // Sync ref with state and toggle canvas opacity dynamically
   useEffect(() => {
     isAnimationActiveRef.current = isAnimationActive;
+    if (canvasRef.current) {
+      canvasRef.current.className = `absolute inset-0 h-full w-full transition-opacity duration-700 pointer-events-auto ${
+        isAnimationActive ? "opacity-75" : "opacity-0 pointer-events-none"
+      }`;
+    }
   }, [isAnimationActive]);
 
   const [paletteIndex, setPaletteIndex] = useState(0);
@@ -135,25 +142,78 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
 
   // Native Three.js 3D Tubes Simulation with robust lifecycle and zero memory leaks
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !canvas.parentElement) return;
+    const container = containerRef.current;
+    if (!container) return;
 
     let isMounted = true;
     let animationFrameId: number;
 
-    const width = canvas.parentElement.clientWidth || window.innerWidth;
-    const height = canvas.parentElement.clientHeight || window.innerHeight;
+    const width = container.clientWidth || window.innerWidth;
+    const height = container.clientHeight || window.innerHeight;
 
-    // 1. Scene, Camera, WebGLRenderer
+    // Dynamically create a virgin canvas element on mount
+    // This guarantees no stale, lost, or conflicting WebGL contexts are ever reused
+    const canvas = document.createElement("canvas");
+    canvas.id = "tubes-canvas";
+    canvas.className = `absolute inset-0 h-full w-full transition-opacity duration-700 pointer-events-auto ${
+      isAnimationActiveRef.current ? "opacity-75" : "opacity-0 pointer-events-none"
+    }`;
+    canvas.style.cursor = isAnimationActiveRef.current ? CUSTOM_CURSOR_URL : "default";
+    container.appendChild(canvas);
+    canvasRef.current = canvas;
+
+    // 1. Scene & Camera
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.set(0, 0, 7.5);
     camera.lookAt(0, 0, 0);
 
+    // 2. Safe WebGL Context Creation with Precision Polyfill
+    // Root cause fix: In certain GPU drivers or privacy modes, gl.getShaderPrecisionFormat returns null,
+    // which causes Three.js to throw "Cannot read properties of null (reading 'precision')".
+    let gl: WebGL2RenderingContext | WebGLRenderingContext | null = null;
+    try {
+      gl =
+        canvas.getContext("webgl2", {
+          alpha: true,
+          antialias: true,
+          powerPreference: "high-performance",
+        }) ||
+        (canvas.getContext("webgl", {
+          alpha: true,
+          antialias: true,
+          powerPreference: "high-performance",
+        }) as WebGLRenderingContext | null);
+    } catch {
+      // Ignored, handled below
+    }
+
+    if (!gl || gl.isContextLost()) {
+      console.warn("WebGL context not available or lost on canvas mount.");
+      return;
+    }
+
+    // Wrap getShaderPrecisionFormat to guarantee it never returns null
+    if (typeof gl.getShaderPrecisionFormat === "function") {
+      const origGetShaderPrecisionFormat = gl.getShaderPrecisionFormat.bind(gl);
+      gl.getShaderPrecisionFormat = (shaderType: number, precisionType: number) => {
+        try {
+          const res = origGetShaderPrecisionFormat(shaderType, precisionType);
+          return (
+            res ||
+            ({ rangeMin: 1, rangeMax: 1, precision: 1 } as WebGLShaderPrecisionFormat)
+          );
+        } catch {
+          return { rangeMin: 1, rangeMax: 1, precision: 1 } as WebGLShaderPrecisionFormat;
+        }
+      };
+    }
+
     let renderer: THREE.WebGLRenderer | null = null;
     try {
       renderer = new THREE.WebGLRenderer({
         canvas,
+        context: gl,
         alpha: true,
         antialias: true,
         powerPreference: "high-performance",
@@ -161,12 +221,12 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
       renderer.setSize(width, height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     } catch (err) {
-      console.warn("WebGL initialization fallback:", err);
+      console.warn("WebGL renderer creation fallback:", err);
       return;
     }
 
-    // 2. Studio Lighting Rig
-    const initialPalette =
+    // 3. Studio Lighting Rig
+    const currentPalette =
       HARMONIC_PALETTES[paletteIndex % HARMONIC_PALETTES.length] || HARMONIC_PALETTES[0];
 
     const ambientLight = new THREE.AmbientLight(0x0f0b1e, 1.2);
@@ -181,24 +241,23 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
     ];
 
     lightPositions.forEach((pos, idx) => {
-      const colorHex = initialPalette.lights[idx] || initialPalette.lights[0];
+      const colorHex = currentPalette.lights[idx] || currentPalette.lights[0];
       const light = new THREE.PointLight(colorHex, 85, 20);
       light.position.set(...pos);
       scene.add(light);
       pointLights.push(light);
     });
 
-    // 3. 14 Musical Harmonic Filaments (Tubes)
+    // 4. 14 Musical Harmonic Filaments (Tubes)
     const TUBE_COUNT = 14;
     const POINTS_PER_TUBE = 24;
     const tubesList: TubeMeshEntry[] = [];
 
     for (let i = 0; i < TUBE_COUNT; i++) {
-      const tubeColorHex = initialPalette.tubes[i % initialPalette.tubes.length];
+      const tubeColorHex = currentPalette.tubes[i % currentPalette.tubes.length];
       const radius = 0.022 + (i % 4) * 0.01;
       const points: THREE.Vector3[] = [];
 
-      // Initial resting curve points
       for (let j = 0; j < POINTS_PER_TUBE; j++) {
         const t = j / (POINTS_PER_TUBE - 1);
         const z = -t * 1.8;
@@ -232,18 +291,16 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
       });
     }
 
-    // Palette updater handler
+    // In-place Palette Updater (updates existing scene without tearing down the renderer)
     updatePaletteRef.current = (idx: number) => {
       const newPalette =
         HARMONIC_PALETTES[idx % HARMONIC_PALETTES.length] || HARMONIC_PALETTES[0];
 
-      // Update lights
       pointLights.forEach((light, lIdx) => {
         const color = newPalette.lights[lIdx] || newPalette.lights[0];
         light.color.set(color);
       });
 
-      // Update tube materials
       tubesList.forEach((tube, tIdx) => {
         const tubeColor = newPalette.tubes[tIdx % newPalette.tubes.length];
         const mat = tube.mesh.material as THREE.MeshStandardMaterial;
@@ -252,7 +309,7 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
       });
     };
 
-    // 4. Pointer Interaction and Motion Physics
+    // 5. Pointer Interaction and Motion Physics
     const mousePos = { x: 0, y: 0, targetX: 0, targetY: 0, isHovering: false };
     const planeZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
     const raycaster = new THREE.Raycaster();
@@ -279,11 +336,11 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     window.addEventListener("pointerleave", handlePointerLeave, { passive: true });
 
-    // 5. Window Resize Handler (clean reference for removeEventListener)
+    // 6. Window Resize Handler
     const handleResize = () => {
-      if (!isMounted || !canvas || !canvas.parentElement || !renderer) return;
-      const newWidth = canvas.parentElement.clientWidth || window.innerWidth;
-      const newHeight = canvas.parentElement.clientHeight || window.innerHeight;
+      if (!isMounted || !container || !renderer) return;
+      const newWidth = container.clientWidth || window.innerWidth;
+      const newHeight = container.clientHeight || window.innerHeight;
 
       camera.aspect = newWidth / newHeight;
       camera.updateProjectionMatrix();
@@ -293,7 +350,7 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
 
     window.addEventListener("resize", handleResize);
 
-    // 6. Smooth 60fps Animation Loop
+    // 7. Smooth 60fps Animation Loop
     const clock = new THREE.Clock();
 
     const animate = () => {
@@ -304,7 +361,7 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
 
       const time = clock.getElapsedTime();
 
-      // If animation is toggled off by user, preserve low-power state
+      // If animation is toggled off by user, pause updates to preserve battery
       if (!isAnimationActiveRef.current) {
         return;
       }
@@ -321,17 +378,14 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
         mousePos.y += (idleY - mousePos.y) * 0.04;
       }
 
-      // Update each tube's leading point and trailing segments
       for (let i = 0; i < tubesList.length; i++) {
         const tube = tubesList[i];
         const { points, curve, radius, timeOffset, speed } = tube;
 
-        // Individual harmonic frequency wave offset
         const waveX = Math.sin(time * speed + timeOffset) * 0.45;
         const waveY = Math.cos(time * (speed * 0.8) + timeOffset) * 0.35;
         const waveZ = Math.sin(time * (speed * 0.6) + timeOffset) * 0.3;
 
-        // Lead point lerps towards current focal point
         const leadX = mousePos.x + waveX;
         const leadY = mousePos.y + waveY;
         const leadZ = waveZ;
@@ -340,7 +394,6 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
         points[0].y += (leadY - points[0].y) * (0.07 + (i % 3) * 0.015);
         points[0].z += (leadZ - points[0].z) * 0.06;
 
-        // Trailing segments smoothly follow the segment ahead (organic snake physics)
         for (let j = 1; j < points.length; j++) {
           const prev = points[j - 1];
           const curr = points[j];
@@ -349,7 +402,6 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
           curr.z += (prev.z - curr.z) * 0.22;
         }
 
-        // Reconstruct tube mesh geometry
         tube.mesh.geometry.dispose();
         tube.mesh.geometry = new THREE.TubeGeometry(curve, 32, radius, 8, false);
       }
@@ -359,7 +411,7 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
 
     animate();
 
-    // 7. Full Cleanup on Unmount (Guarantees zero memory leaks on page navigation)
+    // 8. Clean Unmount (No forceContextLoss, safely removes canvas from container)
     return () => {
       isMounted = false;
       cancelAnimationFrame(animationFrameId);
@@ -368,7 +420,6 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
       window.removeEventListener("resize", handleResize);
       updatePaletteRef.current = null;
 
-      // Dispose all tubes
       tubesList.forEach((tube) => {
         tube.mesh.geometry.dispose();
         if (tube.mesh.material instanceof THREE.Material) {
@@ -377,7 +428,6 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
         scene.remove(tube.mesh);
       });
 
-      // Dispose lights
       pointLights.forEach((light) => {
         scene.remove(light);
         light.dispose();
@@ -387,11 +437,17 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
 
       if (renderer) {
         renderer.dispose();
-        renderer.forceContextLoss();
         renderer = null;
       }
+
+      if (canvas && canvas.parentElement) {
+        canvas.parentElement.removeChild(canvas);
+      }
+      canvasRef.current = null;
     };
-  }, [paletteIndex]);
+    // Initialize ONCE on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div
@@ -405,13 +461,10 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
         aria-hidden="true"
       />
 
-      {/* Interactive 3D WebGL Neon Tubes Canvas with custom audio pointer */}
-      <canvas
-        ref={canvasRef}
-        id="tubes-canvas"
-        className={`absolute inset-0 h-full w-full transition-opacity duration-700 pointer-events-auto ${
-          isAnimationActive ? "opacity-75" : "opacity-0 pointer-events-none"
-        }`}
+      {/* Dynamic 3D WebGL Neon Tubes Canvas Container */}
+      <div
+        ref={containerRef}
+        className="absolute inset-0 h-full w-full pointer-events-auto"
         style={{ cursor: isAnimationActive ? CUSTOM_CURSOR_URL : "default" }}
       />
 
