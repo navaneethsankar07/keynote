@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
-  KeynoteLogo,
   MenuIcon,
   CloseIcon,
   GearIcon,
@@ -86,19 +86,21 @@ export function Navbar() {
           />
         </svg>
 
-        {/* 1. Left: Brand & Icon (App Icon Style) */}
+        {/* 1. Left: Nav Logo Badge */}
         <Link
           href="/"
           onClick={closeMobileMenu}
-          className="group flex items-center gap-2 text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-violet rounded-lg py-1"
+          className="group flex items-center text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-violet rounded-lg py-0.5"
           aria-label={`${SITE_CONFIG.name} Home`}
         >
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-400 via-indigo-500 to-purple-600 shadow-sm shadow-purple-500/25 transition-transform duration-200 group-hover:scale-105">
-            <KeynoteLogo size={16} className="text-white" />
-          </div>
-          <span className="font-display text-sm font-bold tracking-tight text-white">
-            Keynote
-          </span>
+          <Image
+            src="/images/logo.png"
+            alt={SITE_CONFIG.name}
+            width={58}
+            height={30}
+            className="h-[30px] w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+            priority
+          />
         </Link>
 
         {/* 2. Center: Desktop Nav Links (Clean, minimalist text) */}
