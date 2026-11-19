@@ -47,7 +47,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-background/85 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="flex h-16 max-w-[100rem] items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand Logo & Wordmark */}
         <Link
           href="/"

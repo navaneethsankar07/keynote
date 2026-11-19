@@ -1,9 +1,15 @@
 "use client";
 
 import React from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/Button";
 import { ArrowRightIcon, TheoryBookIcon } from "@/components/ui/Icons";
-import { TubesSoundscape } from "./TubesSoundscape";
+
+// Dynamically import 3D TubesSoundscape with ssr: false to guarantee clean client-only WebGL mounting
+const TubesSoundscape = dynamic(
+  () => import("./TubesSoundscape").then((mod) => mod.TubesSoundscape),
+  { ssr: false }
+);
 
 export function HeroSection() {
   return (

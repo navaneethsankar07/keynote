@@ -81,17 +81,47 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
     }
   });
 
-  const activePalette = HARMONIC_PALETTES[paletteIndex % HARMONIC_PALETTES.length];
+  const activePalette =
+    HARMONIC_PALETTES[paletteIndex % HARMONIC_PALETTES.length] || HARMONIC_PALETTES[0];
+
+  // Prevent unhandled promise rejections from WebGPU adapter probe in Three.js WebGPURenderer
+  useEffect(() => {
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      const reason = event.reason;
+      if (reason && (typeof reason === "object" || typeof reason === "string")) {
+        const msg =
+          typeof reason === "string"
+            ? reason
+            : (reason as Error).message || "";
+        if (
+          msg.includes("Cannot read properties of null") ||
+          msg.includes("reading '0'") ||
+          msg.includes("WebGPU")
+        ) {
+          event.preventDefault();
+        }
+      }
+    };
+
+    window.addEventListener("unhandledrejection", handleUnhandledRejection);
+    return () => {
+      window.removeEventListener("unhandledrejection", handleUnhandledRejection);
+    };
+  }, []);
 
   // Cycle palette strictly within the animation component on click
   const cycleHarmonicPalette = useCallback(() => {
     setPaletteIndex((prevIndex) => {
       const nextIndex = (prevIndex + 1) % HARMONIC_PALETTES.length;
       if (appRef.current?.tubes) {
-        const nextPalette = HARMONIC_PALETTES[nextIndex];
+        const nextPalette = HARMONIC_PALETTES[nextIndex] || HARMONIC_PALETTES[0];
         try {
-          appRef.current.tubes.setColors(nextPalette.tubes);
-          appRef.current.tubes.setLightsColors(nextPalette.lights);
+          if (nextPalette?.tubes && typeof appRef.current.tubes.setColors === "function") {
+            appRef.current.tubes.setColors(nextPalette.tubes);
+          }
+          if (nextPalette?.lights && typeof appRef.current.tubes.setLightsColors === "function") {
+            appRef.current.tubes.setLightsColors(nextPalette.lights);
+          }
         } catch (err) {
           console.warn("Could not set tube colors dynamically:", err);
         }
@@ -126,13 +156,13 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
   // High-density color gradient interpolation across 96 filaments
   const spectrumBars = useMemo(() => {
     return SPECTRUM_BARS_DATA.map((bar, i) => {
-      let color = activePalette.tubes[0];
+      let color = activePalette?.tubes?.[0] || "#7c3aed";
       if (i >= 24 && i < 54) {
-        color = activePalette.accentColor;
+        color = activePalette?.accentColor || "#06b6d4";
       } else if (i >= 54 && i < 76) {
-        color = activePalette.staffColor;
+        color = activePalette?.staffColor || "#8b5cf6";
       } else if (i >= 76) {
-        color = activePalette.tubes[1];
+        color = activePalette?.tubes?.[1] || "#0891b2";
       }
       return { ...bar, color };
     });
@@ -141,7 +171,7 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
   // Initialize ThreeJS Tubes with soft, eye-friendly bloom and balanced lighting
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !canvas.parentElement) return;
 
     if (!isWebGLSupported) return;
 
@@ -153,9 +183,11 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
           "threejs-components/build/cursors/tubes1.min.js"
         );
 
-        if (isDestroyed || !canvasRef.current) return;
+        if (isDestroyed || !canvasRef.current || !canvasRef.current.parentElement) return;
 
-        const palette = HARMONIC_PALETTES[paletteIndex % HARMONIC_PALETTES.length];
+        const palette =
+          HARMONIC_PALETTES[paletteIndex % HARMONIC_PALETTES.length] ||
+          HARMONIC_PALETTES[0];
 
         const app = TubesCursor(canvasRef.current, {
           bloom: {
@@ -176,6 +208,14 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
           sleepTimeScale2: 1.4,
         });
 
+        // Attach rejection handler to renderer.init() if it exists
+        const threeInstance = (app as unknown as { three?: { renderer?: { init?: () => Promise<void> } } })?.three;
+        if (threeInstance?.renderer && typeof threeInstance.renderer.init === "function") {
+          threeInstance.renderer.init().catch(() => {
+            // Silently handle WebGPU fallback rejection
+          });
+        }
+
         appRef.current = app;
       } catch (err) {
         console.warn("WebGL Tubes initialization fallback:", err);
@@ -190,8 +230,8 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
       if (appRef.current && typeof appRef.current.dispose === "function") {
         try {
           appRef.current.dispose();
-        } catch (e) {
-          console.error("Error disposing Tubes:", e);
+        } catch {
+          // Ignore disposal errors on unmount
         }
         appRef.current = null;
       }
