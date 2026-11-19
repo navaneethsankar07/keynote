@@ -55,60 +55,60 @@ export function Navbar() {
   return (
     <header className="fixed top-0 inset-x-0 z-50 flex flex-col items-center pointer-events-none px-3 sm:px-4">
       {/* --- TOP-DOCKED DYNAMIC ISLAND / NOTCH CAPSULE --- */}
-      <div className="pointer-events-auto relative flex items-center h-12 px-3.5 sm:px-4 bg-[#090a10]/95 backdrop-blur-xl border-b border-x border-white/10 rounded-b-[20px] shadow-2xl shadow-black/80 gap-3 sm:gap-6 transition-all duration-300">
+      <div className="pointer-events-auto relative flex items-center h-14 sm:h-[58px] px-5 sm:px-7 bg-[#090a10]/95 backdrop-blur-xl border-b border-x border-white/15 rounded-b-[24px] shadow-2xl shadow-black/90 gap-4 sm:gap-8 transition-all duration-300">
         {/* Left Inverted Concave Ear - smooth aesthetic merge into top edge */}
         <svg
-          className="absolute right-full top-0 h-4 w-4 pointer-events-none fill-[#090a10]/95"
-          viewBox="0 0 16 16"
+          className="absolute right-full top-0 h-5 w-5 pointer-events-none fill-[#090a10]/95"
+          viewBox="0 0 20 20"
           aria-hidden="true"
         >
-          <path d="M16 0 L0 0 A16 16 0 0 0 16 16 Z" />
+          <path d="M20 0 L0 0 A20 20 0 0 0 20 20 Z" />
           <path
-            d="M0 0 A16 16 0 0 0 16 16"
+            d="M0 0 A20 20 0 0 0 20 20"
             fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
+            stroke="rgba(255, 255, 255, 0.15)"
             strokeWidth="1"
           />
         </svg>
 
         {/* Right Inverted Concave Ear - smooth aesthetic merge into top edge */}
         <svg
-          className="absolute left-full top-0 h-4 w-4 pointer-events-none fill-[#090a10]/95"
-          viewBox="0 0 16 16"
+          className="absolute left-full top-0 h-5 w-5 pointer-events-none fill-[#090a10]/95"
+          viewBox="0 0 20 20"
           aria-hidden="true"
         >
-          <path d="M0 0 L16 0 A16 16 0 0 1 0 16 Z" />
+          <path d="M0 0 L20 0 A20 20 0 0 1 0 20 Z" />
           <path
-            d="M16 0 A16 16 0 0 1 0 16"
+            d="M20 0 A20 20 0 0 1 0 20"
             fill="none"
-            stroke="rgba(255, 255, 255, 0.1)"
+            stroke="rgba(255, 255, 255, 0.15)"
             strokeWidth="1"
           />
         </svg>
 
-        {/* 1. Left: Nav Logo & Title */}
+        {/* 1. Left: Nav Logo & Title (Enlarged vinyl disc + bold title) */}
         <Link
           href="/"
           onClick={closeMobileMenu}
-          className="group flex items-center gap-2 text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-violet rounded-lg py-0.5"
+          className="group flex items-center gap-2.5 sm:gap-3 text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-violet rounded-lg py-1"
           aria-label={`${SITE_CONFIG.name} Home`}
         >
           <Image
             src="/images/logo-white.png"
             alt="Keynotes Logo"
-            width={24}
-            height={24}
-            className="h-6 w-6 object-contain transition-transform duration-300 group-hover:rotate-45 group-hover:scale-105"
+            width={32}
+            height={32}
+            className="h-7 w-7 sm:h-8 sm:w-8 object-contain transition-transform duration-300 group-hover:rotate-45 group-hover:scale-105"
             priority
           />
-          <span className="font-display text-sm font-bold tracking-tight text-white">
+          <span className="font-display text-base sm:text-lg font-bold tracking-tight text-white">
             Keynotes
           </span>
         </Link>
 
-        {/* 2. Center: Desktop Nav Links (Clean, minimalist text) */}
+        {/* 2. Center: Desktop Nav Links (Enlarged, easy-to-read typography) */}
         <nav
-          className="hidden md:flex items-center gap-1 sm:gap-1.5"
+          className="hidden md:flex items-center gap-1.5 sm:gap-2"
           aria-label="Main Navigation"
         >
           {MAIN_NAV_ITEMS.map((item) => {
@@ -122,10 +122,10 @@ export function Navbar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-violet",
+                  "px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-sm sm:text-[15px] font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-violet",
                   isActive
-                    ? "text-white bg-white/10 font-semibold"
-                    : "text-neutral-400 hover:text-white hover:bg-white/5"
+                    ? "text-white bg-white/15 font-semibold shadow-sm"
+                    : "text-neutral-300 hover:text-white hover:bg-white/10"
                 )}
                 aria-current={isActive ? "page" : undefined}
               >
@@ -136,23 +136,23 @@ export function Navbar() {
         </nav>
 
         {/* 3. Right: Controls & CTA Action Button */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5 sm:gap-3">
           {/* Soundscape Animation Controls (Gear Popover) */}
           <div className="relative" ref={settingsRef}>
             <button
               type="button"
               onClick={() => setSettingsOpen(!settingsOpen)}
               className={cn(
-                "relative flex h-7 w-7 items-center justify-center rounded-full border transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-violet",
+                "relative flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-violet",
                 settingsOpen
-                  ? "border-accent-violet/60 bg-white/15 text-accent-cyan shadow-sm"
-                  : "border-white/10 bg-white/5 text-neutral-300 hover:text-white hover:border-white/20 hover:bg-white/10"
+                  ? "border-accent-violet/60 bg-white/20 text-accent-cyan shadow-sm"
+                  : "border-white/15 bg-white/5 text-neutral-200 hover:text-white hover:border-white/30 hover:bg-white/10"
               )}
               aria-label="Soundscape Animation Controls"
               title="Animation Settings"
             >
               <GearIcon
-                size={13}
+                size={16}
                 className={cn(
                   "transition-transform duration-300",
                   settingsOpen ? "rotate-90 text-accent-cyan" : ""
@@ -161,7 +161,7 @@ export function Navbar() {
               {/* Dynamic status dot on gear button */}
               <span
                 className={cn(
-                  "absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full border border-black",
+                  "absolute top-1 right-1 h-2 w-2 rounded-full border border-black",
                   isAnimationActive ? "bg-emerald-400" : "bg-neutral-500"
                 )}
               />
@@ -170,20 +170,20 @@ export function Navbar() {
             {/* Gear Settings Popover Panel */}
             {settingsOpen && (
               <div
-                className="absolute right-0 top-full mt-2.5 w-72 rounded-2xl border border-white/10 bg-[#0c0d14]/98 p-4 shadow-2xl shadow-black/90 backdrop-blur-2xl z-50 animate-in fade-in zoom-in-95 duration-150"
+                className="absolute right-0 top-full mt-3 w-80 rounded-2xl border border-white/10 bg-[#0c0d14]/98 p-5 shadow-2xl shadow-black/90 backdrop-blur-2xl z-50 animate-in fade-in zoom-in-95 duration-150"
                 role="dialog"
                 aria-label="Soundscape Animation Settings"
               >
-                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
                   <div className="flex items-center gap-2">
-                    <GearIcon size={14} className="text-accent-cyan" />
+                    <GearIcon size={16} className="text-accent-cyan" />
                     <span className="font-display text-xs font-semibold uppercase tracking-wider text-white">
                       Animation Control
                     </span>
                   </div>
                   <div
                     className={cn(
-                      "flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium border",
+                      "flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium border",
                       isAnimationActive
                         ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
                         : "border-neutral-700 bg-neutral-900 text-neutral-400"
@@ -204,7 +204,7 @@ export function Navbar() {
                   type="button"
                   onClick={toggleAnimation}
                   className={cn(
-                    "mt-3.5 w-full flex items-center justify-between p-3 rounded-xl border text-left transition-all duration-200 group focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-violet",
+                    "mt-4 w-full flex items-center justify-between p-3.5 rounded-xl border text-left transition-all duration-200 group focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-violet",
                     isAnimationActive
                       ? "border-accent-violet/40 bg-accent-violet/10 hover:border-accent-violet/60 hover:bg-accent-violet/15"
                       : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10"
@@ -216,23 +216,23 @@ export function Navbar() {
                   <div className="flex items-center gap-3">
                     <div
                       className={cn(
-                        "flex h-8 w-8 items-center justify-center rounded-lg border transition-colors",
+                        "flex h-9 w-9 items-center justify-center rounded-lg border transition-colors",
                         isAnimationActive
                           ? "border-accent-violet/40 bg-accent-violet/20 text-accent-cyan"
                           : "border-white/10 bg-white/5 text-neutral-400"
                       )}
                     >
                       {isAnimationActive ? (
-                        <WaveformIcon size={16} className="animate-pulse" />
+                        <WaveformIcon size={18} className="animate-pulse" />
                       ) : (
-                        <PauseIcon size={14} />
+                        <PauseIcon size={16} />
                       )}
                     </div>
                     <div>
-                      <div className="text-xs font-medium text-white transition-colors">
+                      <div className="text-sm font-medium text-white transition-colors">
                         3D Soundscape
                       </div>
-                      <div className="text-[10px] text-neutral-400">
+                      <div className="text-xs text-neutral-400">
                         {isAnimationActive
                           ? "Interactive harmonic motion"
                           : "Paused • Conserves battery"}
@@ -259,7 +259,7 @@ export function Navbar() {
                 </button>
 
                 {/* Subtle Engine Info & Tip */}
-                <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px] text-neutral-400 font-mono">
+                <div className="mt-3.5 pt-3 border-t border-white/10 flex items-center justify-between text-[11px] text-neutral-400 font-mono">
                   <span>WebGL Tubes Engine</span>
                   <span className="text-accent-violet-light/90">Click background to shift mood</span>
                 </div>
@@ -267,12 +267,12 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Primary CTA Pill Button (White capsule with dark text, matching reference image) */}
+          {/* Primary CTA Pill Button (Enlarged white capsule with dark text) */}
           <Link
             href="/analyze"
-            className="flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-white text-black hover:bg-neutral-100 transition-colors shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white shrink-0"
+            className="flex items-center gap-2 px-4 py-1.5 sm:px-5 sm:py-2 text-xs sm:text-sm font-semibold rounded-full bg-white text-black hover:bg-neutral-100 transition-all shadow-md hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white shrink-0"
           >
-            <WaveformIcon size={12} className="text-black" />
+            <WaveformIcon size={15} className="text-black" />
             <span>Analyze</span>
           </Link>
 
@@ -280,19 +280,19 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/5 text-neutral-300 hover:text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-violet"
+            className="md:hidden flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-neutral-200 hover:text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-violet"
             aria-expanded={mobileMenuOpen}
             aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
           >
-            {mobileMenuOpen ? <CloseIcon size={14} /> : <MenuIcon size={14} />}
+            {mobileMenuOpen ? <CloseIcon size={18} /> : <MenuIcon size={18} />}
           </button>
         </div>
       </div>
 
       {/* --- MOBILE DROPDOWN DRAWER --- */}
       {mobileMenuOpen && (
-        <div className="pointer-events-auto md:hidden mt-2 w-full max-w-sm rounded-2xl border border-white/10 bg-[#090a10]/95 p-4 shadow-2xl shadow-black/90 backdrop-blur-2xl animate-in slide-in-from-top-2 duration-150">
-          <nav className="flex flex-col space-y-1" aria-label="Mobile Navigation">
+        <div className="pointer-events-auto md:hidden mt-2.5 w-full max-w-md rounded-2xl border border-white/10 bg-[#090a10]/95 p-5 shadow-2xl shadow-black/90 backdrop-blur-2xl animate-in slide-in-from-top-2 duration-150">
+          <nav className="flex flex-col space-y-1.5" aria-label="Mobile Navigation">
             {MAIN_NAV_ITEMS.map((item) => {
               const isActive =
                 item.href === "/"
@@ -305,18 +305,18 @@ export function Navbar() {
                   href={item.href}
                   onClick={closeMobileMenu}
                   className={cn(
-                    "flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium transition-colors",
+                    "flex items-center justify-between rounded-xl px-4 py-3 text-base font-medium transition-colors",
                     isActive
                       ? "bg-white/15 text-white font-semibold border border-white/10"
-                      : "text-neutral-300 hover:bg-white/5 hover:text-white"
+                      : "text-neutral-200 hover:bg-white/5 hover:text-white"
                   )}
                   aria-current={isActive ? "page" : undefined}
                 >
                   <span>{item.label}</span>
                   {isActive ? (
-                    <WaveformIcon size={14} className="text-accent-cyan" />
+                    <WaveformIcon size={16} className="text-accent-cyan" />
                   ) : (
-                    <span className="text-[10px] font-mono text-neutral-500">Explore</span>
+                    <span className="text-xs font-mono text-neutral-400">Explore</span>
                   )}
                 </Link>
               );
@@ -324,21 +324,21 @@ export function Navbar() {
           </nav>
 
           {/* Mobile Soundscape Animation Toggle */}
-          <div className="mt-3 pt-3 border-t border-white/10 flex items-center justify-between">
-            <div className="flex items-center gap-2">
+          <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
               <div
                 className={cn(
-                  "flex h-6 w-6 items-center justify-center rounded-md border",
+                  "flex h-8 w-8 items-center justify-center rounded-lg border",
                   isAnimationActive
                     ? "border-accent-violet/40 bg-accent-violet/20 text-accent-cyan"
                     : "border-white/10 bg-white/5 text-neutral-400"
                 )}
               >
-                {isAnimationActive ? <WaveformIcon size={12} /> : <PauseIcon size={10} />}
+                {isAnimationActive ? <WaveformIcon size={15} /> : <PauseIcon size={13} />}
               </div>
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-white">3D Soundscape</span>
-                <span className="text-[10px] text-neutral-400">
+                <span className="text-sm font-medium text-white">3D Soundscape</span>
+                <span className="text-xs text-neutral-400">
                   {isAnimationActive ? "Running" : "Paused"}
                 </span>
               </div>
