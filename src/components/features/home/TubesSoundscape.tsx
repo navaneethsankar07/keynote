@@ -226,103 +226,43 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
             0%, 100% { transform: scaleY(0.92); opacity: 0.95; }
             50% { transform: scaleY(0.48); opacity: 0.6; }
           }
-          @keyframes curveFloat {
-            0%, 100% { opacity: 0.75; transform: scaleY(0.96); }
-            50% { opacity: 0.95; transform: scaleY(1.04); }
-          }
           .pro-fft-pulse-1 { animation: proFftPulse1 2.4s ease-in-out infinite; transform-origin: bottom; }
           .pro-fft-pulse-2 { animation: proFftPulse2 2.8s ease-in-out infinite; transform-origin: bottom; }
           .pro-fft-pulse-3 { animation: proFftPulse3 2.1s ease-in-out infinite; transform-origin: bottom; }
           .pro-fft-pulse-4 { animation: proFftPulse4 2.6s ease-in-out infinite; transform-origin: bottom; }
-          .fft-envelope-curve { animation: curveFloat 3.2s ease-in-out infinite; transform-origin: bottom; }
           @media (prefers-reduced-motion: reduce) {
-            .pro-fft-pulse-1, .pro-fft-pulse-2, .pro-fft-pulse-3, .pro-fft-pulse-4, .fft-envelope-curve {
+            .pro-fft-pulse-1, .pro-fft-pulse-2, .pro-fft-pulse-3, .pro-fft-pulse-4 {
               animation: none !important;
             }
           }
         `}</style>
 
-        {/* Continuous High-Definition Spectral Envelope Waveform */}
-        <div className="w-full relative h-16 sm:h-20 overflow-hidden">
-          <svg
-            className="w-full h-full fft-envelope-curve"
-            viewBox="0 0 1200 75"
-            preserveAspectRatio="none"
-            fill="none"
-          >
-            <defs>
-              <linearGradient id="proFftFill" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor={activePalette.accentColor} stopOpacity="0.22" />
-                <stop offset="40%" stopColor={activePalette.staffColor} stopOpacity="0.12" />
-                <stop offset="100%" stopColor={activePalette.tubes[0]} stopOpacity="0.01" />
-              </linearGradient>
-              <linearGradient id="proFftStroke" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor={activePalette.tubes[0]} />
-                <stop offset="25%" stopColor={activePalette.accentColor} />
-                <stop offset="65%" stopColor={activePalette.staffColor} />
-                <stop offset="100%" stopColor={activePalette.tubes[1]} />
-              </linearGradient>
-              <filter id="proGlow" x="-5%" y="-30%" width="110%" height="160%">
-                <feGaussianBlur stdDeviation="2" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-
-            {/* Glowing Gradient Underfill */}
-            <path
-              d="M 0,72 C 60,72 100,42 160,34 C 230,26 280,50 360,30 C 440,16 540,36 640,26 C 740,16 820,40 940,30 C 1040,22 1120,58 1200,74 L 1200,75 L 0,75 Z"
-              fill="url(#proFftFill)"
-            />
-
-            {/* Secondary Harmonic Ghost Trace (RMS Average) */}
-            <path
-              d="M 0,74 C 70,74 110,54 170,48 C 240,42 290,58 370,44 C 450,30 550,48 650,40 C 750,32 830,50 950,42 C 1050,36 1130,64 1200,74"
-              stroke={activePalette.staffColor}
-              strokeWidth="1"
-              strokeDasharray="3 3"
-              opacity="0.45"
-            />
-
-            {/* Razor-Sharp Main Peak Envelope Curve */}
-            <path
-              d="M 0,72 C 60,72 100,42 160,34 C 230,26 280,50 360,30 C 440,16 540,36 640,26 C 740,16 820,40 940,30 C 1040,22 1120,58 1200,74"
-              stroke="url(#proFftStroke)"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-              filter="url(#proGlow)"
-            />
-          </svg>
-
-          {/* 96 Dense High-Definition Spectral Filament Bars */}
-          <div className="absolute inset-0 w-full flex items-end justify-between px-1 sm:px-4 md:px-6">
-            {spectrumBars.map((bar, idx) => (
-              <div
-                key={idx}
-                className={`flex flex-col items-center flex-1 transition-colors duration-700 ${bar.animClass}`}
-                style={{ height: `${bar.baseH}px` }}
-              >
-                {/* Precision Floating Peak-Hold Micro Dot */}
-                <span
-                  className="w-[1.5px] h-[1.5px] rounded-full mb-[2px] transition-colors duration-700 opacity-90"
-                  style={{
-                    backgroundColor: bar.color,
-                    boxShadow: `0 0 4px ${bar.color}`,
-                  }}
-                />
-                {/* Razor-Thin Vertical Spectrum Filament */}
-                <span
-                  className="w-[1px] sm:w-[1.2px] h-full rounded-t-sm transition-colors duration-700 opacity-80"
-                  style={{
-                    backgroundColor: bar.color,
-                    boxShadow: `0 0 3px ${bar.color}`,
-                  }}
-                />
-              </div>
-            ))}
-          </div>
+        {/* 96 Dense High-Definition Spectral Filament Bars (Full Width) */}
+        <div className="w-full h-16 sm:h-20 flex items-end justify-between px-1 sm:px-4 md:px-6">
+          {spectrumBars.map((bar, idx) => (
+            <div
+              key={idx}
+              className={`flex flex-col items-center flex-1 transition-colors duration-700 ${bar.animClass}`}
+              style={{ height: `${bar.baseH}px` }}
+            >
+              {/* Precision Floating Peak-Hold Micro Dot */}
+              <span
+                className="w-[1.5px] h-[1.5px] rounded-full mb-[2px] transition-colors duration-700 opacity-90"
+                style={{
+                  backgroundColor: bar.color,
+                  boxShadow: `0 0 4px ${bar.color}`,
+                }}
+              />
+              {/* Razor-Thin Vertical Spectrum Filament */}
+              <span
+                className="w-[1px] sm:w-[1.2px] h-full rounded-t-sm transition-colors duration-700 opacity-80"
+                style={{
+                  backgroundColor: bar.color,
+                  boxShadow: `0 0 3px ${bar.color}`,
+                }}
+              />
+            </div>
+          ))}
         </div>
 
         {/* Minimal Studio Precision Hardware Baseline with Micro-Ticks (No text) */}
