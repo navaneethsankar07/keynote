@@ -27,7 +27,7 @@ export function PlaceholderPage({
   mockPreview,
 }: PlaceholderPageProps) {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+    <div className="mx-auto max-w-5xl px-4 pt-20 pb-12 sm:px-6 sm:pt-24 sm:pb-16 lg:px-8">
       {/* Breadcrumb / Back Link */}
       <div className="mb-8">
         <Link

@@ -7,7 +7,7 @@ import { TubesSoundscape } from "./TubesSoundscape";
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center overflow-hidden py-16 sm:py-24">
+    <section className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden pt-20 pb-16 sm:pt-24 sm:pb-24">
       {/* 3D Interactive Neon Tubes Musical Soundscape */}
       <TubesSoundscape />
 
