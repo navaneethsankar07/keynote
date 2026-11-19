@@ -1,24 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ArrowRightIcon, TheoryBookIcon, SparklesIcon } from "@/components/ui/Icons";
 import { TubesSoundscape } from "./TubesSoundscape";
-import { MusicalVisualizer } from "./MusicalVisualizer";
 
 export function HeroSection() {
-  const [activeHarmonicMode, setActiveHarmonicMode] = useState(0);
-
   return (
-    <section className="relative overflow-hidden pt-12 pb-16 sm:pt-20 sm:pb-24 lg:pt-28 lg:pb-32">
+    <section className="relative min-h-[85vh] flex flex-col justify-center overflow-hidden py-16 sm:py-24 lg:py-32">
       {/* 3D Interactive Neon Tubes Musical Soundscape */}
-      <TubesSoundscape
-        activeModeIndex={activeHarmonicMode}
-        onModeChange={setActiveHarmonicMode}
-      />
+      <TubesSoundscape />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center text-center">
           {/* 1. Intro label / Eyebrow badge */}
           <div
@@ -79,22 +73,11 @@ export function HeroSection() {
 
           {/* 5. Interactive hint */}
           <p
-            className="mt-4 text-xs font-mono text-text-muted hero-enter-fade pointer-events-auto"
+            className="mt-8 text-xs font-mono text-text-muted hero-enter-fade pointer-events-auto"
             style={{ animationDelay: "240ms" }}
           >
-            Interactive 3D Harmonic Tubes • Move cursor to bend soundwaves • Click background to shift mode
+            Move cursor to guide 3D neon tubes • Click background to change animation colors
           </p>
-        </div>
-
-        {/* 6. Studio-Grade Console & Deconstruction Dashboard */}
-        <div
-          className="mt-14 sm:mt-16 lg:mt-20 hero-enter-fade pointer-events-auto"
-          style={{ animationDelay: "280ms" }}
-        >
-          <MusicalVisualizer
-            activeModeIndex={activeHarmonicMode}
-            onModeSelect={setActiveHarmonicMode}
-          />
         </div>
       </div>
     </section>
