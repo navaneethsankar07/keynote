@@ -8,11 +8,11 @@ import { TubesSoundscape } from "./TubesSoundscape";
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[85vh] flex flex-col justify-center overflow-hidden py-16 sm:py-24 lg:py-32">
+    <section className="relative min-h-[calc(100vh-4rem)] flex flex-col justify-center items-center overflow-hidden py-16 sm:py-24">
       {/* 3D Interactive Neon Tubes Musical Soundscape */}
       <TubesSoundscape />
 
-      <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 my-auto">
         <div className="flex flex-col items-center text-center">
           {/* 1. Intro label / Eyebrow badge */}
           <div

@@ -161,7 +161,7 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
     >
       {/* Background ambient radial glow */}
       <div
-        className="pointer-events-none absolute top-[-5%] left-1/2 -translate-x-1/2 h-[600px] w-[1000px] max-w-[130vw] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.16)_0%,rgba(6,182,212,0.06)_40%,transparent_70%)] blur-3xl"
+        className="pointer-events-none absolute top-[-5%] left-1/2 -translate-x-1/2 h-[700px] w-[1100px] max-w-[130vw] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.18)_0%,rgba(6,182,212,0.07)_40%,transparent_70%)] blur-3xl"
         aria-hidden="true"
       />
 
@@ -172,130 +172,152 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
         className="absolute inset-0 h-full w-full opacity-85 transition-opacity duration-1000 cursor-crosshair pointer-events-auto"
       />
 
-      {/* --- CENTERED LUMINOUS NEON SOUNDWAVE WITH MUSICAL STAFF NOTES --- */}
+      {/* --- STUDIO ACOUSTIC SOUND RINGS & AMBIENT HARMONIC FREQUENCY SPECTRUM --- */}
       <div
-        className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden opacity-85 transition-all duration-700"
+        className="pointer-events-none absolute inset-0 flex flex-col items-center justify-between overflow-hidden transition-all duration-700"
         aria-hidden="true"
       >
-        <svg
-          className="w-[92vw] max-w-[880px] h-[220px] overflow-visible"
-          viewBox="0 0 880 220"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            {/* Neon Bloom Glow Filter matching the 3D tubes */}
-            <filter id="neonMelodyGlow" x="-30%" y="-40%" width="160%" height="180%">
-              <feGaussianBlur stdDeviation="4" result="heavyGlow" />
-              <feGaussianBlur stdDeviation="1.5" result="sharpGlow" />
-              <feMerge>
-                <feMergeNode in="heavyGlow" />
-                <feMergeNode in="sharpGlow" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
+        <style>{`
+          @keyframes acousticRingBreathe {
+            0%, 100% {
+              transform: scale(0.97) rotate(0deg);
+              opacity: 0.22;
+            }
+            50% {
+              transform: scale(1.03) rotate(1.5deg);
+              opacity: 0.38;
+            }
+          }
+          @keyframes freqBarPulseA {
+            0%, 100% { transform: scaleY(0.4); opacity: 0.45; }
+            50% { transform: scaleY(1.0); opacity: 0.9; }
+          }
+          @keyframes freqBarPulseB {
+            0%, 100% { transform: scaleY(0.8); opacity: 0.75; }
+            50% { transform: scaleY(0.35); opacity: 0.4; }
+          }
+          @keyframes freqBarPulseC {
+            0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
+            50% { transform: scaleY(0.95); opacity: 0.85; }
+          }
+          .acoustic-ring-group {
+            animation: acousticRingBreathe 8s ease-in-out infinite;
+            transform-origin: center center;
+          }
+          .freq-bar-1 { animation: freqBarPulseA 2.4s ease-in-out infinite; transform-origin: bottom; }
+          .freq-bar-2 { animation: freqBarPulseB 2.8s ease-in-out infinite; transform-origin: bottom; }
+          .freq-bar-3 { animation: freqBarPulseC 2.2s ease-in-out infinite; transform-origin: bottom; }
+          @media (prefers-reduced-motion: reduce) {
+            .acoustic-ring-group, .freq-bar-1, .freq-bar-2, .freq-bar-3 {
+              animation: none !important;
+            }
+          }
+        `}</style>
 
-            {/* Sinuous Neon Wave Gradient */}
-            <linearGradient id="neonWaveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor={activePalette.tubes[0]} stopOpacity="0" />
-              <stop offset="25%" stopColor={activePalette.tubes[0]} stopOpacity="0.85" />
-              <stop offset="50%" stopColor={activePalette.tubes[1]} stopOpacity="0.95" />
-              <stop offset="75%" stopColor={activePalette.tubes[2]} stopOpacity="0.85" />
-              <stop offset="100%" stopColor={activePalette.tubes[2]} stopOpacity="0" />
-            </linearGradient>
+        {/* 1. Subtle Concentric Acoustic Sound Rings radiating behind headline */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <svg
+            className="w-[800px] h-[800px] max-w-[130vw] max-h-[130vw] overflow-visible acoustic-ring-group"
+            viewBox="0 0 600 600"
+            fill="none"
+          >
+            <defs>
+              <filter id="acousticGlow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
 
-            {/* Note Beam Gradient */}
-            <linearGradient id="neonNoteBeamGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={activePalette.accentColor} />
-              <stop offset="100%" stopColor={activePalette.staffColor} />
-            </linearGradient>
-
-            <style>{`
-              @keyframes melodicWaveFloat {
-                0%, 100% {
-                  transform: translateY(0px) rotate(-0.5deg);
-                }
-                50% {
-                  transform: translateY(-12px) rotate(0.5deg);
-                }
-              }
-              .melodic-wave-group {
-                animation: melodicWaveFloat 6s ease-in-out infinite;
-                transform-origin: center center;
-              }
-              @media (prefers-reduced-motion: reduce) {
-                .melodic-wave-group {
-                  animation: none !important;
-                }
-              }
-            `}</style>
-          </defs>
-
-          <g className="melodic-wave-group" filter="url(#neonMelodyGlow)">
-            {/* 1. Fluid Neon Soundwave Ribbon */}
-            <path
-              d="M 50,115 C 190,55 310,175 450,105 C 590,40 710,165 830,115"
-              stroke="url(#neonWaveGrad)"
-              strokeWidth="4"
-              strokeLinecap="round"
-              fill="none"
-              opacity="0.9"
-            />
-            {/* White-hot energy core running through the neon wave */}
-            <path
-              d="M 50,115 C 190,55 310,175 450,105 C 590,40 710,165 830,115"
-              stroke="#ffffff"
+            {/* Inner harmonic circle */}
+            <circle
+              cx="300"
+              cy="300"
+              r="130"
+              stroke={activePalette.staffColor}
               strokeWidth="1.2"
-              strokeLinecap="round"
-              fill="none"
-              opacity="0.55"
+              opacity="0.35"
+              filter="url(#acousticGlow)"
             />
 
-            {/* Note 1: Glowing Quarter Note (♩) on first crest (x: 230, y: 80) */}
-            <g transform="translate(230, 80)">
-              {/* Subtle acoustic bloom ring */}
-              <circle cx="0" cy="0" r="11" stroke={activePalette.staffColor} strokeWidth="1" opacity="0.35" fill="none" />
-              {/* Notehead */}
-              <ellipse cx="0" cy="0" rx="7.5" ry="5.5" transform="rotate(-20)" fill={activePalette.staffColor} />
-              <ellipse cx="0" cy="0" rx="4" ry="2.5" transform="rotate(-20)" fill="#ffffff" opacity="0.6" />
-              {/* Stem */}
-              <line x1="7" y1="0" x2="7" y2="-34" stroke={activePalette.staffColor} strokeWidth="2.4" strokeLinecap="round" />
-            </g>
+            {/* Middle acoustic frequency ring with dashed divisions */}
+            <circle
+              cx="300"
+              cy="300"
+              r="210"
+              stroke={activePalette.accentColor}
+              strokeWidth="1.2"
+              strokeDasharray="4 12"
+              opacity="0.3"
+              filter="url(#acousticGlow)"
+            />
 
-            {/* Note 2 & 3: Luminous Beamed Eighth Notes (♫) across central crest (x: 420 to 472) */}
-            <g transform="translate(420, 115)">
-              <ellipse cx="0" cy="0" rx="7.5" ry="5.5" transform="rotate(-20)" fill={activePalette.accentColor} />
-              <ellipse cx="0" cy="0" rx="4" ry="2.5" transform="rotate(-20)" fill="#ffffff" opacity="0.6" />
-              <line x1="7" y1="0" x2="7" y2="-36" stroke={activePalette.accentColor} strokeWidth="2.4" strokeLinecap="round" />
+            {/* Outer harmonic dispersion ring */}
+            <circle
+              cx="300"
+              cy="300"
+              r="285"
+              stroke={activePalette.staffColor}
+              strokeWidth="1"
+              strokeDasharray="2 18"
+              opacity="0.2"
+            />
+          </svg>
+        </div>
 
-              <ellipse cx="52" cy="-12" rx="7.5" ry="5.5" transform="rotate(-20 52 -12)" fill={activePalette.staffColor} />
-              <ellipse cx="52" cy="-12" rx="4" ry="2.5" transform="rotate(-20 52 -12)" fill="#ffffff" opacity="0.6" />
-              <line x1="59" y1="-12" x2="59" y2="-48" stroke={activePalette.staffColor} strokeWidth="2.4" strokeLinecap="round" />
+        {/* Spacer */}
+        <div className="flex-1" />
 
-              {/* Connecting neon beam */}
-              <polygon points="7,-36 59,-48 59,-41 7,-29" fill="url(#neonNoteBeamGrad)" />
-            </g>
-
-            {/* Note 4: Luminous Eighth Note with Curved Neon Flag (♪) (x: 650, y: 95) */}
-            <g transform="translate(650, 95)">
-              {/* Subtle acoustic bloom ring */}
-              <circle cx="0" cy="0" r="11" stroke={activePalette.accentColor} strokeWidth="1" opacity="0.35" fill="none" />
-              {/* Notehead */}
-              <ellipse cx="0" cy="0" rx="7.5" ry="5.5" transform="rotate(-20)" fill={activePalette.accentColor} />
-              <ellipse cx="0" cy="0" rx="4" ry="2.5" transform="rotate(-20)" fill="#ffffff" opacity="0.6" />
-              {/* Stem */}
-              <line x1="7" y1="0" x2="7" y2="-34" stroke={activePalette.staffColor} strokeWidth="2.4" strokeLinecap="round" />
-              {/* Curved flag */}
-              <path
-                d="M 7,-34 C 21,-25 21,-13 24,-7"
-                fill="none"
-                stroke={activePalette.accentColor}
-                strokeWidth="2.6"
-                strokeLinecap="round"
+        {/* 2. Studio Ambient Frequency Spectrum Strip (flanking the bottom above vignette) */}
+        <div className="relative z-10 mb-8 sm:mb-12 flex flex-col items-center gap-2 pointer-events-none opacity-80 transition-colors duration-700">
+          {/* Audio Equalizer Frequency Bars */}
+          <div className="flex items-end gap-1 sm:gap-1.5 h-10 px-4">
+            {[
+              { h: 14, anim: "freq-bar-1", col: activePalette.tubes[0] },
+              { h: 22, anim: "freq-bar-2", col: activePalette.tubes[0] },
+              { h: 18, anim: "freq-bar-3", col: activePalette.tubes[0] },
+              { h: 28, anim: "freq-bar-1", col: activePalette.accentColor },
+              { h: 36, anim: "freq-bar-2", col: activePalette.accentColor },
+              { h: 24, anim: "freq-bar-3", col: activePalette.accentColor },
+              { h: 32, anim: "freq-bar-1", col: activePalette.staffColor },
+              { h: 40, anim: "freq-bar-2", col: activePalette.staffColor },
+              { h: 30, anim: "freq-bar-3", col: activePalette.staffColor },
+              { h: 26, anim: "freq-bar-1", col: activePalette.tubes[1] },
+              { h: 38, anim: "freq-bar-2", col: activePalette.tubes[1] },
+              { h: 32, anim: "freq-bar-3", col: activePalette.tubes[1] },
+              { h: 22, anim: "freq-bar-1", col: activePalette.accentColor },
+              { h: 35, anim: "freq-bar-2", col: activePalette.accentColor },
+              { h: 26, anim: "freq-bar-3", col: activePalette.accentColor },
+              { h: 16, anim: "freq-bar-1", col: activePalette.staffColor },
+              { h: 28, anim: "freq-bar-2", col: activePalette.staffColor },
+              { h: 20, anim: "freq-bar-3", col: activePalette.staffColor },
+              { h: 12, anim: "freq-bar-1", col: activePalette.tubes[2] },
+              { h: 24, anim: "freq-bar-2", col: activePalette.tubes[2] },
+              { h: 16, anim: "freq-bar-3", col: activePalette.tubes[2] },
+            ].map((bar, idx) => (
+              <span
+                key={idx}
+                className={`w-[2.5px] sm:w-[3px] rounded-full transition-colors duration-700 ${bar.anim}`}
+                style={{
+                  height: `${bar.h}px`,
+                  backgroundColor: bar.col,
+                  boxShadow: `0 0 8px ${bar.col}`,
+                }}
               />
-            </g>
-          </g>
-        </svg>
+            ))}
+          </div>
+
+          {/* Minimal Acoustic Scale Labels */}
+          <div className="flex items-center gap-4 sm:gap-6 text-[10px] font-mono tracking-wider text-text-muted/70">
+            <span>20Hz SUB</span>
+            <span>•</span>
+            <span>1kHz MID</span>
+            <span>•</span>
+            <span>20kHz AIR</span>
+          </div>
+        </div>
       </div>
 
       {/* Fallback for reduced motion / non-webgl */}
