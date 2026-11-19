@@ -1,32 +1,39 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ArrowRightIcon, TheoryBookIcon, SparklesIcon } from "@/components/ui/Icons";
-import { SoundscapeBackground } from "./SoundscapeBackground";
+import { TubesSoundscape } from "./TubesSoundscape";
 import { MusicalVisualizer } from "./MusicalVisualizer";
 
 export function HeroSection() {
+  const [activeHarmonicMode, setActiveHarmonicMode] = useState(0);
+
   return (
     <section className="relative overflow-hidden pt-12 pb-16 sm:pt-20 sm:pb-24 lg:pt-28 lg:pb-32">
-      {/* Living Musical Soundscape Background Animation */}
-      <SoundscapeBackground />
+      {/* 3D Interactive Neon Tubes Musical Soundscape */}
+      <TubesSoundscape
+        activeModeIndex={activeHarmonicMode}
+        onModeChange={setActiveHarmonicMode}
+      />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center text-center">
           {/* 1. Intro label / Eyebrow badge */}
           <div
-            className="mb-6 inline-flex items-center gap-2 hero-enter-slide"
+            className="mb-6 inline-flex items-center gap-2 hero-enter-slide pointer-events-auto"
             style={{ animationDelay: "0ms" }}
           >
             <Badge variant="violet" size="md">
               <SparklesIcon size={12} className="text-accent-violet" />
-              <span>Keynote Music Intelligence • Phase 2 Animated Hero</span>
+              <span>Keynote Music Intelligence • Interactive 3D Soundscape</span>
             </Badge>
           </div>
 
           {/* 2. Headline with subtle upward movement */}
           <h1
-            className="font-display max-w-4xl text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-text-primary leading-[1.1] hero-enter-slide"
+            className="font-display max-w-4xl text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-text-primary leading-[1.1] hero-enter-slide pointer-events-auto select-none"
             style={{ animationDelay: "60ms" }}
           >
             Discover the music{" "}
@@ -37,7 +44,7 @@ export function HeroSection() {
 
           {/* 3. Supporting text */}
           <p
-            className="mt-6 max-w-2xl text-base sm:text-lg md:text-xl text-text-secondary leading-relaxed font-sans hero-enter-slide"
+            className="mt-6 max-w-2xl text-base sm:text-lg md:text-xl text-text-secondary leading-relaxed font-sans hero-enter-slide pointer-events-auto"
             style={{ animationDelay: "120ms" }}
           >
             Explore the rhythm, harmony, tempo, and musical ideas hidden inside
@@ -46,7 +53,7 @@ export function HeroSection() {
 
           {/* 4. Call to Action buttons */}
           <div
-            className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center gap-4 hero-enter-slide"
+            className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center gap-4 hero-enter-slide pointer-events-auto"
             style={{ animationDelay: "180ms" }}
           >
             <Button
@@ -70,21 +77,24 @@ export function HeroSection() {
             </Button>
           </div>
 
-          {/* 5. Subtle note about Phase 2 */}
+          {/* 5. Interactive hint */}
           <p
-            className="mt-4 text-xs font-mono text-text-muted hero-enter-fade"
+            className="mt-4 text-xs font-mono text-text-muted hero-enter-fade pointer-events-auto"
             style={{ animationDelay: "240ms" }}
           >
-            Ambient Soundscape Engine active • Acoustic signal field synthesized via code
+            Interactive 3D Harmonic Tubes • Move cursor to bend soundwaves • Click background to shift mode
           </p>
         </div>
 
-        {/* 6. Hero Visual Element: Interactive Audio Spectrum & Deconstruction */}
+        {/* 6. Studio-Grade Console & Deconstruction Dashboard */}
         <div
-          className="mt-14 sm:mt-16 lg:mt-20 hero-enter-fade"
+          className="mt-14 sm:mt-16 lg:mt-20 hero-enter-fade pointer-events-auto"
           style={{ animationDelay: "280ms" }}
         >
-          <MusicalVisualizer />
+          <MusicalVisualizer
+            activeModeIndex={activeHarmonicMode}
+            onModeSelect={setActiveHarmonicMode}
+          />
         </div>
       </div>
     </section>
