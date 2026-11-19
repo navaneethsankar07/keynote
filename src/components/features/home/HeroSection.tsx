@@ -19,7 +19,7 @@ export function HeroSection() {
             style={{ animationDelay: "0ms" }}
           >
             Discover the music{" "}
-            <span className="bg-gradient-to-r from-accent-violet via-purple-300 to-accent-cyan bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-purple-400 via-indigo-200 to-cyan-300 bg-clip-text text-transparent">
               behind the music.
             </span>
           </h1>

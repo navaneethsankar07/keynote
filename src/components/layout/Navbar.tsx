@@ -1,15 +1,35 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { KeynoteLogo, MenuIcon, CloseIcon, WaveformIcon } from "@/components/ui/Icons";
+import { KeynoteLogo, MenuIcon, CloseIcon, GearIcon, PlayIcon, PauseIcon, WaveformIcon } from "@/components/ui/Icons";
+import { useAnimation } from "@/context/AnimationContext";
 import { MAIN_NAV_ITEMS, SITE_CONFIG } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+
+  const { isAnimationActive, toggleAnimation } = useAnimation();
+
+  // Close settings popover when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
+        setSettingsOpen(false);
+      }
+    };
+    if (settingsOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [settingsOpen]);
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -81,8 +101,110 @@ export function Navbar() {
           })}
         </nav>
 
-        {/* Right side status indicator & Mobile menu button */}
-        <div className="flex items-center gap-3">
+        {/* Right side settings & status indicator & Mobile menu button */}
+        <div className="flex items-center gap-2.5">
+          {/* Gear Option for Animation & Motion Control */}
+          <div className="relative" ref={settingsRef}>
+            <button
+              type="button"
+              onClick={() => setSettingsOpen(!settingsOpen)}
+              className={cn(
+                "relative flex h-9 w-9 items-center justify-center rounded-xl border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-violet",
+                settingsOpen
+                  ? "border-accent-violet/60 bg-surface-elevated text-accent-cyan shadow-sm"
+                  : "border-border bg-surface/80 text-text-secondary hover:text-text-primary hover:border-border-hover hover:bg-surface-hover"
+              )}
+              aria-label="Soundscape Animation Controls"
+              title="Animation Settings"
+            >
+              <GearIcon
+                size={18}
+                className={cn(
+                  "transition-transform duration-300",
+                  settingsOpen ? "rotate-90 text-accent-cyan" : "group-hover:rotate-45"
+                )}
+              />
+              {/* Dynamic Status Dot on Gear */}
+              <span
+                className={cn(
+                  "absolute top-1.5 right-1.5 h-2 w-2 rounded-full border border-surface",
+                  isAnimationActive ? "bg-emerald-400" : "bg-text-muted/60"
+                )}
+              />
+            </button>
+
+            {/* Gear Settings Popover Panel */}
+            {settingsOpen && (
+              <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-border bg-surface-elevated p-3.5 shadow-2xl backdrop-blur-xl z-50 animate-in fade-in zoom-in-95 duration-150">
+                <div className="flex items-center justify-between pb-2.5 border-b border-border/70">
+                  <span className="font-display text-xs font-semibold uppercase tracking-wider text-text-primary">
+                    Visual Experience
+                  </span>
+                  <span
+                    className={cn(
+                      "text-[10px] font-mono font-medium px-2 py-0.5 rounded-full border",
+                      isAnimationActive
+                        ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                        : "border-text-muted/30 bg-surface text-text-muted"
+                    )}
+                  >
+                    {isAnimationActive ? "ACTIVE" : "PAUSED"}
+                  </span>
+                </div>
+
+                <div className="mt-3 flex items-center justify-between gap-3">
+                  <div className="flex flex-col">
+                    <span className="text-xs font-medium text-text-primary">
+                      3D Soundscape
+                    </span>
+                    <span className="text-[11px] text-text-muted">
+                      Neon tubes & audio motion
+                    </span>
+                  </div>
+
+                  {/* Toggle Button */}
+                  <button
+                    type="button"
+                    onClick={toggleAnimation}
+                    className={cn(
+                      "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-violet",
+                      isAnimationActive ? "bg-accent-violet" : "bg-surface-hover border-border"
+                    )}
+                    role="switch"
+                    aria-checked={isAnimationActive}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out",
+                        isAnimationActive ? "translate-x-5" : "translate-x-0"
+                      )}
+                    />
+                  </button>
+                </div>
+
+                {/* Quick Pause/Play CTA */}
+                <button
+                  type="button"
+                  onClick={toggleAnimation}
+                  className="mt-3.5 w-full flex items-center justify-center gap-2 rounded-xl border border-border bg-surface py-2 text-xs font-medium text-text-secondary hover:text-text-primary hover:border-accent-violet/40 hover:bg-surface-hover transition-colors"
+                >
+                  {isAnimationActive ? (
+                    <>
+                      <PauseIcon size={14} className="text-accent-violet" />
+                      <span>Stop Animation</span>
+                    </>
+                  ) : (
+                    <>
+                      <PlayIcon size={14} className="text-emerald-400" />
+                      <span>Start Animation</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+
           <div className="hidden lg:flex items-center gap-2 rounded-full border border-border/60 bg-surface/50 px-3 py-1 text-xs text-text-secondary font-mono">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-violet opacity-75" />
@@ -137,7 +259,28 @@ export function Navbar() {
               );
             })}
           </nav>
-          <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-xs text-text-muted font-mono">
+
+          {/* Mobile Soundscape Animation Toggle */}
+          <div className="mt-4 pt-3.5 border-t border-border flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <GearIcon size={16} className="text-text-muted" />
+              <span className="text-xs font-medium text-text-primary">3D Soundscape</span>
+            </div>
+            <button
+              type="button"
+              onClick={toggleAnimation}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-medium border transition-colors",
+                isAnimationActive
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                  : "border-text-muted/30 bg-surface text-text-muted"
+              )}
+            >
+              {isAnimationActive ? "STOP" : "START"}
+            </button>
+          </div>
+
+          <div className="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs text-text-muted font-mono">
             <span>{SITE_CONFIG.name} v{SITE_CONFIG.version}</span>
             <span className="text-accent-violet">Dark Theme</span>
           </div>

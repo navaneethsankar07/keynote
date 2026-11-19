@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { AnimationProvider } from "@/context/AnimationContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -40,9 +41,11 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-full flex flex-col bg-background text-text-primary antialiased selection:bg-accent-violet/30 selection:text-white"
       >
-        <Navbar />
-        {children}
-        <Footer />
+        <AnimationProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </AnimationProvider>
       </body>
     </html>
   );
