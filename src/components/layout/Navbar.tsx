@@ -86,21 +86,24 @@ export function Navbar() {
           />
         </svg>
 
-        {/* 1. Left: Nav Logo Badge */}
+        {/* 1. Left: Nav Logo & Title */}
         <Link
           href="/"
           onClick={closeMobileMenu}
-          className="group flex items-center text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-violet rounded-lg py-0.5"
+          className="group flex items-center gap-2 text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent-violet rounded-lg py-0.5"
           aria-label={`${SITE_CONFIG.name} Home`}
         >
           <Image
             src="/images/logo-white.png"
-            alt={SITE_CONFIG.name}
-            width={48}
-            height={28}
-            className="h-7 sm:h-[29px] w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+            alt="Keynotes Logo"
+            width={24}
+            height={24}
+            className="h-6 w-6 object-contain transition-transform duration-300 group-hover:rotate-45 group-hover:scale-105"
             priority
           />
+          <span className="font-display text-sm font-bold tracking-tight text-white">
+            Keynotes
+          </span>
         </Link>
 
         {/* 2. Center: Desktop Nav Links (Clean, minimalist text) */}
