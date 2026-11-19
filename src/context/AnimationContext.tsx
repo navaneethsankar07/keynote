@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 interface AnimationContextType {
   isAnimationActive: boolean;
@@ -15,26 +15,20 @@ const AnimationContext = createContext<AnimationContextType>({
 });
 
 export function AnimationProvider({ children }: { children: React.ReactNode }) {
-  const [isAnimationActive, setIsAnimationActive] = useState(() => {
-    if (typeof window === "undefined") return true;
+  // Always active initially on load as requested ("make that on initially")
+  const [isAnimationActive, setIsAnimationActive] = useState(true);
+
+  // Clear any legacy stored "false" flag to guarantee fresh initial load is ON
+  useEffect(() => {
     try {
-      const saved = localStorage.getItem("keynote_animation_active");
-      return saved !== null ? saved === "true" : true;
+      localStorage.removeItem("keynote_animation_active");
     } catch {
-      return true;
+      // Ignore
     }
-  });
+  }, []);
 
   const toggleAnimation = () => {
-    setIsAnimationActive((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem("keynote_animation_active", String(next));
-      } catch {
-        // Fallback
-      }
-      return next;
-    });
+    setIsAnimationActive((prev) => !prev);
   };
 
   return (

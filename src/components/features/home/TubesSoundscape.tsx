@@ -70,7 +70,15 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
 
   const [isWebGLSupported, setIsWebGLSupported] = useState(() => {
     if (typeof window === "undefined") return true;
-    return !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    try {
+      const testCanvas = document.createElement("canvas");
+      return !!(
+        window.WebGLRenderingContext &&
+        (testCanvas.getContext("webgl") || testCanvas.getContext("experimental-webgl"))
+      );
+    } catch {
+      return true;
+    }
   });
 
   const activePalette = HARMONIC_PALETTES[paletteIndex % HARMONIC_PALETTES.length];
@@ -196,7 +204,7 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
     <div
       className={`absolute inset-0 -z-10 overflow-hidden select-none ${className}`}
       aria-hidden="true"
-      style={{ cursor: CUSTOM_CURSOR_URL }}
+      style={{ cursor: isAnimationActive ? CUSTOM_CURSOR_URL : "default" }}
     >
       {/* Background ambient radial glow — softened to protect eyes */}
       <div
