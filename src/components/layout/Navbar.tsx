@@ -96,9 +96,9 @@ export function Navbar() {
           <Image
             src="/images/logo-white.png"
             alt={SITE_CONFIG.name}
-            width={40}
-            height={32}
-            className="h-8 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+            width={48}
+            height={28}
+            className="h-7 sm:h-[29px] w-auto object-contain transition-transform duration-200 group-hover:scale-105"
             priority
           />
         </Link>
