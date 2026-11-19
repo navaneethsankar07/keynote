@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import type { TubesApp } from "threejs-components/build/cursors/tubes1.min.js";
+import * as THREE from "three";
 import { useAnimation } from "@/context/AnimationContext";
 
-// Musical Harmonic Color Palettes — dialed down for eye comfort and studio elegance
+// Musical Harmonic Color Palettes — rich, studio-refined tones
 export const HARMONIC_PALETTES = [
   {
     name: "Aeolian",
@@ -54,7 +54,16 @@ const SPECTRUM_BARS_DATA = Array.from({ length: SPECTRUM_BAR_COUNT }, (_, i) => 
 
 // Custom Luminous Audio Reticle Mouse Cursor (Cyan & Violet, 32x32)
 const CUSTOM_CURSOR_URL =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='8.5' stroke='%2322d3ee' stroke-width='1.2' stroke-opacity='0.8'/%3E%3Cline x1='16' y1='2' x2='16' y2='6' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='16' y1='26' x2='16' y2='30' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='2' y1='16' x2='6' y2='16' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='26' y1='16' x2='30' y2='16' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23ffffff'/%3E%3C/svg%3E\") 16 16, crosshair";
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='8.5' stroke='%2322d3ee' stroke-width='1.2' stroke-opacity='0.8'/%3E%3Cline x1='16' y1='2' x2='16' y2='6' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='16' y1='26' x2='16' y2='30' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='26' y1='16' x2='30' y2='16' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='2' y1='16' x2='6' y2='16' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23ffffff'/%3E%3C/svg%3E\") 16 16, crosshair";
+
+interface TubeMeshEntry {
+  mesh: THREE.Mesh;
+  curve: THREE.CatmullRomCurve3;
+  points: THREE.Vector3[];
+  radius: number;
+  timeOffset: number;
+  speed: number;
+}
 
 interface TubesSoundscapeProps {
   className?: string;
@@ -62,75 +71,31 @@ interface TubesSoundscapeProps {
 
 export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const appRef = useRef<TubesApp | null>(null);
-
   const { isAnimationActive } = useAnimation();
+  const isAnimationActiveRef = useRef(isAnimationActive);
+
+  // Sync ref with state for animation loop access without restarting effect
+  useEffect(() => {
+    isAnimationActiveRef.current = isAnimationActive;
+  }, [isAnimationActive]);
 
   const [paletteIndex, setPaletteIndex] = useState(0);
-
-  const [isWebGLSupported, setIsWebGLSupported] = useState(() => {
-    if (typeof window === "undefined") return true;
-    try {
-      const testCanvas = document.createElement("canvas");
-      return !!(
-        window.WebGLRenderingContext &&
-        (testCanvas.getContext("webgl") || testCanvas.getContext("experimental-webgl"))
-      );
-    } catch {
-      return true;
-    }
-  });
-
   const activePalette =
     HARMONIC_PALETTES[paletteIndex % HARMONIC_PALETTES.length] || HARMONIC_PALETTES[0];
 
-  // Prevent unhandled promise rejections from WebGPU adapter probe in Three.js WebGPURenderer
-  useEffect(() => {
-    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      const reason = event.reason;
-      if (reason && (typeof reason === "object" || typeof reason === "string")) {
-        const msg =
-          typeof reason === "string"
-            ? reason
-            : (reason as Error).message || "";
-        if (
-          msg.includes("Cannot read properties of null") ||
-          msg.includes("reading '0'") ||
-          msg.includes("WebGPU")
-        ) {
-          event.preventDefault();
-        }
-      }
-    };
+  const updatePaletteRef = useRef<((idx: number) => void) | null>(null);
 
-    window.addEventListener("unhandledrejection", handleUnhandledRejection);
-    return () => {
-      window.removeEventListener("unhandledrejection", handleUnhandledRejection);
-    };
-  }, []);
-
-  // Cycle palette strictly within the animation component on click
   const cycleHarmonicPalette = useCallback(() => {
     setPaletteIndex((prevIndex) => {
       const nextIndex = (prevIndex + 1) % HARMONIC_PALETTES.length;
-      if (appRef.current?.tubes) {
-        const nextPalette = HARMONIC_PALETTES[nextIndex] || HARMONIC_PALETTES[0];
-        try {
-          if (nextPalette?.tubes && typeof appRef.current.tubes.setColors === "function") {
-            appRef.current.tubes.setColors(nextPalette.tubes);
-          }
-          if (nextPalette?.lights && typeof appRef.current.tubes.setLightsColors === "function") {
-            appRef.current.tubes.setLightsColors(nextPalette.lights);
-          }
-        } catch (err) {
-          console.warn("Could not set tube colors dynamically:", err);
-        }
+      if (updatePaletteRef.current) {
+        updatePaletteRef.current(nextIndex);
       }
       return nextIndex;
     });
   }, []);
 
-  // Click listener: clicking background strictly shifts only animation colors
+  // Click listener: clicking background strictly shifts animation harmonic mood
   useEffect(() => {
     const handleGlobalClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
@@ -168,77 +133,265 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
     });
   }, [activePalette]);
 
-  // Initialize ThreeJS Tubes with soft, eye-friendly bloom and balanced lighting
+  // Native Three.js 3D Tubes Simulation with robust lifecycle and zero memory leaks
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !canvas.parentElement) return;
 
-    if (!isWebGLSupported) return;
+    let isMounted = true;
+    let animationFrameId: number;
 
-    let isDestroyed = false;
+    const width = canvas.parentElement.clientWidth || window.innerWidth;
+    const height = canvas.parentElement.clientHeight || window.innerHeight;
 
-    const initTubes = async () => {
-      try {
-        const { default: TubesCursor } = await import(
-          "threejs-components/build/cursors/tubes1.min.js"
-        );
+    // 1. Scene, Camera, WebGLRenderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+    camera.position.set(0, 0, 7.5);
+    camera.lookAt(0, 0, 0);
 
-        if (isDestroyed || !canvasRef.current || !canvasRef.current.parentElement) return;
+    let renderer: THREE.WebGLRenderer | null = null;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: "high-performance",
+      });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    } catch (err) {
+      console.warn("WebGL initialization fallback:", err);
+      return;
+    }
 
-        const palette =
-          HARMONIC_PALETTES[paletteIndex % HARMONIC_PALETTES.length] ||
-          HARMONIC_PALETTES[0];
+    // 2. Studio Lighting Rig
+    const initialPalette =
+      HARMONIC_PALETTES[paletteIndex % HARMONIC_PALETTES.length] || HARMONIC_PALETTES[0];
 
-        const app = TubesCursor(canvasRef.current, {
-          bloom: {
-            strength: 0.65, // Soft, eye-friendly bloom (no blinding glare)
-            radius: 0.45,
-            threshold: 0.18, // Clean threshold so dark backgrounds stay rested
-          },
-          tubes: {
-            colors: palette.tubes,
-            lights: {
-              intensity: 100, // Balanced, refined ambient illumination
-              colors: palette.lights,
-            },
-          },
-          sleepRadiusX: 280,
-          sleepRadiusY: 140,
-          sleepTimeScale1: 0.7,
-          sleepTimeScale2: 1.4,
-        });
+    const ambientLight = new THREE.AmbientLight(0x0f0b1e, 1.2);
+    scene.add(ambientLight);
 
-        // Attach rejection handler to renderer.init() if it exists
-        const threeInstance = (app as unknown as { three?: { renderer?: { init?: () => Promise<void> } } })?.three;
-        if (threeInstance?.renderer && typeof threeInstance.renderer.init === "function") {
-          threeInstance.renderer.init().catch(() => {
-            // Silently handle WebGPU fallback rejection
-          });
-        }
+    const pointLights: THREE.PointLight[] = [];
+    const lightPositions: [number, number, number][] = [
+      [-5, 4, 4.5],
+      [5, 4, 4.5],
+      [-5, -4, 4],
+      [5, -4, 4],
+    ];
 
-        appRef.current = app;
-      } catch (err) {
-        console.warn("WebGL Tubes initialization fallback:", err);
-        setIsWebGLSupported(false);
+    lightPositions.forEach((pos, idx) => {
+      const colorHex = initialPalette.lights[idx] || initialPalette.lights[0];
+      const light = new THREE.PointLight(colorHex, 85, 20);
+      light.position.set(...pos);
+      scene.add(light);
+      pointLights.push(light);
+    });
+
+    // 3. 14 Musical Harmonic Filaments (Tubes)
+    const TUBE_COUNT = 14;
+    const POINTS_PER_TUBE = 24;
+    const tubesList: TubeMeshEntry[] = [];
+
+    for (let i = 0; i < TUBE_COUNT; i++) {
+      const tubeColorHex = initialPalette.tubes[i % initialPalette.tubes.length];
+      const radius = 0.022 + (i % 4) * 0.01;
+      const points: THREE.Vector3[] = [];
+
+      // Initial resting curve points
+      for (let j = 0; j < POINTS_PER_TUBE; j++) {
+        const t = j / (POINTS_PER_TUBE - 1);
+        const z = -t * 1.8;
+        const x = Math.sin(t * Math.PI + i * 0.4) * 0.8;
+        const y = Math.cos(t * Math.PI + i * 0.5) * 0.4;
+        points.push(new THREE.Vector3(x, y, z));
+      }
+
+      const curve = new THREE.CatmullRomCurve3(points, false, "centripetal");
+      const geometry = new THREE.TubeGeometry(curve, 36, radius, 8, false);
+      const material = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(tubeColorHex),
+        roughness: 0.22,
+        metalness: 0.88,
+        emissive: new THREE.Color(tubeColorHex),
+        emissiveIntensity: 0.28,
+        transparent: true,
+        opacity: 0.9,
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh);
+
+      tubesList.push({
+        mesh,
+        curve,
+        points,
+        radius,
+        timeOffset: i * 0.45 + Math.random() * 0.5,
+        speed: 0.75 + (i % 3) * 0.2,
+      });
+    }
+
+    // Palette updater handler
+    updatePaletteRef.current = (idx: number) => {
+      const newPalette =
+        HARMONIC_PALETTES[idx % HARMONIC_PALETTES.length] || HARMONIC_PALETTES[0];
+
+      // Update lights
+      pointLights.forEach((light, lIdx) => {
+        const color = newPalette.lights[lIdx] || newPalette.lights[0];
+        light.color.set(color);
+      });
+
+      // Update tube materials
+      tubesList.forEach((tube, tIdx) => {
+        const tubeColor = newPalette.tubes[tIdx % newPalette.tubes.length];
+        const mat = tube.mesh.material as THREE.MeshStandardMaterial;
+        mat.color.set(tubeColor);
+        mat.emissive.set(tubeColor);
+      });
+    };
+
+    // 4. Pointer Interaction and Motion Physics
+    const mousePos = { x: 0, y: 0, targetX: 0, targetY: 0, isHovering: false };
+    const planeZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    const raycaster = new THREE.Raycaster();
+    const planeIntersectPoint = new THREE.Vector3();
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const ndcX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      const ndcY = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+
+      raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), camera);
+      if (raycaster.ray.intersectPlane(planeZ, planeIntersectPoint)) {
+        mousePos.targetX = planeIntersectPoint.x;
+        mousePos.targetY = planeIntersectPoint.y;
+        mousePos.isHovering = true;
       }
     };
 
-    initTubes();
+    const handlePointerLeave = () => {
+      mousePos.isHovering = false;
+    };
 
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerleave", handlePointerLeave, { passive: true });
+
+    // 5. Window Resize Handler (clean reference for removeEventListener)
+    const handleResize = () => {
+      if (!isMounted || !canvas || !canvas.parentElement || !renderer) return;
+      const newWidth = canvas.parentElement.clientWidth || window.innerWidth;
+      const newHeight = canvas.parentElement.clientHeight || window.innerHeight;
+
+      camera.aspect = newWidth / newHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(newWidth, newHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    // 6. Smooth 60fps Animation Loop
+    const clock = new THREE.Clock();
+
+    const animate = () => {
+      if (!isMounted) return;
+      animationFrameId = requestAnimationFrame(animate);
+
+      if (!renderer) return;
+
+      const time = clock.getElapsedTime();
+
+      // If animation is toggled off by user, preserve low-power state
+      if (!isAnimationActiveRef.current) {
+        return;
+      }
+
+      // Idle Lissajous harmonic soundwave path when cursor is still or outside
+      const idleX = Math.cos(time * 0.65) * 2.6;
+      const idleY = Math.sin(time * 1.3) * 1.3;
+
+      if (mousePos.isHovering) {
+        mousePos.x += (mousePos.targetX - mousePos.x) * 0.08;
+        mousePos.y += (mousePos.targetY - mousePos.y) * 0.08;
+      } else {
+        mousePos.x += (idleX - mousePos.x) * 0.04;
+        mousePos.y += (idleY - mousePos.y) * 0.04;
+      }
+
+      // Update each tube's leading point and trailing segments
+      for (let i = 0; i < tubesList.length; i++) {
+        const tube = tubesList[i];
+        const { points, curve, radius, timeOffset, speed } = tube;
+
+        // Individual harmonic frequency wave offset
+        const waveX = Math.sin(time * speed + timeOffset) * 0.45;
+        const waveY = Math.cos(time * (speed * 0.8) + timeOffset) * 0.35;
+        const waveZ = Math.sin(time * (speed * 0.6) + timeOffset) * 0.3;
+
+        // Lead point lerps towards current focal point
+        const leadX = mousePos.x + waveX;
+        const leadY = mousePos.y + waveY;
+        const leadZ = waveZ;
+
+        points[0].x += (leadX - points[0].x) * (0.07 + (i % 3) * 0.015);
+        points[0].y += (leadY - points[0].y) * (0.07 + (i % 3) * 0.015);
+        points[0].z += (leadZ - points[0].z) * 0.06;
+
+        // Trailing segments smoothly follow the segment ahead (organic snake physics)
+        for (let j = 1; j < points.length; j++) {
+          const prev = points[j - 1];
+          const curr = points[j];
+          curr.x += (prev.x - curr.x) * 0.22;
+          curr.y += (prev.y - curr.y) * 0.22;
+          curr.z += (prev.z - curr.z) * 0.22;
+        }
+
+        // Reconstruct tube mesh geometry
+        tube.mesh.geometry.dispose();
+        tube.mesh.geometry = new THREE.TubeGeometry(curve, 32, radius, 8, false);
+      }
+
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    // 7. Full Cleanup on Unmount (Guarantees zero memory leaks on page navigation)
     return () => {
-      isDestroyed = true;
-      if (appRef.current && typeof appRef.current.dispose === "function") {
-        try {
-          appRef.current.dispose();
-        } catch {
-          // Ignore disposal errors on unmount
+      isMounted = false;
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerleave", handlePointerLeave);
+      window.removeEventListener("resize", handleResize);
+      updatePaletteRef.current = null;
+
+      // Dispose all tubes
+      tubesList.forEach((tube) => {
+        tube.mesh.geometry.dispose();
+        if (tube.mesh.material instanceof THREE.Material) {
+          tube.mesh.material.dispose();
         }
-        appRef.current = null;
+        scene.remove(tube.mesh);
+      });
+
+      // Dispose lights
+      pointLights.forEach((light) => {
+        scene.remove(light);
+        light.dispose();
+      });
+
+      scene.clear();
+
+      if (renderer) {
+        renderer.dispose();
+        renderer.forceContextLoss();
+        renderer = null;
       }
     };
-    // Initialize once on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isWebGLSupported]);
+  }, [paletteIndex]);
 
   return (
     <div
@@ -257,9 +410,9 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
         ref={canvasRef}
         id="tubes-canvas"
         className={`absolute inset-0 h-full w-full transition-opacity duration-700 pointer-events-auto ${
-          isAnimationActive ? "opacity-65" : "opacity-0 pointer-events-none"
+          isAnimationActive ? "opacity-75" : "opacity-0 pointer-events-none"
         }`}
-        style={{ cursor: CUSTOM_CURSOR_URL }}
+        style={{ cursor: isAnimationActive ? CUSTOM_CURSOR_URL : "default" }}
       />
 
       {/* --- PROFESSIONAL STUDIO-GRADE FULL-WIDTH FFT EQUALIZER --- */}
@@ -288,11 +441,6 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
           .pro-fft-pulse-2 { animation: proFftPulse2 2.8s ease-in-out infinite; transform-origin: bottom; }
           .pro-fft-pulse-3 { animation: proFftPulse3 2.1s ease-in-out infinite; transform-origin: bottom; }
           .pro-fft-pulse-4 { animation: proFftPulse4 2.6s ease-in-out infinite; transform-origin: bottom; }
-          @media (prefers-reduced-motion: reduce) {
-            .pro-fft-pulse-1, .pro-fft-pulse-2, .pro-fft-pulse-3, .pro-fft-pulse-4 {
-              animation: none !important;
-            }
-          }
         `}</style>
 
         {/* 96 Dense High-Definition Spectral Filament Bars (Full Width) */}
@@ -343,11 +491,6 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
           ))}
         </div>
       </div>
-
-      {/* Fallback for reduced motion / non-webgl */}
-      {!isWebGLSupported && (
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_30%,rgba(139,92,246,0.15),rgba(6,182,212,0.05),transparent_80%)]" />
-      )}
 
       {/* Smooth bottom vignette fade into background */}
       <div
