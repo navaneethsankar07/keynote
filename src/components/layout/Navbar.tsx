@@ -94,11 +94,11 @@ export function Navbar() {
           aria-label={`${SITE_CONFIG.name} Home`}
         >
           <Image
-            src="/images/logo.png"
+            src="/images/logo-white.png"
             alt={SITE_CONFIG.name}
-            width={58}
-            height={30}
-            className="h-[30px] w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+            width={40}
+            height={32}
+            className="h-8 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
             priority
           />
         </Link>
