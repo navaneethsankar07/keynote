@@ -27,7 +27,7 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-2 pt-2">
               <span className="inline-flex items-center rounded-full bg-accent-violet/10 px-2.5 py-1 text-xs font-mono text-accent-violet-light border border-accent-violet/25">
-                Phase 1: Foundation
+                Phase 2: Animated Hero
               </span>
               <span className="inline-flex items-center rounded-full bg-surface-elevated px-2.5 py-1 text-xs font-mono text-text-muted border border-border">
                 App Router

@@ -88,7 +88,7 @@ export function Navbar() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-violet opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-violet" />
             </span>
-            <span>Phase 1 Active</span>
+            <span>Phase 2 Active</span>
           </div>
 
           {/* Mobile hamburger button */}

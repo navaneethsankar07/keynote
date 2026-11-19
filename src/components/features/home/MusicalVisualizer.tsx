@@ -35,7 +35,12 @@ const DEMO_PRESETS = [
 
 export function MusicalVisualizer() {
   const [activePresetIndex, setActivePresetIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
   const current = DEMO_PRESETS[activePresetIndex];
+
+  // Derive beat timing from BPM
+  const bpmValue = parseInt(current.bpm, 10) || 120;
+  const beatPeriod = (60 / bpmValue).toFixed(3);
 
   return (
     <div className="relative mx-auto w-full max-w-4xl overflow-hidden rounded-2xl border border-border/80 bg-surface/90 p-5 sm:p-7 shadow-2xl shadow-accent-violet/5 backdrop-blur-sm">
@@ -49,7 +54,7 @@ export function MusicalVisualizer() {
         aria-hidden="true"
       />
 
-      {/* Visualizer Top Bar: Track Meta & Selectors */}
+      {/* Visualizer Top Bar: Track Meta, Live State & Selectors */}
       <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-b border-border/70 pb-4">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-surface-elevated border border-border text-accent-cyan">
@@ -60,9 +65,19 @@ export function MusicalVisualizer() {
               <span className="font-display text-sm font-semibold text-text-primary">
                 Spectral Audio Deconstruction
               </span>
-              <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-mono text-emerald-400 border border-emerald-500/20">
-                Interactive Preview
-              </span>
+              <button
+                type="button"
+                onClick={() => setIsPlaying(!isPlaying)}
+                className={`rounded-full px-2 py-0.5 text-[10px] font-mono border transition-colors ${
+                  isPlaying
+                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20"
+                    : "bg-surface-elevated text-text-muted border-border hover:text-text-primary"
+                }`}
+                title="Toggle visualizer ambient playback"
+                aria-label={`Toggle visualizer playback. Currently ${isPlaying ? "Active" : "Paused"}`}
+              >
+                {isPlaying ? "● Live Signal" : "○ Paused"}
+              </button>
             </div>
             <p className="text-xs text-text-muted">
               Simulating multi-track musical analysis engine
@@ -110,7 +125,10 @@ export function MusicalVisualizer() {
               <span>METER: {current.timeSig}</span>
             </div>
             <div className="hidden sm:flex items-center gap-2">
-              <ActivityIcon size={12} className="text-accent-violet animate-pulse" />
+              <ActivityIcon
+                size={12}
+                className={`text-accent-violet ${isPlaying ? "animate-pulse" : "opacity-40"}`}
+              />
               <span>FFT: 2048 SAMPLES</span>
             </div>
           </div>
@@ -124,7 +142,7 @@ export function MusicalVisualizer() {
               >
                 {/* Bar */}
                 <div
-                  className="w-full rounded-t-sm transition-all duration-500 ease-out"
+                  className="w-full rounded-t-sm transition-all duration-300 ease-out frequency-pulse-tick"
                   style={{
                     height: `${height}%`,
                     background:
@@ -134,6 +152,9 @@ export function MusicalVisualizer() {
                         ? "linear-gradient(to top, #0e7490, #06b6d4)"
                         : "linear-gradient(to top, #7c3aed, #22d3ee)",
                     opacity: 0.85,
+                    animation: isPlaying
+                      ? `frequency-tick-pulse ${beatPeriod}s ease-in-out infinite ${(i * 0.04).toFixed(2)}s`
+                      : "none",
                   }}
                 />
               </div>

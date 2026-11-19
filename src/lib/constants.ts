@@ -5,7 +5,7 @@ export const SITE_CONFIG = {
   tagline: "Discover the music behind the music.",
   description:
     "An AI-powered music discovery, analysis, and learning platform designed to help music lovers and musicians deconstruct tempo, rhythm, harmony, keys, and musical ideas.",
-  version: "0.1.0 (Phase 1)",
+  version: "0.2.0 (Phase 2)",
   links: {
     github: "https://github.com/navaneethsankar07/keynote",
   },

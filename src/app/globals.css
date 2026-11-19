@@ -41,3 +41,64 @@ body {
   overflow-x: hidden;
 }
 
+/* Keynote Soundscape & Hero Entrance Animations */
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sound-ring-breathe {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(0.96);
+    opacity: 0.12;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.04);
+    opacity: 0.24;
+  }
+}
+
+@keyframes frequency-tick-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scaleY(0.7);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scaleY(1.1);
+  }
+}
+
+.hero-enter-fade {
+  animation: hero-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-enter-slide {
+  animation: hero-slide-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-enter-fade,
+  .hero-enter-slide,
+  .frequency-pulse-tick {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
