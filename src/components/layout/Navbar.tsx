@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { KeynoteLogo, MenuIcon, CloseIcon, GearIcon, PlayIcon, PauseIcon, WaveformIcon } from "@/components/ui/Icons";
+import { KeynoteLogo, MenuIcon, CloseIcon, GearIcon, PauseIcon, WaveformIcon } from "@/components/ui/Icons";
 import { useAnimation } from "@/context/AnimationContext";
 import { MAIN_NAV_ITEMS, SITE_CONFIG } from "@/lib/constants";
 import { cn } from "@/lib/utils";
@@ -135,72 +135,100 @@ export function Navbar() {
 
             {/* Gear Settings Popover Panel */}
             {settingsOpen && (
-              <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-border bg-surface-elevated p-3.5 shadow-2xl backdrop-blur-xl z-50 animate-in fade-in zoom-in-95 duration-150">
-                <div className="flex items-center justify-between pb-2.5 border-b border-border/70">
-                  <span className="font-display text-xs font-semibold uppercase tracking-wider text-text-primary">
-                    Visual Experience
-                  </span>
-                  <span
+              <div
+                className="absolute right-0 mt-2 w-72 rounded-2xl border border-border/80 bg-surface-elevated/95 p-4 shadow-2xl shadow-black/60 backdrop-blur-xl z-50 animate-in fade-in zoom-in-95 duration-150"
+                role="dialog"
+                aria-label="Soundscape Animation Settings"
+              >
+                <div className="flex items-center justify-between pb-3 border-b border-border/60">
+                  <div className="flex items-center gap-2">
+                    <GearIcon size={14} className="text-accent-cyan" />
+                    <span className="font-display text-xs font-semibold uppercase tracking-wider text-text-primary">
+                      Animation Control
+                    </span>
+                  </div>
+                  <div
                     className={cn(
-                      "text-[10px] font-mono font-medium px-2 py-0.5 rounded-full border",
+                      "flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium border",
                       isAnimationActive
                         ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
                         : "border-text-muted/30 bg-surface text-text-muted"
                     )}
                   >
-                    {isAnimationActive ? "ACTIVE" : "PAUSED"}
-                  </span>
-                </div>
-
-                <div className="mt-3 flex items-center justify-between gap-3">
-                  <div className="flex flex-col">
-                    <span className="text-xs font-medium text-text-primary">
-                      3D Soundscape
-                    </span>
-                    <span className="text-[11px] text-text-muted">
-                      Neon tubes & audio motion
-                    </span>
-                  </div>
-
-                  {/* Toggle Button */}
-                  <button
-                    type="button"
-                    onClick={toggleAnimation}
-                    className={cn(
-                      "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-violet",
-                      isAnimationActive ? "bg-accent-violet" : "bg-surface-hover border-border"
-                    )}
-                    role="switch"
-                    aria-checked={isAnimationActive}
-                  >
                     <span
-                      aria-hidden="true"
                       className={cn(
-                        "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out",
-                        isAnimationActive ? "translate-x-5" : "translate-x-0"
+                        "h-1.5 w-1.5 rounded-full",
+                        isAnimationActive ? "bg-emerald-400 animate-pulse" : "bg-text-muted"
                       )}
                     />
-                  </button>
+                    {isAnimationActive ? "LIVE" : "PAUSED"}
+                  </div>
                 </div>
 
-                {/* Quick Pause/Play CTA */}
+                {/* Master Interactive Toggle Card (Single unified action, no redundancy) */}
                 <button
                   type="button"
                   onClick={toggleAnimation}
-                  className="mt-3.5 w-full flex items-center justify-center gap-2 rounded-xl border border-border bg-surface py-2 text-xs font-medium text-text-secondary hover:text-text-primary hover:border-accent-violet/40 hover:bg-surface-hover transition-colors"
-                >
-                  {isAnimationActive ? (
-                    <>
-                      <PauseIcon size={14} className="text-accent-violet" />
-                      <span>Stop Animation</span>
-                    </>
-                  ) : (
-                    <>
-                      <PlayIcon size={14} className="text-emerald-400" />
-                      <span>Start Animation</span>
-                    </>
+                  className={cn(
+                    "mt-3.5 w-full flex items-center justify-between p-3 rounded-xl border text-left transition-all duration-200 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-violet",
+                    isAnimationActive
+                      ? "border-accent-violet/40 bg-accent-violet/5 hover:border-accent-violet/60 hover:bg-accent-violet/10"
+                      : "border-border/70 bg-surface/50 hover:border-border hover:bg-surface"
                   )}
+                  role="switch"
+                  aria-checked={isAnimationActive}
+                  aria-label="Toggle 3D soundscape animation"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={cn(
+                        "flex h-9 w-9 items-center justify-center rounded-lg border transition-colors",
+                        isAnimationActive
+                          ? "border-accent-violet/40 bg-accent-violet/15 text-accent-cyan"
+                          : "border-border bg-surface text-text-muted"
+                      )}
+                    >
+                      {isAnimationActive ? (
+                        <WaveformIcon size={18} className="animate-pulse" />
+                      ) : (
+                        <PauseIcon size={16} />
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-xs font-medium text-text-primary group-hover:text-white transition-colors">
+                        3D Soundscape
+                      </div>
+                      <div className="text-[11px] text-text-muted">
+                        {isAnimationActive
+                          ? "Interactive audio motion"
+                          : "Paused • Conserves power"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Toggle Switch */}
+                  <div
+                    className={cn(
+                      "relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border transition-colors duration-200 ease-in-out",
+                      isAnimationActive
+                        ? "bg-accent-violet border-accent-violet shadow-sm shadow-accent-violet/30"
+                        : "bg-surface-hover border-border"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition duration-200 ease-in-out mt-[1px] ml-[1px]",
+                        isAnimationActive ? "translate-x-4" : "translate-x-0"
+                      )}
+                    />
+                  </div>
                 </button>
+
+                {/* Subtle Engine Info & Tip */}
+                <div className="mt-3 pt-2.5 border-t border-border/50 flex items-center justify-between text-[10px] text-text-muted font-mono">
+                  <span>WebGL Engine</span>
+                  <span className="text-accent-violet-light/80">Click canvas to cycle colors</span>
+                </div>
               </div>
             )}
           </div>
@@ -262,21 +290,42 @@ export function Navbar() {
 
           {/* Mobile Soundscape Animation Toggle */}
           <div className="mt-4 pt-3.5 border-t border-border flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <GearIcon size={16} className="text-text-muted" />
-              <span className="text-xs font-medium text-text-primary">3D Soundscape</span>
+            <div className="flex items-center gap-2.5">
+              <div
+                className={cn(
+                  "flex h-7 w-7 items-center justify-center rounded-lg border",
+                  isAnimationActive
+                    ? "border-accent-violet/40 bg-accent-violet/10 text-accent-cyan"
+                    : "border-border bg-surface text-text-muted"
+                )}
+              >
+                {isAnimationActive ? <WaveformIcon size={14} /> : <PauseIcon size={12} />}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-medium text-text-primary">3D Soundscape</span>
+                <span className="text-[10px] text-text-muted">
+                  {isAnimationActive ? "Running" : "Paused"}
+                </span>
+              </div>
             </div>
             <button
               type="button"
               onClick={toggleAnimation}
               className={cn(
-                "flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-mono font-medium border transition-colors",
-                isAnimationActive
-                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                  : "border-text-muted/30 bg-surface text-text-muted"
+                "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-violet",
+                isAnimationActive ? "bg-accent-violet" : "bg-surface-hover border-border"
               )}
+              role="switch"
+              aria-checked={isAnimationActive}
+              aria-label="Toggle 3D soundscape animation"
             >
-              {isAnimationActive ? "STOP" : "START"}
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out",
+                  isAnimationActive ? "translate-x-5" : "translate-x-0"
+                )}
+              />
             </button>
           </div>
 
