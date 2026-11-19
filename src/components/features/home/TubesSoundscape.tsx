@@ -35,19 +35,21 @@ export const HARMONIC_PALETTES = [
   },
 ];
 
-const SPECTRUM_BAR_COUNT = 64;
+const SPECTRUM_BAR_COUNT = 96;
 
-// Precomputed harmonic acoustic heights across 64 frequency bands
+// High-resolution acoustic mastering logarithmic spectrum profile
 const SPECTRUM_BARS_DATA = Array.from({ length: SPECTRUM_BAR_COUNT }, (_, i) => {
   const norm = i / (SPECTRUM_BAR_COUNT - 1);
-  const sub = Math.sin(norm * Math.PI * 0.9) * 22;
-  const mid1 = Math.sin((norm - 0.22) * Math.PI * 3.2) * 14;
-  const mid2 = Math.sin((norm - 0.58) * Math.PI * 4) * 12;
-  const airTaper = Math.cos(norm * (Math.PI / 2)) * 10;
-  const rawHeight = 18 + sub + (mid1 > 0 ? mid1 : 0) + (mid2 > 0 ? mid2 : 0) + airTaper;
-  const baseH = Math.max(10, Math.min(54, Math.round(rawHeight)));
-  const animIndex = (i % 4) + 1; // 1, 2, 3, 4
-  return { baseH, animClass: `eq-pulse-${animIndex}` };
+  // Natural multi-octave acoustic frequency response
+  const subBass = Math.sin(norm * Math.PI * 0.85) * 22;
+  const lowMid = Math.sin((norm - 0.2) * Math.PI * 3.4) * 16;
+  const midRange = Math.sin((norm - 0.52) * Math.PI * 4.2) * 14;
+  const presence = Math.sin((norm - 0.76) * Math.PI * 5) * 11;
+  const airTaper = Math.cos(norm * (Math.PI / 2)) * 8;
+  const rawHeight = 12 + subBass + (lowMid > 0 ? lowMid : 0) + (midRange > 0 ? midRange : 0) + (presence > 0 ? presence : 0) + airTaper;
+  const baseH = Math.max(8, Math.min(62, Math.round(rawHeight)));
+  const animIndex = (i % 4) + 1;
+  return { baseH, animClass: `pro-fft-pulse-${animIndex}` };
 });
 
 interface TubesSoundscapeProps {
@@ -107,15 +109,15 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
     };
   }, [cycleHarmonicPalette]);
 
-  // Color assignments for the 64 full-width equalizer bars
+  // High-density color gradient interpolation across 96 filaments
   const spectrumBars = useMemo(() => {
     return SPECTRUM_BARS_DATA.map((bar, i) => {
       let color = activePalette.tubes[0];
-      if (i >= 16 && i < 34) {
+      if (i >= 24 && i < 54) {
         color = activePalette.accentColor;
-      } else if (i >= 34 && i < 50) {
+      } else if (i >= 54 && i < 76) {
         color = activePalette.staffColor;
-      } else if (i >= 50) {
+      } else if (i >= 76) {
         color = activePalette.tubes[1];
       }
       return { ...bar, color };
@@ -202,65 +204,137 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
         className="absolute inset-0 h-full w-full opacity-85 transition-opacity duration-1000 cursor-crosshair pointer-events-auto"
       />
 
-      {/* --- FULL-WIDTH STUDIO EQUALIZER ALL ALONG THE BOTTOM --- */}
+      {/* --- PROFESSIONAL STUDIO-GRADE FULL-WIDTH FFT EQUALIZER --- */}
       <div
         className="pointer-events-none absolute bottom-0 left-0 right-0 w-full flex flex-col justify-end overflow-hidden z-20"
         aria-hidden="true"
       >
         <style>{`
-          @keyframes eqPulse1 {
-            0%, 100% { transform: scaleY(0.42); opacity: 0.55; }
+          @keyframes proFftPulse1 {
+            0%, 100% { transform: scaleY(0.48); opacity: 0.6; }
             50% { transform: scaleY(1.0); opacity: 0.95; }
           }
-          @keyframes eqPulse2 {
+          @keyframes proFftPulse2 {
             0%, 100% { transform: scaleY(0.85); opacity: 0.9; }
-            50% { transform: scaleY(0.38); opacity: 0.5; }
+            50% { transform: scaleY(0.42); opacity: 0.55; }
           }
-          @keyframes eqPulse3 {
-            0%, 100% { transform: scaleY(0.55); opacity: 0.65; }
+          @keyframes proFftPulse3 {
+            0%, 100% { transform: scaleY(0.58); opacity: 0.65; }
             50% { transform: scaleY(0.96); opacity: 1.0; }
           }
-          @keyframes eqPulse4 {
+          @keyframes proFftPulse4 {
             0%, 100% { transform: scaleY(0.92); opacity: 0.95; }
-            50% { transform: scaleY(0.46); opacity: 0.55; }
+            50% { transform: scaleY(0.48); opacity: 0.6; }
           }
-          .eq-pulse-1 { animation: eqPulse1 2.2s ease-in-out infinite; transform-origin: bottom; }
-          .eq-pulse-2 { animation: eqPulse2 2.6s ease-in-out infinite; transform-origin: bottom; }
-          .eq-pulse-3 { animation: eqPulse3 1.9s ease-in-out infinite; transform-origin: bottom; }
-          .eq-pulse-4 { animation: eqPulse4 2.4s ease-in-out infinite; transform-origin: bottom; }
+          @keyframes curveFloat {
+            0%, 100% { opacity: 0.75; transform: scaleY(0.96); }
+            50% { opacity: 0.95; transform: scaleY(1.04); }
+          }
+          .pro-fft-pulse-1 { animation: proFftPulse1 2.4s ease-in-out infinite; transform-origin: bottom; }
+          .pro-fft-pulse-2 { animation: proFftPulse2 2.8s ease-in-out infinite; transform-origin: bottom; }
+          .pro-fft-pulse-3 { animation: proFftPulse3 2.1s ease-in-out infinite; transform-origin: bottom; }
+          .pro-fft-pulse-4 { animation: proFftPulse4 2.6s ease-in-out infinite; transform-origin: bottom; }
+          .fft-envelope-curve { animation: curveFloat 3.2s ease-in-out infinite; transform-origin: bottom; }
           @media (prefers-reduced-motion: reduce) {
-            .eq-pulse-1, .eq-pulse-2, .eq-pulse-3, .eq-pulse-4 {
+            .pro-fft-pulse-1, .pro-fft-pulse-2, .pro-fft-pulse-3, .pro-fft-pulse-4, .fft-envelope-curve {
               animation: none !important;
             }
           }
         `}</style>
 
-        {/* 64-Band Full Width Equalizer Bars */}
-        <div className="w-full flex items-end justify-between gap-[2px] sm:gap-[3px] md:gap-[4px] px-2 sm:px-6 md:px-10 h-14 sm:h-16">
-          {spectrumBars.map((bar, idx) => (
-            <span
-              key={idx}
-              className={`flex-1 rounded-t-full transition-colors duration-700 ${bar.animClass}`}
-              style={{
-                height: `${bar.baseH}px`,
-                backgroundColor: bar.color,
-                boxShadow: `0 0 10px ${bar.color}`,
-              }}
+        {/* Continuous High-Definition Spectral Envelope Waveform */}
+        <div className="w-full relative h-16 sm:h-20 overflow-hidden">
+          <svg
+            className="w-full h-full fft-envelope-curve"
+            viewBox="0 0 1200 75"
+            preserveAspectRatio="none"
+            fill="none"
+          >
+            <defs>
+              <linearGradient id="proFftFill" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor={activePalette.accentColor} stopOpacity="0.22" />
+                <stop offset="40%" stopColor={activePalette.staffColor} stopOpacity="0.12" />
+                <stop offset="100%" stopColor={activePalette.tubes[0]} stopOpacity="0.01" />
+              </linearGradient>
+              <linearGradient id="proFftStroke" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor={activePalette.tubes[0]} />
+                <stop offset="25%" stopColor={activePalette.accentColor} />
+                <stop offset="65%" stopColor={activePalette.staffColor} />
+                <stop offset="100%" stopColor={activePalette.tubes[1]} />
+              </linearGradient>
+              <filter id="proGlow" x="-5%" y="-30%" width="110%" height="160%">
+                <feGaussianBlur stdDeviation="2" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            {/* Glowing Gradient Underfill */}
+            <path
+              d="M 0,72 C 60,72 100,42 160,34 C 230,26 280,50 360,30 C 440,16 540,36 640,26 C 740,16 820,40 940,30 C 1040,22 1120,58 1200,74 L 1200,75 L 0,75 Z"
+              fill="url(#proFftFill)"
             />
-          ))}
+
+            {/* Secondary Harmonic Ghost Trace (RMS Average) */}
+            <path
+              d="M 0,74 C 70,74 110,54 170,48 C 240,42 290,58 370,44 C 450,30 550,48 650,40 C 750,32 830,50 950,42 C 1050,36 1130,64 1200,74"
+              stroke={activePalette.staffColor}
+              strokeWidth="1"
+              strokeDasharray="3 3"
+              opacity="0.45"
+            />
+
+            {/* Razor-Sharp Main Peak Envelope Curve */}
+            <path
+              d="M 0,72 C 60,72 100,42 160,34 C 230,26 280,50 360,30 C 440,16 540,36 640,26 C 740,16 820,40 940,30 C 1040,22 1120,58 1200,74"
+              stroke="url(#proFftStroke)"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              filter="url(#proGlow)"
+            />
+          </svg>
+
+          {/* 96 Dense High-Definition Spectral Filament Bars */}
+          <div className="absolute inset-0 w-full flex items-end justify-between px-1 sm:px-4 md:px-6">
+            {spectrumBars.map((bar, idx) => (
+              <div
+                key={idx}
+                className={`flex flex-col items-center flex-1 transition-colors duration-700 ${bar.animClass}`}
+                style={{ height: `${bar.baseH}px` }}
+              >
+                {/* Precision Floating Peak-Hold Micro Dot */}
+                <span
+                  className="w-[1.5px] h-[1.5px] rounded-full mb-[2px] transition-colors duration-700 opacity-90"
+                  style={{
+                    backgroundColor: bar.color,
+                    boxShadow: `0 0 4px ${bar.color}`,
+                  }}
+                />
+                {/* Razor-Thin Vertical Spectrum Filament */}
+                <span
+                  className="w-[1px] sm:w-[1.2px] h-full rounded-t-sm transition-colors duration-700 opacity-80"
+                  style={{
+                    backgroundColor: bar.color,
+                    boxShadow: `0 0 3px ${bar.color}`,
+                  }}
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Minimal Audio Frequency Axis scale running full width */}
-        <div className="w-full border-t border-border/40 bg-background/50 backdrop-blur-sm px-3 sm:px-6 md:px-10 py-1.5 flex items-center justify-between text-[9px] sm:text-[10px] font-mono text-text-muted/70 tracking-widest uppercase">
-          <span>20Hz Sub</span>
-          <span className="hidden sm:inline">60Hz</span>
-          <span>120Hz Low</span>
-          <span className="hidden md:inline">250Hz</span>
-          <span>500Hz Mid</span>
-          <span className="hidden md:inline">1kHz</span>
-          <span>2kHz High</span>
-          <span className="hidden sm:inline">8kHz</span>
-          <span>20kHz Air</span>
+        {/* Minimal Studio Precision Hardware Baseline with Micro-Ticks (No text) */}
+        <div className="w-full border-t border-border/40 bg-background/40 backdrop-blur-sm px-2 sm:px-6 py-1 flex items-center justify-between">
+          {Array.from({ length: 33 }).map((_, idx) => (
+            <span
+              key={idx}
+              className={`w-[1px] bg-border/60 transition-colors ${
+                idx % 4 === 0 ? "h-2 bg-text-muted/40" : "h-1 bg-border/40"
+              }`}
+            />
+          ))}
         </div>
       </div>
 

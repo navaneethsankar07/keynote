@@ -2,8 +2,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
-import { ArrowRightIcon, TheoryBookIcon, SparklesIcon } from "@/components/ui/Icons";
+import { ArrowRightIcon, TheoryBookIcon } from "@/components/ui/Icons";
 import { TubesSoundscape } from "./TubesSoundscape";
 
 export function HeroSection() {
@@ -14,21 +13,10 @@ export function HeroSection() {
 
       <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 my-auto">
         <div className="flex flex-col items-center text-center">
-          {/* 1. Intro label / Eyebrow badge */}
-          <div
-            className="mb-6 inline-flex items-center gap-2 hero-enter-slide pointer-events-auto"
-            style={{ animationDelay: "0ms" }}
-          >
-            <Badge variant="violet" size="md">
-              <SparklesIcon size={12} className="text-accent-violet" />
-              <span>Keynote Music Intelligence • Interactive 3D Soundscape</span>
-            </Badge>
-          </div>
-
-          {/* 2. Headline with subtle upward movement */}
+          {/* 1. Headline with subtle upward movement */}
           <h1
             className="font-display max-w-4xl text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-text-primary leading-[1.1] hero-enter-slide pointer-events-auto select-none"
-            style={{ animationDelay: "60ms" }}
+            style={{ animationDelay: "0ms" }}
           >
             Discover the music{" "}
             <span className="bg-gradient-to-r from-accent-violet via-purple-300 to-accent-cyan bg-clip-text text-transparent">
