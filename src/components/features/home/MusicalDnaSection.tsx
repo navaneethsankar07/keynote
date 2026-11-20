@@ -46,8 +46,8 @@ const musicalDimensions = [
     title: "Tonality",
     description:
       "Explore the musical key, scale, tonal center, and relationship between notes. Trace how modal shifts inject subtle color changes into songs.",
-    image3d: "/images/3d/tonality.png",
-    imageAlt: "3D Circle of Fifths Tonal Wheel",
+    image3d: "/images/3d/guitar.png",
+    imageAlt: "3D Electric Guitar",
     bgClass: "bg-[#2873ec]",
     textTitleClass: "text-[#171717]",
     textDescClass: "text-[#171717]/85",
