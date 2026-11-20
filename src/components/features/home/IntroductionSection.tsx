@@ -515,8 +515,8 @@ export function IntroductionSection() {
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-[1600px] mt-auto pb-2 sm:pb-4 px-4 sm:px-6 lg:px-8 shrink-0">
-        <div className="w-full flex flex-col gap-3 sm:gap-4">
+      <div className="relative z-10 w-full max-w-[1800px] mx-auto mt-auto pb-2 sm:pb-4 px-4 sm:px-6 lg:px-8 shrink-0 flex justify-center">
+        <div className="w-445 max-w-full flex flex-col gap-3 sm:gap-4 mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="min-w-0 text-center md:text-left md:w-1/3">
               <h3 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight truncate">
