@@ -41,9 +41,9 @@ export function HeroSection() {
           >
             <NeonButton
               href="/analyze"
-              variant="solid"
+              variant="glass"
               size="lg"
-              className="gap-2 shadow-lg shadow-blue-500/20"
+              className="gap-2 px-8 py-3.5 text-base"
             >
               <span>Analyze a song</span>
               <ArrowRightIcon size={18} />
