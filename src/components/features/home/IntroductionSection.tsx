@@ -415,7 +415,7 @@ export function IntroductionSection() {
   return (
     <section
       id="introduction"
-      className="relative h-screen min-h-[660px] border-t border-white/5 bg-[#06070d] overflow-hidden flex flex-col justify-between pt-8 pb-5 sm:pt-10 sm:pb-7"
+      className="relative min-h-screen lg:h-screen flex flex-col justify-between border-t border-white/5 bg-[#06070d] overflow-hidden pt-6 pb-4 sm:pt-8 sm:pb-6 px-4 sm:px-8"
     >
       <audio
         ref={audioRef}
@@ -427,6 +427,7 @@ export function IntroductionSection() {
         preload="metadata"
       />
 
+      {/* Ambient background glows */}
       <div
         className="pointer-events-none absolute -top-32 right-1/4 w-[560px] h-[560px] rounded-full bg-accent-violet/10 blur-[150px]"
         aria-hidden="true"
@@ -437,23 +438,23 @@ export function IntroductionSection() {
       />
 
       {/* Header */}
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 text-center shrink-0">
-        <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-text-primary leading-[1.12]">
+      <div className="relative z-10 text-center max-w-5xl mx-auto shrink-0 pt-2 sm:pt-4">
+        <h2 className="font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-text-primary leading-[1.12]">
           Every song has a story{" "}
           <span className="bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-300 bg-clip-text text-transparent">
             beyond its sound.
           </span>
         </h2>
 
-        <p className="mt-3 text-sm sm:text-base text-text-secondary leading-relaxed font-sans max-w-2xl mx-auto">
+        <p className="mt-3 sm:mt-4 text-xs sm:text-base md:text-lg text-text-secondary leading-relaxed font-sans max-w-3xl mx-auto">
           Discover the musical structure hiding beneath the melodies you love.
           Explore rhythm, harmony, instruments, tonal relationships, and the musical
           ideas that bring songs to life.
         </p>
       </div>
 
-      {/* 3D Disc Cascade Carousel */}
-      <div className="relative z-10 w-full flex-1 min-h-[280px] max-h-[460px] my-auto flex items-center justify-center">
+      {/* 3D CD Carousel with infinite loop */}
+      <div className="relative z-10 w-full flex-1 min-h-[300px] sm:min-h-[350px] md:min-h-[380px] flex items-center justify-center my-auto">
         <DiscCascadeCarousel
           items={carouselItems}
           height="100%"
@@ -482,9 +483,9 @@ export function IntroductionSection() {
         />
       </div>
 
-      {/* Borderless Floating Player Bar */}
-      <div className="relative z-10 w-full max-w-[1360px] mx-auto px-4 sm:px-8 shrink-0">
-        <div className="w-full rounded-2xl sm:rounded-full bg-[#0c0e17]/80 px-5 py-2.5 sm:px-8 sm:py-3 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_35px_rgba(139,92,246,0.12)] transition-all">
+      {/* Borderless floating player at the bottom */}
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto mt-auto pb-1 sm:pb-2 shrink-0">
+        <div className="w-full rounded-2xl sm:rounded-full bg-[#0c0e17]/85 border-none px-5 py-2.5 sm:px-10 sm:py-3 backdrop-blur-2xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85),0_0_35px_rgba(139,92,246,0.12)] transition-all">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
             <div className="min-w-0 text-center sm:text-left sm:w-1/3">
               <h3 className="font-display text-sm sm:text-base font-bold text-white tracking-tight truncate">
@@ -570,7 +571,7 @@ export function IntroductionSection() {
             <div className="hidden sm:block sm:w-1/3" aria-hidden="true" />
           </div>
 
-          <div className="mt-2 flex items-center gap-3">
+          <div className="mt-2 sm:mt-2.5 flex items-center gap-3">
             <span className="text-[11px] font-mono text-text-muted shrink-0 w-10 text-right">
               {formatTime(currentTime)}
             </span>
