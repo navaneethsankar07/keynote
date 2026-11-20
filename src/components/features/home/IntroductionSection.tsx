@@ -127,7 +127,6 @@ const MUSIC_TRACKS: TrackItem[] = [
   },
 ];
 
-// Minimal Player Icons
 function ShuffleIcon({ className = "", size = 18 }: { className?: string; size?: number }) {
   return (
     <svg
@@ -267,7 +266,6 @@ export function IntroductionSection() {
 
   const currentTrack = MUSIC_TRACKS[selectedIndex] ?? MUSIC_TRACKS[0];
 
-  // Stop previous audio and reset state when switching tracks
   const handleIndexChange = useCallback(
     (index: number, autoPlay: boolean = false) => {
       setSelectedIndex(index);
@@ -319,7 +317,6 @@ export function IntroductionSection() {
     handleIndexChange(prevIdx, isPlaying);
   };
 
-  // Play / Pause toggle with legitimate audio playback
   const togglePlay = () => {
     if (!currentTrack.audioSrc) {
       setAudioError("Preview unavailable");
@@ -350,7 +347,6 @@ export function IntroductionSection() {
     }
   };
 
-  // Synchronize audio source if audio element was not yet created or src changed
   useEffect(() => {
     if (audioRef.current && !audioRef.current.src) {
       audioRef.current.src = currentTrack.audioSrc || "";
@@ -385,7 +381,6 @@ export function IntroductionSection() {
     setAudioError("Preview unavailable");
   };
 
-  // Seek bar interaction
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!seekTrackRef.current || !audioRef.current || !duration) return;
     const rect = seekTrackRef.current.getBoundingClientRect();
@@ -405,12 +400,11 @@ export function IntroductionSection() {
 
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
-  // Prepare carousel items from real track collection
   const carouselItems = MUSIC_TRACKS.map((t) => ({
     title: t.title,
     src: t.src,
     alt: `${t.title} - ${t.artist}`,
-    label: "", // Clean printed CD face
+    label: "",
     credits: [
       { label: "Artist", value: t.artist },
       { label: "Album", value: t.album },
@@ -421,9 +415,8 @@ export function IntroductionSection() {
   return (
     <section
       id="introduction"
-      className="relative py-16 sm:py-20 lg:py-24 border-t border-white/5 bg-[#06070d] overflow-hidden"
+      className="relative h-screen min-h-[660px] border-t border-white/5 bg-[#06070d] overflow-hidden flex flex-col justify-between pt-8 pb-5 sm:pt-10 sm:pb-7"
     >
-      {/* Hidden audio element for genuine preview playback */}
       <audio
         ref={audioRef}
         src={currentTrack.audioSrc}
@@ -434,7 +427,6 @@ export function IntroductionSection() {
         preload="metadata"
       />
 
-      {/* Background ambient lighting */}
       <div
         className="pointer-events-none absolute -top-32 right-1/4 w-[560px] h-[560px] rounded-full bg-accent-violet/10 blur-[150px]"
         aria-hidden="true"
@@ -444,58 +436,56 @@ export function IntroductionSection() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12">
-        {/* 1. Header on top with full width */}
-        <div className="text-center max-w-5xl mx-auto mb-8 sm:mb-12">
-          <h2 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-text-primary leading-[1.12]">
-            Every song has a story{" "}
-            <span className="bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-300 bg-clip-text text-transparent">
-              beyond its sound.
-            </span>
-          </h2>
+      {/* Header */}
+      <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 text-center shrink-0">
+        <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-text-primary leading-[1.12]">
+          Every song has a story{" "}
+          <span className="bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-300 bg-clip-text text-transparent">
+            beyond its sound.
+          </span>
+        </h2>
 
-          <p className="mt-5 text-base sm:text-lg md:text-xl text-text-secondary leading-relaxed font-sans max-w-3xl mx-auto">
-            Discover the musical structure hiding beneath the melodies you love.
-            Explore rhythm, harmony, instruments, tonal relationships, and the musical
-            ideas that bring songs to life.
-          </p>
-        </div>
+        <p className="mt-3 text-sm sm:text-base text-text-secondary leading-relaxed font-sans max-w-2xl mx-auto">
+          Discover the musical structure hiding beneath the melodies you love.
+          Explore rhythm, harmony, instruments, tonal relationships, and the musical
+          ideas that bring songs to life.
+        </p>
+      </div>
 
-        {/* 2. Full-Width 3D Disc Cascade Carousel with Infinite Loop */}
-        <div className="relative w-full h-[360px] sm:h-[400px] md:h-[440px] flex items-center justify-center">
-          <DiscCascadeCarousel
-            items={carouselItems}
-            height="100%"
-            discSize="clamp(200px, 23vw, 300px)"
-            spacing={0.96}
-            rise={0.2}
-            depth={0.4}
-            yaw={20}
-            fan={-9}
-            tilt={-5}
-            roll={100}
-            loop={true}
-            spin={isPlaying ? 12 : 24}
-            background="transparent"
-            color="rgba(255,255,255,0.92)"
-            frame={false}
-            details={false}
-            reviews={false}
-            controls={true}
-            indexLabel=""
-            hint="Drag, swipe, or click discs"
-            defaultIndex={0}
-            index={selectedIndex}
-            onIndexChange={(idx) => handleIndexChange(idx, false)}
-            ariaLabel="Featured CD Carousel"
-          />
-        </div>
+      {/* 3D Disc Cascade Carousel */}
+      <div className="relative z-10 w-full flex-1 min-h-[280px] max-h-[460px] my-auto flex items-center justify-center">
+        <DiscCascadeCarousel
+          items={carouselItems}
+          height="100%"
+          discSize="clamp(190px, 22vw, 290px)"
+          spacing={0.96}
+          rise={0.2}
+          depth={0.4}
+          yaw={20}
+          fan={-9}
+          tilt={-5}
+          roll={100}
+          loop={true}
+          spin={isPlaying ? 12 : 24}
+          background="transparent"
+          color="rgba(255,255,255,0.92)"
+          frame={false}
+          details={false}
+          reviews={false}
+          controls={true}
+          indexLabel=""
+          hint="Drag, swipe, or click discs"
+          defaultIndex={0}
+          index={selectedIndex}
+          onIndexChange={(idx) => handleIndexChange(idx, false)}
+          ariaLabel="Featured CD Carousel"
+        />
+      </div>
 
-        {/* 3. Floating, Compact Full-Width Minimal Player Bar */}
-        <div className="w-full max-w-6xl mx-auto mt-4 sm:mt-6 rounded-2xl sm:rounded-full bg-[#0c0e17]/85 border border-white/12 px-5 py-3 sm:px-8 sm:py-3.5 backdrop-blur-2xl shadow-[0_30px_70px_-15px_rgba(0,0,0,0.85),0_0_40px_rgba(139,92,246,0.14),inset_0_1px_1px_rgba(255,255,255,0.2)] transition-all">
-          {/* Top row: Track Info | 5 Controls | Balanced Spacer */}
+      {/* Borderless Floating Player Bar */}
+      <div className="relative z-10 w-full max-w-[1360px] mx-auto px-4 sm:px-8 shrink-0">
+        <div className="w-full rounded-2xl sm:rounded-full bg-[#0c0e17]/80 px-5 py-2.5 sm:px-8 sm:py-3 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_35px_rgba(139,92,246,0.12)] transition-all">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
-            {/* Left: Track Title & Artist */}
             <div className="min-w-0 text-center sm:text-left sm:w-1/3">
               <h3 className="font-display text-sm sm:text-base font-bold text-white tracking-tight truncate">
                 {currentTrack.title}
@@ -505,9 +495,7 @@ export function IntroductionSection() {
               </p>
             </div>
 
-            {/* Center: Playback Controls (Shuffle, Prev, Play/Pause, Next, Repeat) */}
             <div className="flex items-center justify-center gap-4 sm:gap-5 sm:w-1/3">
-              {/* Shuffle */}
               <button
                 type="button"
                 onClick={() => setIsShuffle((prev) => !prev)}
@@ -521,7 +509,6 @@ export function IntroductionSection() {
                 <ShuffleIcon size={17} />
               </button>
 
-              {/* Previous Track */}
               <button
                 type="button"
                 onClick={handlePrev}
@@ -531,7 +518,6 @@ export function IntroductionSection() {
                 <PrevTrackIcon size={19} />
               </button>
 
-              {/* Elevated Floating Play / Pause Button */}
               <button
                 type="button"
                 onClick={togglePlay}
@@ -558,7 +544,6 @@ export function IntroductionSection() {
                 )}
               </button>
 
-              {/* Next Track */}
               <button
                 type="button"
                 onClick={handleNext}
@@ -568,7 +553,6 @@ export function IntroductionSection() {
                 <NextTrackIcon size={19} />
               </button>
 
-              {/* Repeat / Loop */}
               <button
                 type="button"
                 onClick={() => setIsRepeat((prev) => !prev)}
@@ -583,12 +567,10 @@ export function IntroductionSection() {
               </button>
             </div>
 
-            {/* Right: Balanced Empty Spacer for Symmetrical Layout */}
             <div className="hidden sm:block sm:w-1/3" aria-hidden="true" />
           </div>
 
-          {/* Bottom row: Full-Width Scrubber Track with Left & Right Timestamps */}
-          <div className="mt-2 sm:mt-2.5 flex items-center gap-3">
+          <div className="mt-2 flex items-center gap-3">
             <span className="text-[11px] font-mono text-text-muted shrink-0 w-10 text-right">
               {formatTime(currentTime)}
             </span>
