@@ -56,7 +56,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const content = (
       <>
-        {/* Dynamic mouse-tracking hover bloom for glassy violet effect */}
         {isGlass && (
           <span
             className="pointer-events-none absolute -inset-px rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out"
@@ -67,7 +66,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           />
         )}
 
-        {/* Top neon glow line */}
         <span
           className={cn(
             "absolute h-px opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out inset-x-0 top-0 bg-gradient-to-r w-3/4 mx-auto from-transparent via-violet-300 to-transparent hidden z-10",
@@ -75,12 +73,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           )}
         />
 
-        {/* Button content */}
         <span className="relative z-10 inline-flex items-center justify-center gap-2">
           {children}
         </span>
 
-        {/* Bottom neon glow line */}
         <span
           className={cn(
             "absolute group-hover:opacity-60 transition-all duration-500 ease-in-out inset-x-0 h-px -bottom-px bg-gradient-to-r w-3/4 mx-auto from-transparent via-cyan-400 to-transparent hidden z-10",

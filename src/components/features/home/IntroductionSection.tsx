@@ -11,7 +11,10 @@ export interface TrackItem {
   year: string;
   src: string;
   audioSrc?: string;
-  previewLabel: string;
+  key: string;
+  bpm: number;
+  timeSignature: string;
+  groove: string;
 }
 
 const MUSIC_TRACKS: TrackItem[] = [
@@ -24,7 +27,10 @@ const MUSIC_TRACKS: TrackItem[] = [
     src: "/images/discs/one-of-the-girls.jpg",
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9e/2f/1f/9e2f1f11-20a8-767a-0e33-9029028a7024/mzaf_1603981766065362477.plus.aac.p.m4a",
-    previewLabel: "Official 30s Preview",
+    key: "B Minor",
+    bpm: 118,
+    timeSignature: "4/4",
+    groove: "Slow Jam R&B",
   },
   {
     id: "starboy",
@@ -35,7 +41,10 @@ const MUSIC_TRACKS: TrackItem[] = [
     src: "/images/discs/starboy.jpg",
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/11/71/d6/1171d6ad-3c96-e027-2af6-58028426588c/mzaf_15137631797407745471.plus.aac.p.m4a",
-    previewLabel: "Official 30s Preview",
+    key: "G Minor",
+    bpm: 93,
+    timeSignature: "4/4",
+    groove: "Synthwave Pulse",
   },
   {
     id: "die-for-you",
@@ -46,7 +55,10 @@ const MUSIC_TRACKS: TrackItem[] = [
     src: "/images/discs/die-for-you.jpg",
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/50/50/1a/50501a86-bd74-e90d-8a56-68c9b5e6e7d6/mzaf_4588197682084244913.plus.aac.p.m4a",
-    previewLabel: "Official 30s Preview",
+    key: "C# Minor",
+    bpm: 134,
+    timeSignature: "4/4",
+    groove: "Electro Ballad",
   },
   {
     id: "save-your-tears",
@@ -57,7 +69,10 @@ const MUSIC_TRACKS: TrackItem[] = [
     src: "/images/discs/save-your-tears.jpg",
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/8b/38/17/8b3817e4-c0e9-7e02-2654-3e2ecee93603/mzaf_18415642125637540903.plus.aac.p.m4a",
-    previewLabel: "Official 30s Preview",
+    key: "C Major",
+    bpm: 118,
+    timeSignature: "4/4",
+    groove: "Synth-pop Beat",
   },
   {
     id: "kill-bill",
@@ -68,7 +83,10 @@ const MUSIC_TRACKS: TrackItem[] = [
     src: "/images/discs/kill-bill.jpg",
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/45/2b/ea/452bead6-c7f5-82d4-f5f7-ec876014b4cc/mzaf_2905911853279084717.plus.aac.p.m4a",
-    previewLabel: "Official 30s Preview",
+    key: "A Minor",
+    bpm: 89,
+    timeSignature: "4/4",
+    groove: "Boom-Bap R&B",
   },
   {
     id: "snooze",
@@ -79,7 +97,10 @@ const MUSIC_TRACKS: TrackItem[] = [
     src: "/images/discs/snooze.jpg",
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b3/9b/ca/b39bca57-2627-1aec-77af-cbf551205394/mzaf_4430383240210492712.plus.aac.p.m4a",
-    previewLabel: "Official 30s Preview",
+    key: "F Major",
+    bpm: 143,
+    timeSignature: "4/4",
+    groove: "Soul Swing",
   },
   {
     id: "the-hills",
@@ -90,7 +111,10 @@ const MUSIC_TRACKS: TrackItem[] = [
     src: "/images/discs/the-hills.jpg",
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/0b/70/c8/0b70c898-ec23-3131-5d17-aa7417045013/mzaf_3059117378996578649.plus.aac.p.m4a",
-    previewLabel: "Official 30s Preview",
+    key: "C Minor",
+    bpm: 113,
+    timeSignature: "4/4",
+    groove: "Trap R&B",
   },
   {
     id: "creepin",
@@ -101,7 +125,10 @@ const MUSIC_TRACKS: TrackItem[] = [
     src: "/images/discs/creepin.jpg",
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/47/ba/83/47ba83bd-ff6a-d4b2-f126-545a170f0775/mzaf_2932236241939206370.plus.aac.p.m4a",
-    previewLabel: "Official 30s Preview",
+    key: "C# Minor",
+    bpm: 98,
+    timeSignature: "4/4",
+    groove: "Cinematic R&B",
   },
   {
     id: "pink-and-white",
@@ -112,7 +139,10 @@ const MUSIC_TRACKS: TrackItem[] = [
     src: "/images/discs/pink-and-white.jpg",
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ba/11/dc/ba11dccd-16d2-9cd8-13f0-85b73acc0a09/mzaf_1304250511099243436.plus.aac.p.m4a",
-    previewLabel: "Official 30s Preview",
+    key: "A Major",
+    bpm: 160,
+    timeSignature: "6/8",
+    groove: "Neo-Soul Waltz",
   },
   {
     id: "saturn",
@@ -123,7 +153,10 @@ const MUSIC_TRACKS: TrackItem[] = [
     src: "/images/discs/saturn.jpg",
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/7c/28/b3/7c28b3ed-9aa9-6454-92c6-e46d20849bed/mzaf_518591709818271733.plus.aac.p.m4a",
-    previewLabel: "Official 30s Preview",
+    key: "B Major",
+    bpm: 178,
+    timeSignature: "4/4",
+    groove: "Dream R&B",
   },
 ];
 
@@ -407,8 +440,9 @@ export function IntroductionSection() {
     label: "",
     credits: [
       { label: "Artist", value: t.artist },
-      { label: "Album", value: t.album },
-      { label: "Year", value: t.year },
+      { label: "Key", value: t.key },
+      { label: "BPM", value: `${t.bpm}` },
+      { label: "Time", value: t.timeSignature },
     ],
   }));
 
@@ -427,7 +461,6 @@ export function IntroductionSection() {
         preload="metadata"
       />
 
-      {/* Ambient background glows */}
       <div
         className="pointer-events-none absolute -top-32 right-1/4 w-[560px] h-[560px] rounded-full bg-accent-violet/10 blur-[150px]"
         aria-hidden="true"
@@ -437,10 +470,10 @@ export function IntroductionSection() {
         aria-hidden="true"
       />
 
-      {/* Header */}
       <div className="relative z-10 text-center max-w-5xl mx-auto shrink-0 pt-2 sm:pt-4">
         <h2 className="font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-text-primary leading-[1.12]">
           Every song has a story{" "}
+          <br />
           <span className="bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-300 bg-clip-text text-transparent">
             beyond its sound.
           </span>
@@ -453,14 +486,13 @@ export function IntroductionSection() {
         </p>
       </div>
 
-      {/* 3D CD Carousel with infinite loop */}
-      <div className="relative z-10 w-full flex-1 min-h-[300px] sm:min-h-[350px] md:min-h-[380px] flex items-center justify-center my-auto">
+      <div className="relative z-10 w-full flex-1 min-h-[350px] md:min-h-[380px] flex items-center justify-center my-auto">
         <DiscCascadeCarousel
           items={carouselItems}
-          height="100%"
-          discSize="clamp(190px, 22vw, 290px)"
+          height="110%"
+          discSize="clamp(170px, 18vw, 260px)"
           spacing={0.96}
-          rise={0.2}
+          rise={0.18}
           depth={0.4}
           yaw={20}
           fan={-9}
@@ -483,40 +515,38 @@ export function IntroductionSection() {
         />
       </div>
 
-      {/* Borderless floating player at the bottom */}
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto mt-auto pb-1 sm:pb-2 shrink-0">
-        <div className="w-full rounded-2xl sm:rounded-full bg-[#0c0e17]/85 border-none px-5 py-2.5 sm:px-10 sm:py-3 backdrop-blur-2xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.85),0_0_35px_rgba(139,92,246,0.12)] transition-all">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4">
-            <div className="min-w-0 text-center sm:text-left sm:w-1/3">
-              <h3 className="font-display text-sm sm:text-base font-bold text-white tracking-tight truncate">
+      <div className="relative z-10 w-full max-w-[1600px] mt-auto pb-2 sm:pb-4 px-4 sm:px-6 lg:px-8 shrink-0">
+        <div className="w-full flex flex-col gap-3 sm:gap-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="min-w-0 text-center md:text-left md:w-1/3">
+              <h3 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white tracking-tight truncate">
                 {currentTrack.title}
               </h3>
-              <p className="text-xs text-text-muted truncate mt-0.5">
+              <p className="text-xs sm:text-sm text-text-secondary truncate mt-0.5">
                 {currentTrack.artist}
               </p>
             </div>
 
-            <div className="flex items-center justify-center gap-4 sm:gap-5 sm:w-1/3">
+            <div className="flex items-center justify-center gap-4 sm:gap-6 md:w-1/3">
               <button
                 type="button"
                 onClick={() => setIsShuffle((prev) => !prev)}
                 aria-label={isShuffle ? "Disable shuffle" : "Enable shuffle"}
-                className={`p-1.5 transition-all cursor-pointer ${
-                  isShuffle
-                    ? "text-accent-violet scale-110"
-                    : "text-white/60 hover:text-white"
-                }`}
+                className={`p-2 transition-all cursor-pointer ${isShuffle
+                  ? "text-accent-violet scale-110"
+                  : "text-white/60 hover:text-white"
+                  }`}
               >
-                <ShuffleIcon size={17} />
+                <ShuffleIcon size={20} />
               </button>
 
               <button
                 type="button"
                 onClick={handlePrev}
                 aria-label="Previous track"
-                className="p-1.5 text-white/80 hover:text-white hover:scale-110 active:scale-95 transition-all cursor-pointer"
+                className="p-2 text-white/80 hover:text-white hover:scale-110 active:scale-95 transition-all cursor-pointer"
               >
-                <PrevTrackIcon size={19} />
+                <PrevTrackIcon size={22} />
               </button>
 
               <button
@@ -528,20 +558,19 @@ export function IntroductionSection() {
                     ? `Pause ${currentTrack.title}`
                     : `Play ${currentTrack.title}`
                 }
-                className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-lg ${
-                  !currentTrack.audioSrc
-                    ? "bg-white/10 text-white/40 cursor-not-allowed"
-                    : isPlaying
-                    ? "bg-gradient-to-tr from-violet-600 to-indigo-600 text-white shadow-[0_0_25px_rgba(139,92,246,0.6)] scale-105 active:scale-95"
-                    : "bg-white text-slate-950 hover:bg-white/95 hover:scale-105 active:scale-95 shadow-[0_6px_18px_rgba(255,255,255,0.25)]"
-                }`}
+                className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-xl ${!currentTrack.audioSrc
+                  ? "bg-white/10 text-white/40 cursor-not-allowed"
+                  : isPlaying
+                    ? "bg-accent-violet transition-all duration-500 ease-out text-white shadow-[0_0_30px_rgba(139,92,246,0.6)] scale-105 active:scale-95"
+                    : "bg-white text-slate-950 hover:bg-white/95 hover:scale-105 active:scale-95 shadow-[0_8px_25px_rgba(255,255,255,0.3)]"
+                  }`}
               >
                 {isLoading ? (
-                  <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  <span className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
                 ) : isPlaying ? (
-                  <PauseIcon size={19} />
+                  <PauseIcon size={24} />
                 ) : (
-                  <PlayIcon size={19} className="ml-0.5" />
+                  <PlayIcon size={24} className="ml-0.5" />
                 )}
               </button>
 
@@ -549,37 +578,53 @@ export function IntroductionSection() {
                 type="button"
                 onClick={handleNext}
                 aria-label="Next track"
-                className="p-1.5 text-white/80 hover:text-white hover:scale-110 active:scale-95 transition-all cursor-pointer"
+                className="p-2 text-white/80 hover:text-white hover:scale-110 active:scale-95 transition-all cursor-pointer"
               >
-                <NextTrackIcon size={19} />
+                <NextTrackIcon size={22} />
               </button>
 
               <button
                 type="button"
                 onClick={() => setIsRepeat((prev) => !prev)}
                 aria-label={isRepeat ? "Disable repeat" : "Enable repeat"}
-                className={`p-1.5 transition-all cursor-pointer ${
-                  isRepeat
-                    ? "text-accent-violet scale-110"
-                    : "text-white/60 hover:text-white"
-                }`}
+                className={`p-2 transition-all cursor-pointer ${isRepeat
+                  ? "text-accent-violet scale-110"
+                  : "text-white/60 hover:text-white"
+                  }`}
               >
-                <RepeatIcon size={17} />
+                <RepeatIcon size={20} />
               </button>
             </div>
 
-            <div className="hidden sm:block sm:w-1/3" aria-hidden="true" />
+            <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap justify-center md:justify-end md:w-1/3">
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.06] border border-white/10 text-xs">
+                <span className="text-text-muted text-[10px] font-mono uppercase tracking-wider">Key</span>
+                <span className="font-semibold text-purple-300 font-mono">{currentTrack.key}</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.06] border border-white/10 text-xs">
+                <span className="text-text-muted text-[10px] font-mono uppercase tracking-wider">Tempo</span>
+                <span className="font-semibold text-cyan-300 font-mono">{currentTrack.bpm} BPM</span>
+              </div>
+              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.06] border border-white/10 text-xs">
+                <span className="text-text-muted text-[10px] font-mono uppercase tracking-wider">Time</span>
+                <span className="font-semibold text-white font-mono">{currentTrack.timeSignature}</span>
+              </div>
+              <div className="hidden xl:flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.06] border border-white/10 text-xs">
+                <span className="text-text-muted text-[10px] font-mono uppercase tracking-wider">Rhythm</span>
+                <span className="font-medium text-indigo-200">{currentTrack.groove}</span>
+              </div>
+            </div>
           </div>
 
-          <div className="mt-2 sm:mt-2.5 flex items-center gap-3">
-            <span className="text-[11px] font-mono text-text-muted shrink-0 w-10 text-right">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <span className="text-xs sm:text-sm font-mono text-text-muted shrink-0 w-12 text-right">
               {formatTime(currentTime)}
             </span>
 
             <div
               ref={seekTrackRef}
               onClick={handleSeek}
-              className="h-1.5 flex-1 bg-white/15 hover:bg-white/25 rounded-full cursor-pointer relative group/seek transition-colors"
+              className="h-2 flex-1 bg-white/15 hover:bg-white/25 rounded-full cursor-pointer relative group/seek transition-colors"
               role="progressbar"
               aria-valuenow={currentTime}
               aria-valuemin={0}
@@ -591,15 +636,15 @@ export function IntroductionSection() {
                 style={{ width: `${progressPercent}%` }}
               >
                 <span
-                  className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3.5 h-3.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)] scale-100 group-hover/seek:scale-125 transition-transform"
+                  className="absolute top-1/2 -translate-y-1/2 -right-2 w-4 h-4 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.9)] scale-100 group-hover/seek:scale-125 transition-transform"
                   aria-hidden="true"
                 />
               </div>
             </div>
 
-            <span className="text-[11px] font-mono text-text-muted shrink-0 w-10">
+            <span className="text-xs sm:text-sm font-mono text-text-muted shrink-0 w-12">
               {audioError ? (
-                <span className="text-amber-400 font-sans text-[10px]">{audioError}</span>
+                <span className="text-amber-400 font-sans text-xs">{audioError}</span>
               ) : (
                 formatTime(duration || 30)
               )}
