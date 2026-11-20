@@ -46,13 +46,13 @@ const musicalDimensions = [
     title: "Tonality",
     description:
       "Explore the musical key, scale, tonal center, and relationship between notes. Trace how modal shifts inject subtle color changes into songs.",
-    image3d: "/images/3d/tuning-fork.png",
-    imageAlt: "3D Tuning Fork",
+    image3d: "/images/3d/tonality.png",
+    imageAlt: "3D Circle of Fifths Tonal Wheel",
     bgClass: "bg-[#2873ec]",
     textTitleClass: "text-[#171717]",
     textDescClass: "text-[#171717]/85",
     shadowClass: "shadow-[0_20px_50px_-10px_rgba(40,115,236,0.35)]",
-    imgWrapClass: "bottom-0 right-2 sm:right-4 w-[140px] sm:w-[180px] md:w-[200px] h-[150px] sm:h-[190px] md:h-[210px]",
+    imgWrapClass: "bottom-0 right-2 sm:right-4 w-[150px] sm:w-[190px] md:w-[210px] h-[150px] sm:h-[190px] md:h-[210px]",
   },
   {
     title: "Structure",
