@@ -2,6 +2,7 @@
 
 @theme {
   --color-background: #090a0f;
+  --color-foreground: #f8fafc;
   --color-surface: #12141d;
   --color-surface-elevated: #181b28;
   --color-surface-hover: #1f2334;
