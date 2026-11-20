@@ -19,7 +19,6 @@ const musicalDimensions = [
     icon: <MetronomeIcon size={20} />,
     color: "text-accent-violet",
     bg: "bg-accent-violet/10 border-accent-violet/20",
-    hoverBorder: "hover:border-accent-violet/30",
   },
   {
     title: "Harmony",
@@ -28,7 +27,6 @@ const musicalDimensions = [
     icon: <PianoKeysIcon size={20} />,
     color: "text-accent-cyan",
     bg: "bg-accent-cyan/10 border-accent-cyan/20",
-    hoverBorder: "hover:border-accent-cyan/30",
   },
   {
     title: "Melody",
@@ -37,7 +35,6 @@ const musicalDimensions = [
     icon: <WaveformIcon size={20} />,
     color: "text-purple-400",
     bg: "bg-purple-500/10 border-purple-500/20",
-    hoverBorder: "hover:border-purple-500/30",
   },
   {
     title: "Tonality",
@@ -46,7 +43,6 @@ const musicalDimensions = [
     icon: <ActivityIcon size={20} />,
     color: "text-cyan-400",
     bg: "bg-cyan-500/10 border-cyan-500/20",
-    hoverBorder: "hover:border-cyan-500/30",
   },
   {
     title: "Structure",
@@ -55,7 +51,6 @@ const musicalDimensions = [
     icon: <LayersIcon size={20} />,
     color: "text-indigo-400",
     bg: "bg-indigo-500/10 border-indigo-500/20",
-    hoverBorder: "hover:border-indigo-500/30",
   },
   {
     title: "Instruments & Sound",
@@ -64,7 +59,6 @@ const musicalDimensions = [
     icon: <SlidersIcon size={20} />,
     color: "text-cyan-400",
     bg: "bg-cyan-500/10 border-cyan-500/20",
-    hoverBorder: "hover:border-cyan-500/30",
   },
 ];
 
@@ -95,22 +89,24 @@ export function MusicalDnaSection() {
           {musicalDimensions.map((item) => (
             <div
               key={item.title}
-              className={`rounded-3xl border border-white/10 bg-[#0c0d16]/90 p-6 sm:p-8 flex flex-col shadow-xl relative overflow-hidden group ${item.hoverBorder} transition-all duration-300`}
+              className="rot-card shadow-xl transition-all duration-300 group hover:shadow-[0_0_30px_rgba(0,183,255,0.25)]"
             >
-              <div className="flex items-center gap-3.5 mb-4">
-                <div
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.bg} ${item.color}`}
-                >
-                  {item.icon}
+              <div className="relative z-10 p-6 sm:p-8 flex flex-col h-full justify-start">
+                <div className="flex items-center gap-3.5 mb-4">
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.bg} ${item.color}`}
+                  >
+                    {item.icon}
+                  </div>
+                  <h3 className="font-display text-lg font-bold text-white">
+                    {item.title}
+                  </h3>
                 </div>
-                <h3 className="font-display text-lg font-bold text-white">
-                  {item.title}
-                </h3>
-              </div>
 
-              <p className="text-sm text-text-secondary leading-relaxed">
-                {item.description}
-              </p>
+                <p className="text-sm text-text-secondary leading-relaxed">
+                  {item.description}
+                </p>
+              </div>
             </div>
           ))}
         </div>
