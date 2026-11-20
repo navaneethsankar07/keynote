@@ -89,16 +89,16 @@ export function MusicalDnaSection() {
           {musicalDimensions.map((item) => (
             <div
               key={item.title}
-              className="rot-card shadow-xl transition-all duration-300 group hover:shadow-[0_0_30px_rgba(0,183,255,0.25)]"
+              className="group relative rounded-[20px] border border-white/20 bg-white/[0.04] backdrop-blur-md p-6 sm:p-8 flex flex-col justify-between shadow-[0_12px_40px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.2)] cursor-pointer select-none transition-all duration-500 ease-out hover:border-white/50 hover:scale-[1.04] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_2px_rgba(255,255,255,0.35)] active:scale-[0.96] active:rotate-[1.7deg]"
             >
-              <div className="relative z-10 p-6 sm:p-8 flex flex-col h-full justify-start">
+              <div>
                 <div className="flex items-center gap-3.5 mb-4">
                   <div
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${item.bg} ${item.color}`}
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border ${item.bg} ${item.color} shadow-inner transition-transform duration-300 group-hover:scale-110`}
                   >
                     {item.icon}
                   </div>
-                  <h3 className="font-display text-lg font-bold text-white">
+                  <h3 className="font-display text-xl font-bold text-white tracking-tight">
                     {item.title}
                   </h3>
                 </div>
@@ -107,6 +107,11 @@ export function MusicalDnaSection() {
                   {item.description}
                 </p>
               </div>
+
+              <span
+                className="pointer-events-none absolute inset-x-6 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-500"
+                aria-hidden="true"
+              />
             </div>
           ))}
         </div>
