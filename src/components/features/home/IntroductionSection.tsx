@@ -1,9 +1,91 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
+import DiscCascadeCarousel from "@/components/ui/disc-cascade-carousel";
 import { WaveformIcon, ActivityIcon } from "@/components/ui/Icons";
 
+export interface TrackItem {
+  id: string;
+  title: string;
+  artist: string;
+  album: string;
+  year: string;
+  src: string;
+  audioSrc?: string;
+  previewLabel: string;
+}
+
+const MUSIC_TRACKS: TrackItem[] = [
+  {
+    id: "one-of-the-girls",
+    title: "One of the Girls",
+    artist: "The Weeknd, JENNIE & Lily-Rose Depp",
+    album: "The Idol Episode 4",
+    year: "2023",
+    src: "/images/discs/one-of-the-girls.jpg",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9e/2f/1f/9e2f1f11-20a8-767a-0e33-9029028a7024/mzaf_1603981766065362477.plus.aac.p.m4a",
+    previewLabel: "Official 30s Preview",
+  },
+  {
+    id: "starboy",
+    title: "Starboy",
+    artist: "The Weeknd ft. Daft Punk",
+    album: "Starboy",
+    year: "2016",
+    src: "/images/discs/starboy.jpg",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/11/71/d6/1171d6ad-3c96-e027-2af6-58028426588c/mzaf_15137631797407745471.plus.aac.p.m4a",
+    previewLabel: "Official 30s Preview",
+  },
+  {
+    id: "die-for-you",
+    title: "Die For You",
+    artist: "The Weeknd",
+    album: "Starboy",
+    year: "2016",
+    src: "/images/discs/die-for-you.jpg",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/50/50/1a/50501a86-bd74-e90d-8a56-68c9b5e6e7d6/mzaf_4588197682084244913.plus.aac.p.m4a",
+    previewLabel: "Official 30s Preview",
+  },
+  {
+    id: "save-your-tears",
+    title: "Save Your Tears",
+    artist: "The Weeknd",
+    album: "After Hours",
+    year: "2020",
+    src: "/images/discs/save-your-tears.jpg",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/8b/38/17/8b3817e4-c0e9-7e02-2654-3e2ecee93603/mzaf_18415642125637540903.plus.aac.p.m4a",
+    previewLabel: "Official 30s Preview",
+  },
+  {
+    id: "kill-bill",
+    title: "Kill Bill",
+    artist: "SZA",
+    album: "SOS",
+    year: "2022",
+    src: "/images/discs/kill-bill.jpg",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/45/2b/ea/452bead6-c7f5-82d4-f5f7-ec876014b4cc/mzaf_2905911853279084717.plus.aac.p.m4a",
+    previewLabel: "Official 30s Preview",
+  },
+  {
+    id: "snooze",
+    title: "Snooze",
+    artist: "SZA",
+    album: "SOS",
+    year: "2022",
+    src: "/images/discs/snooze.jpg",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b3/9b/ca/b39bca57-2627-1aec-77af-cbf551205394/mzaf_4430383240210492712.plus.aac.p.m4a",
+    previewLabel: "Official 30s Preview",
+  },
+];
+
+// Minimal Player Icons matching user's visual reference
 function ShuffleIcon({ className = "", size = 18 }: { className?: string; size?: number }) {
   return (
     <svg
@@ -18,51 +100,90 @@ function ShuffleIcon({ className = "", size = 18 }: { className?: string; size?:
       className={className}
       aria-hidden="true"
     >
-      <path d="M16 3h5v5" />
-      <path d="M4 20L21 3" />
-      <path d="M21 16v5h-5" />
-      <path d="M15 15l6 6" />
-      <path d="M4 4l5 5" />
+      <polyline points="16 3 21 3 21 8" />
+      <line x1="4" y1="20" x2="21" y2="3" />
+      <polyline points="21 16 21 21 16 21" />
+      <line x1="15" y1="15" x2="21" y2="21" />
+      <line x1="4" y1="4" x2="9" y2="9" />
     </svg>
   );
 }
 
-function SkipBackIcon({ className = "", size = 20 }: { className?: string; size?: number }) {
+function PrevTrackIcon({ className = "", size = 18 }: { className?: string; size?: number }) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      fill="currentColor"
       className={className}
       aria-hidden="true"
     >
-      <polygon points="19 20 9 12 19 4 19 20" fill="currentColor" />
-      <line x1="5" y1="19" x2="5" y2="5" />
+      <polygon points="19 20 9 12 19 4 19 20" />
+      <line
+        x1="5"
+        y1="19"
+        x2="5"
+        y2="5"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
 
-function SkipForwardIcon({ className = "", size = 20 }: { className?: string; size?: number }) {
+function PlayIcon({ className = "", size = 20 }: { className?: string; size?: number }) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      fill="currentColor"
       className={className}
       aria-hidden="true"
     >
-      <polygon points="5 4 15 12 5 20 5 4" fill="currentColor" />
-      <line x1="19" y1="5" x2="19" y2="19" />
+      <polygon points="6 3 20 12 6 21 6 3" />
+    </svg>
+  );
+}
+
+function PauseIcon({ className = "", size = 20 }: { className?: string; size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="6" y="4" width="4" height="16" rx="1" />
+      <rect x="14" y="4" width="4" height="16" rx="1" />
+    </svg>
+  );
+}
+
+function NextTrackIcon({ className = "", size = 18 }: { className?: string; size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <polygon points="5 4 15 12 5 20 5 4" />
+      <line
+        x1="19"
+        y1="5"
+        x2="19"
+        y2="19"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -81,180 +202,207 @@ function RepeatIcon({ className = "", size = 18 }: { className?: string; size?: 
       className={className}
       aria-hidden="true"
     >
-      <path d="M17 1l4 4-4 4" />
+      <polyline points="17 1 21 5 17 9" />
       <path d="M3 11V9a4 4 0 0 1 4-4h14" />
-      <path d="M7 23l-4-4 4-4" />
+      <polyline points="7 23 3 19 7 15" />
       <path d="M21 13v2a4 4 0 0 1-4 4H3" />
     </svg>
   );
 }
 
-function PlayIcon({ className = "", size = 20 }: { className?: string; size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
-      <polygon points="6 3 20 12 6 21 6 3" />
-    </svg>
-  );
-}
-
-function PauseIcon({ className = "", size = 20 }: { className?: string; size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
-      <rect x="6" y="4" width="4" height="16" rx="1" />
-      <rect x="14" y="4" width="4" height="16" rx="1" />
-    </svg>
-  );
-}
-
-const TOTAL_DURATION = 230; // 3:50 (Starboy duration)
-
 export function IntroductionSection() {
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(84); // 01:24
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(30);
+  const [isLoading, setIsLoading] = useState(false);
+  const [audioError, setAudioError] = useState<string | null>(null);
   const [isShuffle, setIsShuffle] = useState(false);
-  const [isRepeat, setIsRepeat] = useState(true);
+  const [isRepeat, setIsRepeat] = useState(false);
 
-  const progressBarRef = useRef<HTMLDivElement>(null);
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const seekTrackRef = useRef<HTMLDivElement>(null);
 
-  // Smooth synthesizer chord loop for Starboy (G minor: Gm -> F -> Eb -> Dm)
-  const playAmbientChord = useCallback((ctx: AudioContext, timeOffset: number, freqs: number[]) => {
-    try {
-      const now = ctx.currentTime + timeOffset;
-      freqs.forEach((freq) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
+  const currentTrack = MUSIC_TRACKS[selectedIndex] ?? MUSIC_TRACKS[0];
 
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, now);
+  // Stop previous audio and reset state when switching tracks
+  const handleIndexChange = useCallback(
+    (index: number, autoPlay: boolean = false) => {
+      setSelectedIndex(index);
+      setCurrentTime(0);
+      setAudioError(null);
+      setIsLoading(false);
 
-        gain.gain.setValueAtTime(0.0001, now);
-        gain.gain.linearRampToValueAtTime(0.04, now + 0.3);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.8);
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.start(now);
-        osc.stop(now + 2.9);
-      });
-    } catch {
-      // Audio autoplay blocked or unsupported
-    }
-  }, []);
-
-  const triggerChordSequence = useCallback(() => {
-    try {
-      if (!audioCtxRef.current) {
-        const AudioCtx =
-          window.AudioContext ||
-          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-        if (!AudioCtx) return;
-        audioCtxRef.current = new AudioCtx();
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current.src = MUSIC_TRACKS[index]?.audioSrc || "";
+        audioRef.current.load();
+        if (autoPlay && MUSIC_TRACKS[index]?.audioSrc) {
+          setIsLoading(true);
+          audioRef.current
+            .play()
+            .then(() => {
+              setIsPlaying(true);
+              setIsLoading(false);
+            })
+            .catch(() => {
+              setIsPlaying(false);
+              setIsLoading(false);
+            });
+          return;
+        }
       }
-      const ctx = audioCtxRef.current;
-      if (ctx.state === "suspended") {
-        ctx.resume();
-      }
-
-      // Gm7 (G3, Bb3, D4, F4)
-      playAmbientChord(ctx, 0, [196.0, 233.08, 293.66, 349.23]);
-      // F (F3, A3, C4, E4)
-      playAmbientChord(ctx, 1.2, [174.61, 220.0, 261.63, 329.63]);
-    } catch {
-      // ignore
-    }
-  }, [playAmbientChord]);
-
-  const togglePlay = () => {
-    if (isPlaying) {
       setIsPlaying(false);
-      if (timerRef.current) clearInterval(timerRef.current);
+    },
+    []
+  );
+
+  const handleNext = () => {
+    if (isShuffle) {
+      let nextIdx = Math.floor(Math.random() * MUSIC_TRACKS.length);
+      if (nextIdx === selectedIndex) {
+        nextIdx = (selectedIndex + 1) % MUSIC_TRACKS.length;
+      }
+      handleIndexChange(nextIdx, isPlaying);
     } else {
-      setIsPlaying(true);
-      triggerChordSequence();
+      const nextIdx = (selectedIndex + 1) % MUSIC_TRACKS.length;
+      handleIndexChange(nextIdx, isPlaying);
     }
-  };
-
-  useEffect(() => {
-    if (isPlaying) {
-      timerRef.current = setInterval(() => {
-        setCurrentTime((prev) => {
-          if (prev >= TOTAL_DURATION) {
-            return isRepeat ? 0 : TOTAL_DURATION;
-          }
-          return prev + 1;
-        });
-      }, 1000);
-    } else if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [isPlaying, isRepeat]);
-
-  // Periodic chill synth chords while playing
-  useEffect(() => {
-    if (!isPlaying) return;
-    const interval = setInterval(() => {
-      triggerChordSequence();
-    }, 4500);
-
-    return () => clearInterval(interval);
-  }, [isPlaying, triggerChordSequence]);
-
-  const formatTime = (secs: number) => {
-    const mins = Math.floor(secs / 60);
-    const remSecs = secs % 60;
-    return `${mins.toString().padStart(2, "0")}:${remSecs.toString().padStart(2, "0")}`;
-  };
-
-  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!progressBarRef.current) return;
-    const rect = progressBarRef.current.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const ratio = Math.max(0, Math.min(1, clickX / rect.width));
-    setCurrentTime(Math.round(ratio * TOTAL_DURATION));
   };
 
   const handlePrev = () => {
-    setCurrentTime(0);
-    if (isPlaying) triggerChordSequence();
+    const prevIdx =
+      (selectedIndex - 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length;
+    handleIndexChange(prevIdx, isPlaying);
   };
 
-  const handleNext = () => {
-    setCurrentTime((prev) => (prev + 30 > TOTAL_DURATION ? 0 : prev + 30));
-    if (isPlaying) triggerChordSequence();
+  // Play / Pause toggle with legitimate audio playback
+  const togglePlay = () => {
+    if (!currentTrack.audioSrc) {
+      setAudioError("Preview unavailable");
+      return;
+    }
+
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      setIsLoading(true);
+      setAudioError(null);
+
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.error("Audio playback error:", err);
+          setIsPlaying(false);
+          setIsLoading(false);
+          setAudioError("Unable to play preview");
+        });
+    }
   };
 
-  const progressPercent = (currentTime / TOTAL_DURATION) * 100;
+  // Synchronize audio source if audio element was not yet created or src changed
+  useEffect(() => {
+    if (audioRef.current && !audioRef.current.src) {
+      audioRef.current.src = currentTrack.audioSrc || "";
+      audioRef.current.load();
+    }
+  }, [currentTrack.audioSrc]);
+
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    if (audioRef.current && audioRef.current.duration) {
+      setDuration(audioRef.current.duration);
+    }
+  };
+
+  const handleEnded = () => {
+    if (isRepeat && audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(() => setIsPlaying(false));
+    } else {
+      handleNext();
+    }
+  };
+
+  const handleError = () => {
+    setIsLoading(false);
+    setIsPlaying(false);
+    setAudioError("Preview unavailable");
+  };
+
+  // Seek bar interaction
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!seekTrackRef.current || !audioRef.current || !duration) return;
+    const rect = seekTrackRef.current.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+    const newTime = ratio * duration;
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
+  const formatTime = (secs: number) => {
+    if (isNaN(secs)) return "00:00";
+    const mins = Math.floor(secs / 60);
+    const remSecs = Math.floor(secs % 60);
+    return `${mins.toString().padStart(2, "0")}:${remSecs.toString().padStart(2, "0")}`;
+  };
+
+  const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+  // Prepare carousel items from real track collection
+  const carouselItems = MUSIC_TRACKS.map((t) => ({
+    title: t.title,
+    src: t.src,
+    alt: `${t.title} - ${t.artist}`,
+    label: "", // Clean printed CD face
+    credits: [
+      { label: "Artist", value: t.artist },
+      { label: "Album", value: t.album },
+      { label: "Year", value: t.year },
+    ],
+  }));
 
   return (
-    <section className="relative py-28 sm:py-36 lg:py-44 border-t border-white/5 bg-[#07080e] overflow-hidden">
-      {/* Background ambient radial gradients */}
+    <section id="introduction" className="relative py-20 sm:py-28 lg:py-32 border-t border-white/5 bg-[#06070d] overflow-hidden">
+      {/* Hidden audio element for genuine preview playback */}
+      <audio
+        ref={audioRef}
+        src={currentTrack.audioSrc}
+        onTimeUpdate={handleTimeUpdate}
+        onLoadedMetadata={handleLoadedMetadata}
+        onEnded={handleEnded}
+        onError={handleError}
+        preload="metadata"
+      />
+
+      {/* Background ambient lighting */}
       <div
-        className="pointer-events-none absolute -top-32 right-1/4 w-[520px] h-[520px] rounded-full bg-accent-violet/15 blur-[140px] animate-pulse"
-        style={{ animationDuration: "7s" }}
+        className="pointer-events-none absolute -top-32 right-1/4 w-[520px] h-[520px] rounded-full bg-accent-violet/10 blur-[140px]"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -bottom-32 right-1/3 w-[460px] h-[460px] rounded-full bg-accent-cyan/10 blur-[130px] animate-pulse"
-        style={{ animationDuration: "9s" }}
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute top-1/2 -left-32 w-[420px] h-[420px] rounded-full bg-accent-violet/10 blur-[120px] animate-pulse"
-        style={{ animationDuration: "8s" }}
+        className="pointer-events-none absolute -bottom-32 right-1/3 w-[460px] h-[460px] rounded-full bg-accent-cyan/10 blur-[130px]"
         aria-hidden="true"
       />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          {/* Left Column: Typographic & Editorial Storytelling */}
-          <div className="lg:col-span-7 xl:col-span-6 flex flex-col items-start space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+          {/* Left Column: Shifted slightly toward the left for optimal balance */}
+          <div className="lg:col-span-5 flex flex-col items-start space-y-6">
             <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-text-primary leading-[1.15]">
               Every song has a story{" "}
               <span className="bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-300 bg-clip-text text-transparent">
@@ -268,10 +416,10 @@ export function IntroductionSection() {
               ideas that bring songs to life.
             </p>
 
-            {/* Editorial Feature Highlights */}
-            <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-              <div className="p-4 rounded-2xl bg-surface/50 border border-white/5 hover:border-white/10 backdrop-blur-md transition-all hover:translate-y-[-2px] hover:shadow-lg hover:shadow-accent-violet/5 group">
-                <div className="flex items-center gap-2 text-accent-violet text-sm font-semibold mb-1 group-hover:text-accent-violet-light transition-colors">
+            {/* Feature Highlights */}
+            <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+              <div className="p-4 rounded-2xl bg-surface/50 border border-white/5 hover:border-white/10 backdrop-blur-md transition-all">
+                <div className="flex items-center gap-2 text-accent-violet text-sm font-semibold mb-1">
                   <WaveformIcon size={16} />
                   <span>Hidden Architecture</span>
                 </div>
@@ -280,8 +428,8 @@ export function IntroductionSection() {
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-surface/50 border border-white/5 hover:border-white/10 backdrop-blur-md transition-all hover:translate-y-[-2px] hover:shadow-lg hover:shadow-accent-cyan/5 group">
-                <div className="flex items-center gap-2 text-accent-cyan text-sm font-semibold mb-1 group-hover:text-cyan-300 transition-colors">
+              <div className="p-4 rounded-2xl bg-surface/50 border border-white/5 hover:border-white/10 backdrop-blur-md transition-all">
+                <div className="flex items-center gap-2 text-accent-cyan text-sm font-semibold mb-1">
                   <ActivityIcon size={16} />
                   <span>Sonic Anatomy</span>
                 </div>
@@ -292,138 +440,209 @@ export function IntroductionSection() {
             </div>
           </div>
 
-          {/* Right Column: Music Player Component (styled like the attached design) */}
-          <div className="lg:col-span-5 xl:col-span-6 flex items-center justify-center">
-            <div className="relative w-full max-w-[340px] sm:max-w-[360px]">
-              {/* Backlight glow */}
+          {/* Right Column: Disc Cascade Carousel + Minimal Music Player Card */}
+          <div className="lg:col-span-7 flex flex-col items-center justify-center space-y-6">
+            {/* 1. Disc Cascade Carousel */}
+            <div className="relative w-full h-[320px] sm:h-[350px] flex items-center justify-center">
+              <DiscCascadeCarousel
+                items={carouselItems}
+                height="100%"
+                discSize="clamp(180px, 22vw, 260px)"
+                spacing={0.96}
+                rise={0.2}
+                depth={0.4}
+                yaw={20}
+                fan={-9}
+                tilt={-5}
+                roll={100}
+                spin={isPlaying ? 12 : 24}
+                background="transparent"
+                color="rgba(255,255,255,0.92)"
+                frame={false}
+                details={false}
+                reviews={false}
+                controls={true}
+                hint="Drag, swipe, or click discs"
+                defaultIndex={0}
+                index={selectedIndex}
+                onIndexChange={(idx) => handleIndexChange(idx, false)}
+                ariaLabel="Featured CD Carousel"
+              />
+            </div>
+
+            {/* 2. Minimal Music Player Card (Directly inspired by user reference) */}
+            <div className="relative w-full max-w-[340px] sm:max-w-[370px] rounded-3xl bg-[#0d0f17]/90 border border-white/10 p-6 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.65),inset_0_1px_1px_rgba(255,255,255,0.15)] transition-all">
+              {/* Subtle top inner glow */}
               <div
-                className="pointer-events-none absolute -inset-4 bg-gradient-to-tr from-accent-violet/25 via-indigo-500/15 to-accent-cyan/20 blur-3xl rounded-[44px] -z-10"
+                className="pointer-events-none absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-24 bg-accent-violet/20 blur-2xl rounded-full"
                 aria-hidden="true"
               />
 
-              {/* Music Player Card */}
-              <div className="relative rounded-[36px] bg-[#0c0e18]/90 border border-white/10 p-7 sm:p-8 backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.7),0_0_40px_rgba(139,92,246,0.12)]">
-                {/* Circular Album Artwork */}
-                <div className="relative w-48 h-48 sm:w-52 sm:h-52 rounded-full overflow-hidden mx-auto shadow-[0_12px_30px_rgba(0,0,0,0.8),0_0_25px_rgba(139,92,246,0.2)] border-2 border-white/10 select-none">
-                  <Image
-                    src="/images/starboy-cover.jpg"
-                    alt="Starboy - The Weeknd"
-                    fill
-                    priority
-                    sizes="(max-width: 640px) 192px, 208px"
-                    className={`object-cover object-center transition-all duration-700 ${
-                      isPlaying ? "scale-105" : "scale-100"
-                    }`}
-                  />
-                  {/* Subtle vinyl gloss sheen */}
-                  <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/10 to-transparent" />
-
-                  {/* Pulsing playing indicator ring */}
-                  {isPlaying && (
-                    <div className="pointer-events-none absolute inset-0 rounded-full border-2 border-accent-violet/40 animate-ping opacity-30" />
-                  )}
-                </div>
-
-                {/* Track Title and Artist */}
-                <div className="text-center mt-6 select-none">
-                  <h3 className="font-display text-xl sm:text-2xl font-bold text-white tracking-tight">
-                    Starboy
-                  </h3>
-                  <p className="text-xs sm:text-sm text-text-secondary mt-1 font-medium">
-                    The Weeknd ft. Daft Punk
-                  </p>
-                </div>
-
-                {/* Scrubber / Timeline Bar */}
-                <div className="mt-6 select-none">
-                  {/* Progress slider track */}
+              {/* Circular Album / Vinyl Disc Artwork (Referencing Image 1 & Image 2) */}
+              <div className="relative mx-auto w-32 h-32 sm:w-36 sm:h-36 rounded-full p-1 bg-gradient-to-b from-white/20 via-white/5 to-transparent shadow-[0_12px_32px_rgba(0,0,0,0.7)] flex items-center justify-center">
+                {/* Vinyl outer groove ring styling */}
+                <div
+                  className={`relative w-full h-full rounded-full overflow-hidden bg-black/80 p-1.5 transition-transform duration-700 ${
+                    isPlaying ? "animate-[spin_10s_linear_infinite]" : ""
+                  }`}
+                >
+                  {/* Concentric groove rings */}
                   <div
-                    ref={progressBarRef}
-                    onClick={handleSeek}
-                    className="h-1.5 w-full bg-white/15 hover:bg-white/20 rounded-full cursor-pointer relative group/bar transition-colors"
-                    role="progressbar"
-                    aria-valuenow={currentTime}
-                    aria-valuemin={0}
-                    aria-valuemax={TOTAL_DURATION}
-                    aria-label="Track progress"
-                  >
-                    {/* Filled bar */}
+                    className="absolute inset-0 rounded-full border border-white/10 pointer-events-none"
+                    aria-hidden="true"
+                  />
+                  <div
+                    className="absolute inset-2 rounded-full border border-white/5 pointer-events-none"
+                    aria-hidden="true"
+                  />
+                  <div
+                    className="absolute inset-4 rounded-full border border-white/5 pointer-events-none"
+                    aria-hidden="true"
+                  />
+
+                  {/* Album Cover Center */}
+                  <div className="relative w-full h-full rounded-full overflow-hidden">
+                    <Image
+                      src={currentTrack.src}
+                      alt={`${currentTrack.title} by ${currentTrack.artist}`}
+                      fill
+                      sizes="144px"
+                      className="object-cover"
+                      priority
+                    />
+                    {/* Vinyl center hole & clamp ring */}
                     <div
-                      className="h-full bg-white rounded-full relative"
-                      style={{ width: `${progressPercent}%` }}
+                      className="absolute inset-0 m-auto w-6 h-6 rounded-full bg-[#0d0f17] border-2 border-white/30 shadow-inner flex items-center justify-center"
+                      aria-hidden="true"
                     >
-                      {/* Scrubber knob handle */}
-                      <span className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3.5 h-3.5 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.5)] group-hover/bar:scale-125 transition-transform" />
+                      <div className="w-2 h-2 rounded-full bg-white/70" />
                     </div>
                   </div>
+                </div>
+              </div>
 
-                  {/* Timestamps */}
-                  <div className="flex items-center justify-between text-[11px] font-mono text-text-muted mt-2">
-                    <span>{formatTime(currentTime)}</span>
-                    <span>{formatTime(TOTAL_DURATION)}</span>
+              {/* Track Title & Artist */}
+              <div className="mt-5 text-center">
+                <h3 className="font-display text-lg font-bold text-white tracking-tight truncate px-2">
+                  {currentTrack.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-text-muted mt-1 truncate px-4">
+                  {currentTrack.artist}
+                </p>
+              </div>
+
+              {/* Progress / Seek bar with Left & Right Timestamps */}
+              <div className="mt-5">
+                <div
+                  ref={seekTrackRef}
+                  onClick={handleSeek}
+                  className="h-1.5 w-full bg-white/15 hover:bg-white/25 rounded-full cursor-pointer relative group/seek transition-colors"
+                  role="progressbar"
+                  aria-valuenow={currentTime}
+                  aria-valuemin={0}
+                  aria-valuemax={duration || 30}
+                  aria-label="Seek progress"
+                >
+                  <div
+                    className="h-full bg-white rounded-full relative"
+                    style={{ width: `${progressPercent}%` }}
+                  >
+                    {/* Draggable Scrubber Knob matching mockup */}
+                    <span
+                      className="absolute top-1/2 -translate-y-1/2 -right-1.5 w-3.5 h-3.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)] scale-100 group-hover/seek:scale-125 transition-transform"
+                      aria-hidden="true"
+                    />
                   </div>
                 </div>
 
-                {/* Player Controls (Shuffle, Prev, Big Play/Pause Circle, Next, Repeat) */}
-                <div className="flex items-center justify-between px-1 mt-6 select-none">
-                  {/* Shuffle */}
-                  <button
-                    type="button"
-                    onClick={() => setIsShuffle((prev) => !prev)}
-                    aria-label="Toggle shuffle"
-                    className={`p-2 transition-colors cursor-pointer ${
-                      isShuffle
-                        ? "text-accent-violet drop-shadow-[0_0_8px_rgba(139,92,246,0.8)]"
-                        : "text-text-muted hover:text-white"
-                    }`}
-                  >
-                    <ShuffleIcon size={18} />
-                  </button>
-
-                  {/* Previous */}
-                  <button
-                    type="button"
-                    onClick={handlePrev}
-                    aria-label="Previous track"
-                    className="p-2 text-text-secondary hover:text-white transition-colors cursor-pointer active:scale-90"
-                  >
-                    <SkipBackIcon size={20} />
-                  </button>
-
-                  {/* Big Elevated Circular Play/Pause Button */}
-                  <button
-                    type="button"
-                    onClick={togglePlay}
-                    aria-label={isPlaying ? "Pause track" : "Play track"}
-                    className="w-14 h-14 rounded-full bg-white text-[#090a0f] flex items-center justify-center shadow-[0_8px_20px_rgba(0,0,0,0.4),0_0_20px_rgba(255,255,255,0.3)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
-                  >
-                    {isPlaying ? <PauseIcon size={20} /> : <PlayIcon size={20} className="ml-0.5" />}
-                  </button>
-
-                  {/* Next */}
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    aria-label="Next track"
-                    className="p-2 text-text-secondary hover:text-white transition-colors cursor-pointer active:scale-90"
-                  >
-                    <SkipForwardIcon size={20} />
-                  </button>
-
-                  {/* Repeat */}
-                  <button
-                    type="button"
-                    onClick={() => setIsRepeat((prev) => !prev)}
-                    aria-label="Toggle repeat"
-                    className={`p-2 transition-colors cursor-pointer ${
-                      isRepeat
-                        ? "text-accent-violet drop-shadow-[0_0_8px_rgba(139,92,246,0.8)]"
-                        : "text-text-muted hover:text-white"
-                    }`}
-                  >
-                    <RepeatIcon size={18} />
-                  </button>
+                <div className="flex items-center justify-between text-[11px] font-mono text-text-muted mt-2">
+                  <span>{formatTime(currentTime)}</span>
+                  <span>
+                    {audioError ? (
+                      <span className="text-amber-400 font-sans text-[10px]">{audioError}</span>
+                    ) : (
+                      formatTime(duration || 30)
+                    )}
+                  </span>
                 </div>
+              </div>
+
+              {/* Controls Row: Shuffle | Prev | Play/Pause | Next | Repeat (Matching user reference) */}
+              <div className="mt-4 flex items-center justify-between px-2">
+                {/* Shuffle */}
+                <button
+                  type="button"
+                  onClick={() => setIsShuffle((prev) => !prev)}
+                  aria-label={isShuffle ? "Disable shuffle" : "Enable shuffle"}
+                  className={`p-2 transition-all cursor-pointer ${
+                    isShuffle
+                      ? "text-accent-violet scale-110"
+                      : "text-white/60 hover:text-white"
+                  }`}
+                >
+                  <ShuffleIcon size={18} />
+                </button>
+
+                {/* Previous Track */}
+                <button
+                  type="button"
+                  onClick={handlePrev}
+                  aria-label="Previous track"
+                  className="p-2 text-white/80 hover:text-white hover:scale-110 active:scale-95 transition-all cursor-pointer"
+                >
+                  <PrevTrackIcon size={20} />
+                </button>
+
+                {/* Central Elevated Play / Pause Button */}
+                <button
+                  type="button"
+                  onClick={togglePlay}
+                  disabled={!currentTrack.audioSrc}
+                  aria-label={
+                    isPlaying
+                      ? `Pause ${currentTrack.title}`
+                      : `Play ${currentTrack.title}`
+                  }
+                  className={`w-13 h-13 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-lg ${
+                    !currentTrack.audioSrc
+                      ? "bg-white/10 text-white/40 cursor-not-allowed"
+                      : isPlaying
+                      ? "bg-gradient-to-tr from-violet-600 to-indigo-600 text-white shadow-[0_0_25px_rgba(139,92,246,0.55)] scale-105 active:scale-95"
+                      : "bg-white text-slate-950 hover:bg-white/95 hover:scale-105 active:scale-95 shadow-[0_8px_20px_rgba(255,255,255,0.25)]"
+                  }`}
+                >
+                  {isLoading ? (
+                    <span className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  ) : isPlaying ? (
+                    <PauseIcon size={22} />
+                  ) : (
+                    <PlayIcon size={22} className="ml-0.5" />
+                  )}
+                </button>
+
+                {/* Next Track */}
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  aria-label="Next track"
+                  className="p-2 text-white/80 hover:text-white hover:scale-110 active:scale-95 transition-all cursor-pointer"
+                >
+                  <NextTrackIcon size={20} />
+                </button>
+
+                {/* Repeat / Loop */}
+                <button
+                  type="button"
+                  onClick={() => setIsRepeat((prev) => !prev)}
+                  aria-label={isRepeat ? "Disable repeat" : "Enable repeat"}
+                  className={`p-2 transition-all cursor-pointer ${
+                    isRepeat
+                      ? "text-accent-violet scale-110"
+                      : "text-white/60 hover:text-white"
+                  }`}
+                >
+                  <RepeatIcon size={18} />
+                </button>
               </div>
             </div>
           </div>

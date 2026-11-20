@@ -2,8 +2,8 @@
 
 import React from "react";
 import { Button } from "@/components/ui/Button";
-import { Button as NeonButton } from "@/components/ui/neon-button";
-import { ArrowRightIcon, TheoryBookIcon } from "@/components/ui/Icons";
+import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
+import { TheoryBookIcon } from "@/components/ui/Icons";
 import { TubesSoundscape } from "./TubesSoundscape";
 
 export function HeroSection() {
@@ -39,15 +39,9 @@ export function HeroSection() {
             className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center gap-4 hero-enter-slide pointer-events-auto"
             style={{ animationDelay: "180ms" }}
           >
-            <NeonButton
-              href="/analyze"
-              variant="glass"
-              size="lg"
-              className="gap-2 px-8 py-3.5 text-base"
-            >
-              <span>Analyze a song</span>
-              <ArrowRightIcon size={18} />
-            </NeonButton>
+            <InteractiveHoverButton href="/analyze">
+              Analyze a song
+            </InteractiveHoverButton>
 
             <Button
               href="/learn"
