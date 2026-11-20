@@ -58,18 +58,6 @@ const musicalDimensions = [
     title: "Structure",
     description:
       "Discover how a song is organized into sections such as intro, verse, chorus, bridge, and outro. Trace the arrangement timeline and energy dynamics.",
-    image3d: "/images/3d/structure-blocks.png",
-    imageAlt: "3D Structure Blocks",
-    bgClass: "bg-[#171717] border border-white/10 hover:border-white/20",
-    textTitleClass: "text-white",
-    textDescClass: "text-white/70",
-    shadowClass: "shadow-[0_20px_50px_-10px_rgba(0,0,0,0.7)]",
-    imgWrapClass: "bottom-0 right-2 sm:right-4 w-[150px] sm:w-[190px] md:w-[210px] h-[140px] sm:h-[175px] md:h-[195px]",
-  },
-  {
-    title: "Instruments & Sound",
-    description:
-      "Explore the instruments, sound layers, textures, and musical elements that contribute to the song's sonic identity and acoustic space.",
     image3d: "/images/3d/headphones.png",
     imageAlt: "3D Studio Headphones",
     bgClass: "bg-[#171717] border border-white/10 hover:border-white/20",
@@ -77,6 +65,18 @@ const musicalDimensions = [
     textDescClass: "text-white/70",
     shadowClass: "shadow-[0_20px_50px_-10px_rgba(0,0,0,0.7)]",
     imgWrapClass: "bottom-0 right-2 sm:right-4 w-[140px] sm:w-[180px] md:w-[200px] h-[160px] sm:h-[200px] md:h-[220px]",
+  },
+  {
+    title: "Instruments & Sound",
+    description:
+      "Explore the instruments, sound layers, textures, and musical elements that contribute to the song's sonic identity and acoustic space.",
+    image3d: "/images/3d/violin.png",
+    imageAlt: "3D Classical Violin",
+    bgClass: "bg-[#171717] border border-white/10 hover:border-white/20",
+    textTitleClass: "text-white",
+    textDescClass: "text-white/70",
+    shadowClass: "shadow-[0_20px_50px_-10px_rgba(0,0,0,0.7)]",
+    imgWrapClass: "bottom-0 right-2 sm:right-4 w-[150px] sm:w-[190px] md:w-[210px] h-[150px] sm:h-[190px] md:h-[210px]",
   },
 ];
 
