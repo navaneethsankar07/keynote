@@ -13,8 +13,12 @@ interface SplineEntity extends THREE.Object3D {
 
 interface SplineAppInstance {
   setZoom?: (zoom: number) => void;
-  findObjectByName?: (name: string) => SplineEntity | null;
-  getAllObjects?: () => SplineEntity[];
+  findObjectByName?: (name: string) => { position?: { x: number; y: number; z: number } } | null;
+  _findEntity?: (name: string) => SplineEntity | null;
+  _scene?: {
+    getObjectByName?: (name: string) => SplineEntity | null;
+    traverse?: (callback: (obj: THREE.Object3D) => void) => void;
+  };
   requestRender?: () => void;
 }
 
@@ -252,35 +256,64 @@ export function LearnPreviewSection() {
       bot.position.x = 0;
     }
 
-    const head = typeof splineApp.findObjectByName === "function" ? splineApp.findObjectByName("Head") : null;
+    const scene = splineApp._scene;
+    const findRealEntity = (name: string): SplineEntity | null => {
+      if (typeof splineApp._findEntity === "function") {
+        return splineApp._findEntity(name);
+      }
+      if (scene && typeof scene.getObjectByName === "function") {
+        return scene.getObjectByName(name) || null;
+      }
+      return null;
+    };
+
+    const realHead = findRealEntity("Head");
     let reelA: THREE.Mesh | null = null;
     let reelB: THREE.Mesh | null = null;
 
-    if (head && Array.isArray(head.children)) {
-      head.children.forEach((c: THREE.Object3D) => {
-        c.visible = false;
-        c.scale.set(0.0001, 0.0001, 0.0001);
-      });
+    if (realHead && typeof realHead.add === "function") {
+      if (!realHead.getObjectByName("CustomRadioHead")) {
+        realHead.children.forEach((c: THREE.Object3D) => {
+          c.visible = false;
+          if (c.scale && typeof c.scale.set === "function") {
+            c.scale.set(0.0001, 0.0001, 0.0001);
+          }
+        });
 
-      const { radioGroup, leftReel, rightReel } = buildRadioHead();
-      radioGroup.position.set(0, 0, 0);
-      head.add(radioGroup);
-      reelA = leftReel;
-      reelB = rightReel;
+        const { radioGroup, leftReel, rightReel } = buildRadioHead();
+        radioGroup.position.set(0, 0, 0);
+        realHead.add(radioGroup);
+        reelA = leftReel;
+        reelB = rightReel;
+      }
     }
 
-    const allObjs = typeof splineApp.getAllObjects === "function" ? splineApp.getAllObjects() : [];
-    const feet = allObjs.filter((o: SplineEntity) => o && o.name === "Foot");
+    const realFeet: THREE.Object3D[] = [];
+    if (scene && typeof scene.traverse === "function") {
+      scene.traverse((obj: THREE.Object3D) => {
+        if (obj.name === "Foot" && typeof obj.add === "function") {
+          realFeet.push(obj);
+        }
+      });
+    }
 
-    feet.forEach((foot: SplineEntity, idx: number) => {
-      if (Array.isArray(foot.children)) {
+    realFeet.forEach((foot: THREE.Object3D, idx: number) => {
+      const isLeft = idx === 0;
+      const sneakerName = isLeft ? "CustomSneakerLeft" : "CustomSneakerRight";
+
+      if (!foot.getObjectByName(sneakerName)) {
         foot.children.forEach((c: THREE.Object3D) => {
-          c.visible = false;
-          c.scale.set(0.0001, 0.0001, 0.0001);
+          if (c.name !== "CustomSneakerLeft" && c.name !== "CustomSneakerRight") {
+            c.visible = false;
+            if (c.scale && typeof c.scale.set === "function") {
+              c.scale.set(0.0001, 0.0001, 0.0001);
+            }
+          }
         });
+
+        const sneaker = buildSneakerFoot(isLeft);
+        foot.add(sneaker);
       }
-      const sneaker = buildSneakerFoot(idx === 0);
-      foot.add(sneaker);
     });
 
     const animateReels = () => {
