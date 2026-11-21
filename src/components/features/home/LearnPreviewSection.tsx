@@ -1,12 +1,22 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import { Button } from "@/components/ui/Button";
 import { ArrowRightIcon } from "@/components/ui/Icons";
-import { MusicCharacter3D } from "@/components/features/home/MusicCharacter3D";
+import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
+import { customizeSplineBot } from "./SplineMusicBot";
 
 export function LearnPreviewSection() {
+  const cleanupRef = useRef<(() => void) | null>(null);
+
+  const handleSplineLoad = useCallback((splineApp: unknown) => {
+    if (cleanupRef.current) {
+      cleanupRef.current();
+    }
+    cleanupRef.current = customizeSplineBot(splineApp);
+  }, []);
+
   return (
     <section className="relative py-20 sm:py-28 md:py-32 border-t border-white/5 bg-[#07080e]/50 overflow-hidden">
       <Spotlight
@@ -18,7 +28,7 @@ export function LearnPreviewSection() {
       <div className="pointer-events-none absolute -bottom-24 left-1/4 w-[450px] h-[450px] rounded-full bg-accent-cyan/10 blur-[130px]" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-16 min-h-[500px]">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-16 min-h-[520px]">
           <div className="flex-1 flex flex-col justify-center items-start text-left max-w-2xl">
             <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.12]">
               Understand the language{" "}
@@ -45,8 +55,12 @@ export function LearnPreviewSection() {
             </div>
           </div>
 
-          <div className="flex-1 relative w-full h-[460px] sm:h-[520px] lg:h-[620px] min-h-[440px]">
-            <MusicCharacter3D className="w-full h-full" />
+          <div className="flex-1 relative w-full h-[540px] sm:h-[620px] lg:h-[700px] min-h-[480px]">
+            <SplineScene
+              scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+              className="w-full h-full"
+              onLoad={handleSplineLoad}
+            />
           </div>
         </div>
       </div>
