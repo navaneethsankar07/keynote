@@ -50,7 +50,7 @@ export function GetStartedButton({
     "overflow-hidden rounded-full border border-white/20 px-8",
     "bg-zinc-950 text-white text-sm sm:text-base font-semibold tracking-wide",
     "transition-all duration-300 shadow-[0_0_25px_rgba(0,0,0,0.5)]",
-    "hover:border-white/60 hover:text-zinc-950 hover:shadow-[0_0_35px_rgba(255,255,255,0.2)]",
+    "hover:border-zinc-300/60 hover:text-zinc-900 hover:shadow-[0_0_35px_rgba(255,255,255,0.18)]",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
     className ?? "",
   ].join(" ");
@@ -60,14 +60,14 @@ export function GetStartedButton({
       <span
         aria-hidden="true"
         className={[
-          "pointer-events-none absolute left-1/2 top-1/2 h-5 w-5",
+          "pointer-events-none absolute left-1/2 top-1/2 h-80 w-80",
           "-translate-x-1/2 -translate-y-1/2 scale-0 rounded-full",
-          "bg-white",
+          "bg-zinc-200",
           "transition-transform duration-500 ease-out",
-          "group-hover:scale-[40] group-focus-visible:scale-[40]",
+          "group-hover:scale-100 group-focus-visible:scale-100",
         ].join(" ")}
       />
-      <span className="relative z-10 transition-colors duration-300 text-white group-hover:text-zinc-950">
+      <span className="relative z-10 transition-colors duration-300 text-white group-hover:text-zinc-900">
         {label}
       </span>
       <svg
@@ -80,7 +80,7 @@ export function GetStartedButton({
         strokeWidth={2.2}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="relative z-10 transition-transform duration-150 ease-linear text-white group-hover:text-zinc-950"
+        className="relative z-10 transition-transform duration-150 ease-linear text-white group-hover:text-zinc-900"
         style={{ transform: `rotate(${angle}deg)` }}
       >
         <line x1="5" y1="12" x2="19" y2="12" />
