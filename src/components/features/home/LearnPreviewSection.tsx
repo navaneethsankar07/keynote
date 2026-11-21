@@ -9,68 +9,73 @@ import { Spotlight } from "@/components/ui/spotlight";
 
 export function LearnPreviewSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const splineRef = useRef<Application | null>(null);
-  const isHoveredRef = useRef(false);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const handlePointerEnter = useCallback(() => {
-    isHoveredRef.current = true;
-    if (splineRef.current) {
-      try {
-        splineRef.current.canvas?.dispatchEvent(
-          new PointerEvent("pointerenter", { bubbles: true, cancelable: true })
-        );
-        splineRef.current.setGlobalEvents(true);
-      } catch {}
+  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLElement>) => {
+    const canvas =
+      canvasRef.current || sectionRef.current?.querySelector("canvas");
+    if (!canvas) return;
+
+    if (e.target !== canvas && !canvas.contains(e.target as Node)) {
+      canvas.dispatchEvent(new PointerEvent("pointerenter", { bubbles: true }));
+
+      const syntheticEvent = new PointerEvent("pointermove", {
+        bubbles: true,
+        cancelable: true,
+        clientX: e.clientX,
+        clientY: e.clientY,
+        screenX: e.screenX,
+        screenY: e.screenY,
+        pointerId: e.pointerId ?? 1,
+        pointerType: e.pointerType ?? "mouse",
+      });
+
+      Object.defineProperty(syntheticEvent, "pageX", {
+        value: e.pageX || e.clientX + window.scrollX,
+      });
+      Object.defineProperty(syntheticEvent, "pageY", {
+        value: e.pageY || e.clientY + window.scrollY,
+      });
+
+      canvas.dispatchEvent(syntheticEvent);
     }
   }, []);
 
-  const handlePointerMove = useCallback(() => {
-    if (!isHoveredRef.current) {
-      handlePointerEnter();
-    }
-  }, [handlePointerEnter]);
-
   const handlePointerLeave = useCallback(() => {
-    isHoveredRef.current = false;
-    if (splineRef.current) {
-      try {
-        splineRef.current.setGlobalEvents(false);
-        const canvas = splineRef.current.canvas;
-        if (canvas) {
-          const rect = canvas.getBoundingClientRect();
-          canvas.dispatchEvent(
-            new PointerEvent("pointermove", {
-              bubbles: true,
-              cancelable: true,
-              clientX: rect.left + rect.width / 2,
-              clientY: rect.top + rect.height / 2,
-            })
-          );
-          canvas.dispatchEvent(
-            new PointerEvent("pointerleave", { bubbles: true, cancelable: true })
-          );
-        }
-      } catch {}
-    }
+    const canvas =
+      canvasRef.current || sectionRef.current?.querySelector("canvas");
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+
+    const centerEvent = new PointerEvent("pointermove", {
+      bubbles: true,
+      cancelable: true,
+      clientX: centerX,
+      clientY: centerY,
+      pointerId: 1,
+      pointerType: "mouse",
+    });
+
+    Object.defineProperty(centerEvent, "pageX", {
+      value: centerX + window.scrollX,
+    });
+    Object.defineProperty(centerEvent, "pageY", {
+      value: centerY + window.scrollY,
+    });
+
+    canvas.dispatchEvent(centerEvent);
   }, []);
 
   const handleSplineLoad = useCallback((app: Application) => {
-    splineRef.current = app;
-    if (sectionRef.current?.matches(":hover")) {
-      isHoveredRef.current = true;
-      try {
-        app.canvas?.dispatchEvent(
-          new PointerEvent("pointerenter", { bubbles: true, cancelable: true })
-        );
-        app.setGlobalEvents(true);
-      } catch {}
-    }
+    canvasRef.current = app.canvas;
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      onPointerEnter={handlePointerEnter}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       className="relative py-20 sm:py-28 md:py-32 border-t border-white/5 bg-[#07080e]/50 overflow-hidden"
