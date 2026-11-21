@@ -8,7 +8,7 @@ const Spline = lazy(() => import('@splinetool/react-spline'))
 interface SplineSceneProps {
   scene: string
   className?: string
-  onLoad?: (e: Application) => void
+  onLoad?: (spline: Application) => void
 }
 
 export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
