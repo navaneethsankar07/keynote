@@ -80,29 +80,29 @@ export function HowItWorksSection() {
             How it works
           </h2>
 
-          <p className="mt-4 text-base sm:text-lg text-text-secondary leading-relaxed max-w-2xl">
+          <p className="mt-4 text-base sm:text-lg text-[#8e93a0] leading-relaxed max-w-2xl font-sans">
             Keynote combines audio signal processing and music theory to deconstruct any song into intuitive musical elements.
           </p>
         </div>
 
-        <div className="relative mb-8 max-w-6xl mx-auto">
+        <div className="relative mb-10 sm:mb-12 max-w-6xl mx-auto">
           <div
-            className="hidden md:block absolute top-1/2 -translate-y-1/2 left-[16.666%] right-[16.666%] h-px bg-white/15"
+            className="hidden md:block absolute top-1/2 -translate-y-1/2 left-[16.666%] right-[16.666%] h-px bg-[#262833]"
             aria-hidden="true"
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             <div className="flex justify-center">
-              <div className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full bg-[#181922] border border-white/20 text-xs font-semibold text-white/90 shadow-md">
+              <div className="relative z-10 flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-[#14151b] border border-[#2b2d38] text-xs font-semibold text-white/90 shadow-md">
                 1
               </div>
             </div>
             <div className="flex justify-center">
-              <div className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full bg-[#181922] border border-white/20 text-xs font-semibold text-white/90 shadow-md">
+              <div className="relative z-10 flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-[#14151b] border border-[#2b2d38] text-xs font-semibold text-white/90 shadow-md">
                 2
               </div>
             </div>
             <div className="flex justify-center">
-              <div className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full bg-[#181922] border border-white/20 text-xs font-semibold text-white/90 shadow-md">
+              <div className="relative z-10 flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-[#14151b] border border-[#2b2d38] text-xs font-semibold text-white/90 shadow-md">
                 3
               </div>
             </div>
@@ -113,36 +113,36 @@ export function HowItWorksSection() {
           {steps.map((item, idx) => (
             <div
               key={idx}
-              className="group relative flex flex-col justify-between rounded-[24px] border border-white/10 bg-[#121319] p-7 sm:p-8 shadow-xl transition-all duration-300 ease-out hover:-translate-y-2 hover:border-white/25 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.85),0_0_35px_rgba(255,255,255,0.03)] overflow-hidden"
+              className="group relative flex flex-col justify-between rounded-[24px] border border-white/[0.08] bg-[#121319] p-7 sm:p-8 shadow-xl transition-all duration-300 ease-out hover:-translate-y-2 hover:border-white/20 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.85),0_0_35px_rgba(255,255,255,0.03)] overflow-hidden"
             >
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               <div className="absolute inset-0 bg-gradient-to-b from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-[24px]" />
 
               <div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/[0.04] border border-white/10 group-hover:border-white/25 group-hover:bg-white/[0.08] transition-all duration-300 mb-6">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/[0.04] border border-white/[0.08] group-hover:border-white/20 group-hover:bg-white/[0.08] transition-all duration-300 mb-6">
                   {item.icon}
                 </div>
 
-                <h3 className="font-display text-xl sm:text-2xl font-bold text-white mb-2.5 tracking-tight">
+                <h3 className="font-display text-xl sm:text-[22px] font-bold text-white mb-2.5 tracking-tight">
                   {item.title}
                 </h3>
 
-                <p className="text-sm text-text-secondary leading-relaxed mb-6 font-sans">
+                <p className="text-sm text-[#8e93a0] leading-relaxed mb-6 font-sans">
                   {item.description}
                 </p>
-              </div>
 
-              <ul className="space-y-2.5 pt-4 border-t border-white/[0.06]">
-                {item.bullets.map((bullet, bIdx) => (
-                  <li
-                    key={bIdx}
-                    className="flex items-start gap-2.5 text-xs sm:text-sm text-[#9da1b4] font-sans"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-white/40 mt-1.5 shrink-0 group-hover:bg-white/70 transition-colors duration-300" />
-                    <span className="leading-snug">{bullet}</span>
-                  </li>
-                ))}
-              </ul>
+                <ul className="space-y-3">
+                  {item.bullets.map((bullet, bIdx) => (
+                    <li
+                      key={bIdx}
+                      className="flex items-start gap-2.5 text-xs sm:text-sm text-[#9da1b4] font-sans"
+                    >
+                      <span className="w-2 h-2 rounded-full bg-[#525666] mt-1.5 shrink-0 group-hover:bg-[#8e93a0] transition-colors duration-300" />
+                      <span className="leading-snug">{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ))}
         </div>
