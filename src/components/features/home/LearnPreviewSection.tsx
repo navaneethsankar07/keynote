@@ -7,113 +7,66 @@ import { ArrowRightIcon } from "@/components/ui/Icons";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 
-const NOTE_FREQS: Record<string, number> = {
-  B3: 246.94,
-  C4: 261.63,
-  "C#4": 277.18,
-  D4: 293.66,
-  "Eb4": 311.13,
-  E4: 329.63,
-  F4: 349.23,
-  "F#4": 369.99,
-  G4: 392.0,
-  "Ab4": 415.3,
-  A4: 440.0,
-  "A#4": 466.16,
-  "Bb4": 466.16,
-  B4: 493.88,
-  C5: 523.25,
-  "C#5": 554.37,
-  D5: 587.33,
-  "Eb5": 622.25,
-  E5: 659.25,
-  F5: 698.46,
-};
-
 const REAL_SONGS = [
   {
-    title: "Never Gonna Give You Up",
-    lyrics:
-      "Never gonna give you up! Never gonna let you down! Never gonna run around and desert you! Never gonna make you cry! Never gonna say goodbye!",
-    tempo: 114,
-    notes: ["F4", "G4", "Bb4", "G4", "D5", "D5", "C5", "F4", "G4", "Bb4", "G4", "C5", "C5", "Bb4", "A4", "G4"],
+    title: "Starboy",
+    artist: "The Weeknd ft. Daft Punk",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/11/71/d6/1171d6ad-3c96-e027-2af6-58028426588c/mzaf_15137631797407745471.plus.aac.p.m4a",
   },
   {
-    title: "Bohemian Rhapsody",
-    lyrics:
-      "Mama! Just killed a man! Put a gun against his head, pulled my trigger now he's dead! Mama! Life had just begun, but now I've gone and thrown it all away!",
-    tempo: 76,
-    notes: ["Bb4", "D4", "F4", "G4", "Eb4", "G4", "Bb4", "F4", "D4", "Bb4", "C4", "D4", "Eb4", "F4"],
+    title: "One of the Girls",
+    artist: "The Weeknd, JENNIE & Lily-Rose Depp",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9e/2f/1f/9e2f1f11-20a8-767a-0e33-9029028a7024/mzaf_1603981766065362477.plus.aac.p.m4a",
   },
   {
-    title: "All Star",
-    lyrics:
-      "Somebody once told me the world is gonna roll me, I ain't the sharpest tool in the shed! She was looking kind of dumb with her finger and her thumb in the shape of an L on her forehead!",
-    tempo: 104,
-    notes: ["F#4", "C#5", "A#4", "A#4", "G4", "F#4", "F#4", "B4", "A#4", "A#4", "G4", "G4", "F#4"],
+    title: "Die For You",
+    artist: "The Weeknd",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/50/50/1a/50501a86-bd74-e90d-8a56-68c9b5e6e7d6/mzaf_4588197682084244913.plus.aac.p.m4a",
   },
   {
-    title: "I Want It That Way",
-    lyrics:
-      "Tell me why! Ain't nothin' but a heartache! Tell me why! Ain't nothin' but a mistake! Tell me why! I never wanna hear you say, I want it that way!",
-    tempo: 100,
-    notes: ["F#4", "E4", "D4", "E4", "F#4", "B4", "A4", "G4", "F#4", "E4", "F#4", "D4"],
+    title: "Save Your Tears",
+    artist: "The Weeknd",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/8b/38/17/8b3817e4-c0e9-7e02-2654-3e2ecee93603/mzaf_18415642125637540903.plus.aac.p.m4a",
   },
   {
-    title: "Don't Stop Believin'",
-    lyrics:
-      "Just a small town girl, livin' in a lonely world! She took the midnight train goin' anywhere! Just a city boy, born and raised in South Detroit! Don't stop believin'! Hold on to that feelin'!",
-    tempo: 118,
-    notes: ["E4", "B4", "G4", "E4", "B4", "C#5", "B4", "A4", "G4", "F#4", "E4"],
+    title: "The Hills",
+    artist: "The Weeknd",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/0b/70/c8/0b70c898-ec23-3131-5d17-aa7417045013/mzaf_3059117378996578649.plus.aac.p.m4a",
   },
   {
-    title: "Hey Jude",
-    lyrics:
-      "Hey Jude, don't make it bad! Take a sad song and make it better! Remember to let her into your heart, then you can start to make it better! Na, na na, na-na-na na!",
-    tempo: 78,
-    notes: ["C5", "A4", "A4", "C5", "D5", "G4", "G4", "A4", "Bb4", "F5", "F5", "E5", "C5", "D5"],
+    title: "Creepin'",
+    artist: "Metro Boomin, The Weeknd & 21 Savage",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/47/ba/83/47ba83bd-ff6a-d4b2-f126-545a170f0775/mzaf_2932236241939206370.plus.aac.p.m4a",
   },
   {
-    title: "Livin' on a Prayer",
-    lyrics:
-      "Whoa, we're halfway there! Whoa-oh, livin' on a prayer! Take my hand, we'll make it I swear! Whoa-oh, livin' on a prayer!",
-    tempo: 122,
-    notes: ["E4", "G4", "A4", "B4", "D5", "C5", "B4", "A4", "G4", "A4", "B4", "E4"],
+    title: "Kill Bill",
+    artist: "SZA",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/45/2b/ea/452bead6-c7f5-82d4-f5f7-ec876014b4cc/mzaf_2905911853279084717.plus.aac.p.m4a",
   },
   {
-    title: "Billie Jean",
-    lyrics:
-      "Billie Jean is not my lover! She's just a girl who claims that I am the one, but the kid is not my son! She says I am the one, but the kid is not my son! Hee-hee!",
-    tempo: 117,
-    notes: ["F#4", "C#4", "E4", "F#4", "E4", "C#4", "B3", "C#4", "F#4", "C#4", "E4", "F#4"],
+    title: "Snooze",
+    artist: "SZA",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b3/9b/ca/b39bca57-2627-1aec-77af-cbf551205394/mzaf_4430383240210492712.plus.aac.p.m4a",
   },
   {
-    title: "Blinding Lights",
-    lyrics:
-      "I said, ooh, I'm blinded by the lights! No, I can't sleep until I feel your touch! I said, ooh, I'm drowning in the night! Oh, when I'm like this, you're the one I trust!",
-    tempo: 170,
-    notes: ["F4", "F4", "Eb4", "F4", "G4", "C5", "Bb4", "Ab4", "G4", "F4", "Eb4", "F4"],
+    title: "Pink + White",
+    artist: "Frank Ocean",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ba/11/dc/ba11dccd-16d2-9cd8-13f0-85b73acc0a09/mzaf_1304250511099243436.plus.aac.p.m4a",
   },
   {
-    title: "Fly Me to the Moon",
-    lyrics:
-      "Fly me to the moon, let me play among the stars! Let me see what spring is like on Jupiter and Mars! In other words, hold my hand! In other words, baby, kiss me!",
-    tempo: 118,
-    notes: ["C5", "B4", "A4", "G4", "F4", "G4", "A4", "C5", "B4", "A4", "G4", "F4", "E4"],
-  },
-  {
-    title: "Eye of the Tiger",
-    lyrics:
-      "It's the eye of the tiger, it's the thrill of the fight! Risin' up to the challenge of our rival! And the last known survivor stalks his prey in the night, and he's watching us all with the eye of the tiger!",
-    tempo: 109,
-    notes: ["C4", "C4", "Bb4", "C4", "C4", "Bb4", "C4", "C4", "Eb4", "D4", "C4"],
-  },
-  {
-    title: "Take On Me",
-    lyrics:
-      "Take on me! Take on me! Take me on! Take on me! I'll be gone, in a day or two!",
-    tempo: 168,
-    notes: ["B3", "B3", "D4", "G4", "G4", "F#4", "A4", "A4", "A4", "E4", "G4", "G4", "G4", "F#4", "D4"],
+    title: "Saturn",
+    artist: "SZA",
+    audioSrc:
+      "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/7c/28/b3/7c28b3ed-9aa9-6454-92c6-e46d20849bed/mzaf_518591709818271733.plus.aac.p.m4a",
   },
 ];
 
@@ -340,110 +293,102 @@ export function LearnPreviewSection() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const lastTriggerTimeRef = useRef(0);
   const pendingClickRef = useRef<{ clientX: number; clientY: number; relX: number; relY: number } | null>(null);
-  const [isSinging, setIsSinging] = useState(false);
-  const activeAudioContextRef = useRef<AudioContext | null>(null);
-  const lastSongIndexRef = useRef(-1);
-
-  const stopSinging = useCallback(() => {
-    setIsSinging(false);
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-    }
-    if (activeAudioContextRef.current) {
-      try {
-        activeAudioContextRef.current.close();
-      } catch {}
-      activeAudioContextRef.current = null;
-    }
-  }, []);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlayingSong, setIsPlayingSong] = useState(false);
+  const currentSongIndexRef = useRef<number>(-1);
 
   useEffect(() => {
     return () => {
-      stopSinging();
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
     };
-  }, [stopSinging]);
+  }, []);
 
-  const singSong = useCallback((song: (typeof REAL_SONGS)[number]) => {
-    if (typeof window === "undefined") return;
-
-    stopSinging();
-    setIsSinging(true);
-
-    try {
-      const AudioContextClass =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      if (AudioContextClass) {
-        const ctx = new AudioContextClass();
-        activeAudioContextRef.current = ctx;
-
-        const noteDuration = (60 / song.tempo) * 0.7;
-        const now = ctx.currentTime + 0.05;
-
-        const loopNotes = [...song.notes, ...song.notes, ...song.notes];
-        loopNotes.forEach((noteStr, idx) => {
-          const freq = NOTE_FREQS[noteStr];
-          if (!freq) return;
-
-          const startTime = now + idx * noteDuration;
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(freq, startTime);
-
-          gain.gain.setValueAtTime(0.001, startTime);
-          gain.gain.exponentialRampToValueAtTime(0.12, startTime + 0.03);
-          gain.gain.exponentialRampToValueAtTime(0.001, startTime + noteDuration * 0.9);
-
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-
-          osc.start(startTime);
-          osc.stop(startTime + noteDuration);
-        });
-      }
-    } catch {}
-
-    if ("speechSynthesis" in window) {
-      try {
-        const utterance = new SpeechSynthesisUtterance(song.lyrics);
-        const maleVoice = getMaleVoice();
-        if (maleVoice) {
-          utterance.voice = maleVoice;
-        }
-        utterance.pitch = 0.95;
-        utterance.rate = 1.08;
-        utterance.volume = 1;
-
-        utterance.onend = () => {
-          stopSinging();
-        };
-
-        utterance.onerror = () => {
-          stopSinging();
-        };
-
-        window.speechSynthesis.speak(utterance);
-      } catch {
-        stopSinging();
-      }
-    }
-  }, [stopSinging]);
-
-  const handleSingRandomSong = useCallback((e: React.MouseEvent) => {
+  const handleSingSong = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    let nextIdx: number;
-    do {
-      nextIdx = Math.floor(Math.random() * REAL_SONGS.length);
-    } while (nextIdx === lastSongIndexRef.current && REAL_SONGS.length > 1);
-    lastSongIndexRef.current = nextIdx;
 
-    singSong(REAL_SONGS[nextIdx]);
-  }, [singSong]);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+
+    let nextIdx = Math.floor(Math.random() * REAL_SONGS.length);
+    if (nextIdx === currentSongIndexRef.current) {
+      nextIdx = (nextIdx + 1) % REAL_SONGS.length;
+    }
+    currentSongIndexRef.current = nextIdx;
+
+    const song = REAL_SONGS[nextIdx];
+    const audio = new Audio(song.audioSrc);
+    audioRef.current = audio;
+
+    audio.onplay = () => setIsPlayingSong(true);
+    audio.onended = () => {
+      setIsPlayingSong(false);
+      audioRef.current = null;
+    };
+    audio.onpause = () => setIsPlayingSong(false);
+    audio.onerror = () => {
+      setIsPlayingSong(false);
+      audioRef.current = null;
+    };
+
+    audio.play().catch(() => {
+      setIsPlayingSong(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isPlayingSong) return;
+
+    let animFrame: number;
+    const startTime = Date.now();
+
+    const grooveLoop = () => {
+      const canvas =
+        canvasRef.current || sectionRef.current?.querySelector("canvas");
+      if (canvas) {
+        const rect = canvas.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const elapsed = (Date.now() - startTime) / 1000;
+        const swayX = Math.sin(elapsed * 4.2) * (rect.width * 0.12);
+        const bobY = Math.abs(Math.sin(elapsed * 4.2)) * (rect.height * 0.05);
+
+        const syntheticEvent = new PointerEvent("pointermove", {
+          bubbles: true,
+          cancelable: true,
+          clientX: centerX + swayX,
+          clientY: centerY - bobY,
+          pointerId: 1,
+          pointerType: "mouse",
+        });
+
+        Object.defineProperty(syntheticEvent, "pageX", {
+          value: centerX + swayX + window.scrollX,
+        });
+        Object.defineProperty(syntheticEvent, "pageY", {
+          value: centerY - bobY + window.scrollY,
+        });
+
+        canvas.dispatchEvent(syntheticEvent);
+      }
+      animFrame = requestAnimationFrame(grooveLoop);
+    };
+
+    animFrame = requestAnimationFrame(grooveLoop);
+    return () => cancelAnimationFrame(animFrame);
+  }, [isPlayingSong]);
 
   const triggerReaction = useCallback(
-    (targetName: string, clientX?: number, clientY?: number, relY?: number) => {
+    (targetName: string, _clientX?: number, _clientY?: number, relY?: number) => {
       const text = getReactionForTarget(targetName, relY);
       if (!text) return;
 
@@ -451,11 +396,10 @@ export function LearnPreviewSection() {
       if (now - lastTriggerTimeRef.current < 200) return;
       lastTriggerTimeRef.current = now;
 
-      stopSinging();
       playCartoonSound();
       speakPhrase(text);
     },
-    [stopSinging]
+    []
   );
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLElement>) => {
@@ -629,41 +573,42 @@ export function LearnPreviewSection() {
             onPointerDown={handleCanvasContainerPointerDown}
             className="flex-1 relative w-full h-[420px] sm:h-[480px] lg:h-[580px] min-h-[400px]"
           >
-            <button
-              type="button"
-              onClick={handleSingRandomSong}
-              aria-label="Sing a song"
-              className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/[0.08] hover:bg-white/[0.18] active:scale-95 border border-white/20 hover:border-white/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.37),inset_0_1px_1px_rgba(255,255,255,0.25)] transition-all duration-300 cursor-pointer overflow-hidden group"
-            >
-              {isSinging ? (
-                <div className="flex items-end justify-center gap-1 h-5 w-5">
-                  <span className="w-1 bg-cyan-400 rounded-full animate-[pulse_0.6s_ease-in-out_infinite] h-4" />
-                  <span className="w-1 bg-violet-400 rounded-full animate-[pulse_0.4s_ease-in-out_infinite] h-5" />
-                  <span className="w-1 bg-indigo-400 rounded-full animate-[pulse_0.8s_ease-in-out_infinite] h-3" />
-                </div>
-              ) : (
-                <svg
-                  className="w-5 h-5 sm:w-6 sm:h-6 text-white/80 group-hover:text-white transition-colors group-hover:scale-110 duration-200"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M9 18V5l12-2v13" />
-                  <circle cx="6" cy="18" r="3" />
-                  <circle cx="18" cy="16" r="3" />
-                </svg>
-              )}
-            </button>
-
             <SplineScene
               scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
               className="w-full h-full"
               onLoad={handleSplineLoad}
               onSplineMouseDown={handleSplineMouseDown}
             />
+
+            <button
+              type="button"
+              onClick={handleSingSong}
+              aria-label="Make character sing"
+              className={`absolute bottom-6 right-6 sm:bottom-8 sm:right-8 z-20 flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full backdrop-blur-2xl transition-all duration-300 ease-out active:scale-95 group shadow-2xl cursor-pointer ${
+                isPlayingSong
+                  ? "bg-white/20 border-2 border-white/50 ring-4 ring-purple-500/30 shadow-[0_0_35px_rgba(168,85,247,0.55),inset_0_1px_2px_rgba(255,255,255,0.6)] scale-105"
+                  : "bg-white/[0.10] hover:bg-white/[0.18] border border-white/25 hover:border-white/40 shadow-[0_8px_32px_0_rgba(0,0,0,0.45),inset_0_1px_2px_rgba(255,255,255,0.35)] hover:scale-105"
+              }`}
+            >
+              <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/10 to-white/25 opacity-70 group-hover:opacity-100 transition-opacity" />
+
+              {isPlayingSong ? (
+                <div className="relative z-10 flex items-center gap-[3px]">
+                  <span className="w-1 h-3.5 bg-white rounded-full animate-[bounce_0.8s_ease-in-out_infinite] [animation-delay:0ms]" />
+                  <span className="w-1 h-6 bg-white rounded-full animate-[bounce_0.7s_ease-in-out_infinite] [animation-delay:180ms]" />
+                  <span className="w-1 h-4.5 bg-white rounded-full animate-[bounce_0.85s_ease-in-out_infinite] [animation-delay:360ms]" />
+                  <span className="w-1 h-2.5 bg-white rounded-full animate-[bounce_0.75s_ease-in-out_infinite] [animation-delay:90ms]" />
+                </div>
+              ) : (
+                <svg
+                  className="relative z-10 w-6 h-6 text-white/90 group-hover:text-white transition-transform group-hover:scale-110 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
+                </svg>
+              )}
+            </button>
           </div>
         </div>
       </div>
