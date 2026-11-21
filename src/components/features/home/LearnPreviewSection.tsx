@@ -46,12 +46,13 @@ const playCartoonSound = () => {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
-    osc.type = "sine";
+    osc.type = "sawtooth";
     const now = ctx.currentTime;
-    osc.frequency.setValueAtTime(340, now);
-    osc.frequency.exponentialRampToValueAtTime(780, now + 0.12);
+    osc.frequency.setValueAtTime(180, now);
+    osc.frequency.exponentialRampToValueAtTime(320, now + 0.08);
+    osc.frequency.exponentialRampToValueAtTime(120, now + 0.18);
 
-    gain.gain.setValueAtTime(0.22, now);
+    gain.gain.setValueAtTime(0.18, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
 
     osc.connect(gain);
@@ -62,13 +63,36 @@ const playCartoonSound = () => {
   } catch {}
 };
 
+const getMaleVoice = (): SpeechSynthesisVoice | null => {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return null;
+  const voices = window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return null;
+
+  const english = voices.filter((v) => v.lang.startsWith("en"));
+  const pool = english.length > 0 ? english : voices;
+
+  const preferred = pool.find((v) =>
+    /(male|david|alex|fred|daniel|george|james|guy|tom|oliver|aaron|mark)/i.test(v.name)
+  );
+
+  const fallbackNonFemale = pool.find(
+    (v) => !/(female|woman|zira|samantha|victoria|karen|fiona|moira|veena|cynthia)/i.test(v.name)
+  );
+
+  return preferred || fallbackNonFemale || pool[0];
+};
+
 const speakPhrase = (phrase: string) => {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
   try {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(phrase);
-    utterance.pitch = 1.45;
-    utterance.rate = 1.25;
+    const maleVoice = getMaleVoice();
+    if (maleVoice) {
+      utterance.voice = maleVoice;
+    }
+    utterance.pitch = 0.82;
+    utterance.rate = 1.12;
     utterance.volume = 1;
     window.speechSynthesis.speak(utterance);
   } catch {}
