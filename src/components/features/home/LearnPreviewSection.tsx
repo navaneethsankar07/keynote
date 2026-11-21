@@ -7,8 +7,18 @@ import { ArrowRightIcon } from "@/components/ui/Icons";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 
-const getReactionForTarget = (name: string): string => {
+const getReactionForTarget = (name: string, relativeY?: number): string => {
   const lower = name.toLowerCase();
+
+  if (lower.includes("neck")) {
+    const neckPhrases = [
+      "Ow, my neck!",
+      "Hey, don't choke me!",
+      "Ouch, watch the neck!",
+      "Hey, ticklish neck!",
+    ];
+    return neckPhrases[Math.floor(Math.random() * neckPhrases.length)];
+  }
 
   if (lower.includes("eye")) {
     const eyePhrases = [
@@ -39,7 +49,7 @@ const getReactionForTarget = (name: string): string => {
     return earPhrases[Math.floor(Math.random() * earPhrases.length)];
   }
 
-  if (lower.includes("chest") || lower.includes("body") || lower.includes("fusedbody")) {
+  if (lower.includes("chest")) {
     const chestPhrases = [
       "Ouch, my chest!",
       "Hey, what are you doing to my chest?!",
@@ -49,16 +59,44 @@ const getReactionForTarget = (name: string): string => {
     return chestPhrases[Math.floor(Math.random() * chestPhrases.length)];
   }
 
-  if (lower.includes("belly")) {
+  if (
+    lower.includes("belly") ||
+    lower.includes("stomach") ||
+    lower.includes("pelvic") ||
+    lower.includes("bottom")
+  ) {
     const bellyPhrases = [
       "Ouch! That tickles!",
       "Oof, not the belly!",
       "Hey, personal space!",
+      "Watch the gut, man!",
     ];
     return bellyPhrases[Math.floor(Math.random() * bellyPhrases.length)];
   }
 
-  if (lower.includes("arm") || lower.includes("hand") || lower.includes("forearm")) {
+  if (lower.includes("body") || lower.includes("fusedbody")) {
+    if (relativeY !== undefined && relativeY >= 0.6) {
+      const bellyPhrases = [
+        "Ouch! That tickles!",
+        "Oof, not the belly!",
+        "Hey, personal space!",
+      ];
+      return bellyPhrases[Math.floor(Math.random() * bellyPhrases.length)];
+    }
+    const chestPhrases = [
+      "Ouch, my chest!",
+      "Hey, what are you doing to my chest?!",
+      "Oof, right in the chest!",
+    ];
+    return chestPhrases[Math.floor(Math.random() * chestPhrases.length)];
+  }
+
+  if (
+    lower.includes("arm") ||
+    lower.includes("hand") ||
+    lower.includes("forearm") ||
+    lower.includes("elbow")
+  ) {
     const armPhrases = [
       "Hey, that's my hand!",
       "Don't grab my arm!",
@@ -68,11 +106,17 @@ const getReactionForTarget = (name: string): string => {
     return armPhrases[Math.floor(Math.random() * armPhrases.length)];
   }
 
-  if (lower.includes("leg") || lower.includes("foot")) {
+  if (
+    lower.includes("leg") ||
+    lower.includes("foot") ||
+    lower.includes("femur") ||
+    lower.includes("shin")
+  ) {
     const legPhrases = [
       "Ow, my leg!",
       "Hey, watch my feet!",
       "Oof, watch your step!",
+      "That's my shin, ow!",
     ];
     return legPhrases[Math.floor(Math.random() * legPhrases.length)];
   }
@@ -155,15 +199,15 @@ export function LearnPreviewSection() {
   const [reaction, setReaction] = useState<{ text: string; x: number; y: number } | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastTriggerTimeRef = useRef(0);
-  const pendingClickRef = useRef<{ clientX: number; clientY: number } | null>(null);
+  const pendingClickRef = useRef<{ clientX: number; clientY: number; relY?: number } | null>(null);
 
   const triggerReaction = useCallback(
-    (targetName: string, clientX?: number, clientY?: number) => {
+    (targetName: string, clientX?: number, clientY?: number, relY?: number) => {
       const now = Date.now();
       if (now - lastTriggerTimeRef.current < 200) return;
       lastTriggerTimeRef.current = now;
 
-      const text = getReactionForTarget(targetName);
+      const text = getReactionForTarget(targetName, relY);
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -262,35 +306,42 @@ export function LearnPreviewSection() {
     (e: SplineEvent) => {
       const coords = pendingClickRef.current;
       pendingClickRef.current = null;
-      triggerReaction(e.target?.name || "chest", coords?.clientX, coords?.clientY);
+      triggerReaction(
+        e.target?.name || "chest",
+        coords?.clientX,
+        coords?.clientY,
+        coords?.relY
+      );
     },
     [triggerReaction]
   );
 
   const handleCanvasContainerPointerDown = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
-      pendingClickRef.current = { clientX: e.clientX, clientY: e.clientY };
-
       const canvas = canvasRef.current || e.currentTarget.querySelector("canvas");
       if (canvas) {
         const rect = canvas.getBoundingClientRect();
         const relX = (e.clientX - rect.left) / rect.width;
         const relY = (e.clientY - rect.top) / rect.height;
 
+        pendingClickRef.current = { clientX: e.clientX, clientY: e.clientY, relY };
+
         let part = "chest";
-        if (relX < 0.35 || relX > 0.65) {
-          if (relY > 0.38 && relY < 0.72) {
+        if (relX < 0.32 || relX > 0.68) {
+          if (relY > 0.35 && relY < 0.72) {
             part = "arm";
           }
         }
         if (part !== "arm") {
-          if (relY < 0.32) {
+          if (relY < 0.30) {
             part = "head";
-          } else if (relY < 0.44) {
+          } else if (relY < 0.38) {
             part = "eye";
-          } else if (relY < 0.62) {
+          } else if (relY < 0.46) {
+            part = "neck";
+          } else if (relY < 0.60) {
             part = "chest";
-          } else if (relY < 0.76) {
+          } else if (relY < 0.74) {
             part = "belly";
           } else {
             part = "leg";
@@ -299,7 +350,7 @@ export function LearnPreviewSection() {
 
         setTimeout(() => {
           if (pendingClickRef.current) {
-            triggerReaction(part, e.clientX, e.clientY);
+            triggerReaction(part, e.clientX, e.clientY, relY);
             pendingClickRef.current = null;
           }
         }, 50);
