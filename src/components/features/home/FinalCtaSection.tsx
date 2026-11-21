@@ -62,7 +62,7 @@ export function FinalCtaSection() {
 
           <ShinyButton
             href="/learn"
-            label="Browse music theory"
+            label="Explore music theory"
           />
         </div>
 
