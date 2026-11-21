@@ -225,47 +225,280 @@ const speakPhrase = (phrase: string) => {
   } catch {}
 };
 
+interface Song {
+  lines: { text: string; pitch: number; rate: number }[];
+  melody: { freq: number; duration: number }[];
+}
+
+const SONGS: Song[] = [
+  {
+    lines: [
+      { text: "Never gonna give you up,", pitch: 1.05, rate: 1.15 },
+      { text: "Never gonna let you down!", pitch: 0.95, rate: 1.15 },
+      { text: "Never gonna run around and desert you!", pitch: 1.12, rate: 1.25 },
+      { text: "Never gonna make you cry, oh yeah!", pitch: 1.25, rate: 1.2 },
+    ],
+    melody: [
+      { freq: 261.63, duration: 0.2 },
+      { freq: 293.66, duration: 0.2 },
+      { freq: 329.63, duration: 0.25 },
+      { freq: 392.0, duration: 0.35 },
+      { freq: 440.0, duration: 0.3 },
+      { freq: 523.25, duration: 0.5 },
+    ],
+  },
+  {
+    lines: [
+      { text: "Is this the real life?", pitch: 0.85, rate: 1.05 },
+      { text: "Or is this just fantasy?", pitch: 0.95, rate: 1.1 },
+      { text: "Caught in a landslide, no escape from reality!", pitch: 1.1, rate: 1.2 },
+      { text: "Mamaaa, ooh-ooh-ooh!", pitch: 1.35, rate: 0.95 },
+    ],
+    melody: [
+      { freq: 349.23, duration: 0.3 },
+      { freq: 392.0, duration: 0.3 },
+      { freq: 440.0, duration: 0.35 },
+      { freq: 349.23, duration: 0.4 },
+      { freq: 523.25, duration: 0.6 },
+    ],
+  },
+  {
+    lines: [
+      { text: "Sweet Caroline!", pitch: 1.15, rate: 1.05 },
+      { text: "Ba, ba, baaa!", pitch: 1.35, rate: 1.15 },
+      { text: "Good times never seemed so good!", pitch: 1.1, rate: 1.15 },
+      { text: "So good! So good! So good!", pitch: 1.28, rate: 1.25 },
+    ],
+    melody: [
+      { freq: 392.0, duration: 0.25 },
+      { freq: 440.0, duration: 0.25 },
+      { freq: 493.88, duration: 0.3 },
+      { freq: 587.33, duration: 0.4 },
+      { freq: 523.25, duration: 0.5 },
+    ],
+  },
+  {
+    lines: [
+      { text: "Fly me to the moon,", pitch: 1.0, rate: 1.05 },
+      { text: "And let me play among the stars!", pitch: 1.15, rate: 1.15 },
+      { text: "Let me see what spring is like on Jupiter and Mars!", pitch: 1.08, rate: 1.2 },
+      { text: "In other words... Do be do be doo!", pitch: 1.25, rate: 1.1 },
+    ],
+    melody: [
+      { freq: 440.0, duration: 0.25 },
+      { freq: 392.0, duration: 0.25 },
+      { freq: 349.23, duration: 0.3 },
+      { freq: 329.63, duration: 0.3 },
+      { freq: 293.66, duration: 0.5 },
+    ],
+  },
+  {
+    lines: [
+      { text: "Whether you're a brother or whether you're a mother,", pitch: 0.92, rate: 1.25 },
+      { text: "You're stayin' alive, stayin' alive!", pitch: 1.28, rate: 1.2 },
+      { text: "Feel the city breakin' and everybody shakin'!", pitch: 1.0, rate: 1.25 },
+      { text: "Ah, ha, ha, ha, stayin' alive, stayin' alive!", pitch: 1.35, rate: 1.2 },
+    ],
+    melody: [
+      { freq: 349.23, duration: 0.2 },
+      { freq: 392.0, duration: 0.2 },
+      { freq: 440.0, duration: 0.25 },
+      { freq: 523.25, duration: 0.4 },
+      { freq: 587.33, duration: 0.45 },
+    ],
+  },
+  {
+    lines: [
+      { text: "Just a small town girl,", pitch: 0.95, rate: 1.1 },
+      { text: "Livin' in a lonely world!", pitch: 1.05, rate: 1.15 },
+      { text: "Don't stop believin'!", pitch: 1.25, rate: 1.1 },
+      { text: "Hold on to that feelin'! Oh-whoa-oh!", pitch: 1.32, rate: 1.15 },
+    ],
+    melody: [
+      { freq: 329.63, duration: 0.25 },
+      { freq: 392.0, duration: 0.25 },
+      { freq: 493.88, duration: 0.35 },
+      { freq: 440.0, duration: 0.35 },
+      { freq: 523.25, duration: 0.5 },
+    ],
+  },
+  {
+    lines: [
+      { text: "Somebody once told me the world is gonna roll me,", pitch: 0.95, rate: 1.25 },
+      { text: "I ain't the sharpest tool in the shed!", pitch: 0.9, rate: 1.25 },
+      { text: "Hey now, you're an all star, get your game on, go play!", pitch: 1.22, rate: 1.2 },
+      { text: "Only shooting stars break the mold!", pitch: 1.18, rate: 1.25 },
+    ],
+    melody: [
+      { freq: 392.0, duration: 0.2 },
+      { freq: 440.0, duration: 0.2 },
+      { freq: 392.0, duration: 0.2 },
+      { freq: 493.88, duration: 0.35 },
+      { freq: 523.25, duration: 0.5 },
+    ],
+  },
+  {
+    lines: [
+      { text: "Work it harder, make it better,", pitch: 0.95, rate: 1.2 },
+      { text: "Do it faster, makes us stronger!", pitch: 1.1, rate: 1.2 },
+      { text: "More than ever, hour after, our work is never over!", pitch: 1.25, rate: 1.25 },
+      { text: "Around the world, around the world! Beep boop!", pitch: 1.32, rate: 1.2 },
+    ],
+    melody: [
+      { freq: 261.63, duration: 0.2 },
+      { freq: 329.63, duration: 0.2 },
+      { freq: 392.0, duration: 0.25 },
+      { freq: 523.25, duration: 0.35 },
+      { freq: 659.25, duration: 0.45 },
+    ],
+  },
+];
+
+const playSongMelody = (notes: { freq: number; duration: number }[]) => {
+  if (typeof window === "undefined") return () => {};
+  try {
+    const AudioContextClass =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return () => {};
+    const ctx = new AudioContextClass();
+    let startTime = ctx.currentTime + 0.05;
+    const oscs: OscillatorNode[] = [];
+
+    notes.forEach(({ freq, duration }) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, startTime);
+
+      gain.gain.setValueAtTime(0.001, startTime);
+      gain.gain.linearRampToValueAtTime(0.12, startTime + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(startTime);
+      osc.stop(startTime + duration);
+      oscs.push(osc);
+      startTime += duration;
+    });
+
+    return () => {
+      try {
+        oscs.forEach((osc) => {
+          try {
+            osc.stop();
+          } catch {}
+        });
+        ctx.close();
+      } catch {}
+    };
+  } catch {
+    return () => {};
+  }
+};
+
+const singSong = (
+  song: Song,
+  onFinish?: () => void
+): (() => void) => {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+    onFinish?.();
+    return () => {};
+  }
+
+  let isCanceled = false;
+  window.speechSynthesis.cancel();
+  const stopMelody = playSongMelody(song.melody);
+  const maleVoice = getMaleVoice();
+
+  let lineIndex = 0;
+  const speakNextLine = () => {
+    if (isCanceled || lineIndex >= song.lines.length) {
+      if (!isCanceled) {
+        onFinish?.();
+      }
+      return;
+    }
+
+    const line = song.lines[lineIndex];
+    lineIndex++;
+
+    const utterance = new SpeechSynthesisUtterance(line.text);
+    if (maleVoice) {
+      utterance.voice = maleVoice;
+    }
+    utterance.pitch = line.pitch;
+    utterance.rate = line.rate;
+    utterance.volume = 1;
+
+    utterance.onend = () => {
+      if (!isCanceled) {
+        speakNextLine();
+      }
+    };
+
+    utterance.onerror = () => {
+      if (!isCanceled) {
+        onFinish?.();
+      }
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  speakNextLine();
+
+  return () => {
+    isCanceled = true;
+    window.speechSynthesis.cancel();
+    stopMelody();
+  };
+};
+
 export function LearnPreviewSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [reaction, setReaction] = useState<{ text: string; x: number; y: number } | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isSinging, setIsSinging] = useState(false);
+  const stopSingingRef = useRef<(() => void) | null>(null);
+  const lastSongIndexRef = useRef<number>(-1);
   const lastTriggerTimeRef = useRef(0);
   const pendingClickRef = useRef<{ clientX: number; clientY: number; relX: number; relY: number } | null>(null);
 
+  const handleSingClick = useCallback(() => {
+    if (stopSingingRef.current) {
+      stopSingingRef.current();
+      stopSingingRef.current = null;
+    }
+
+    let nextIndex = Math.floor(Math.random() * SONGS.length);
+    if (SONGS.length > 1 && nextIndex === lastSongIndexRef.current) {
+      nextIndex = (nextIndex + 1) % SONGS.length;
+    }
+    lastSongIndexRef.current = nextIndex;
+
+    setIsSinging(true);
+    stopSingingRef.current = singSong(SONGS[nextIndex], () => {
+      setIsSinging(false);
+      stopSingingRef.current = null;
+    });
+  }, []);
+
   const triggerReaction = useCallback(
-    (targetName: string, clientX?: number, clientY?: number, relY?: number) => {
+    (targetName: string, relY?: number) => {
       const text = getReactionForTarget(targetName, relY);
       if (!text) return;
+
+      if (stopSingingRef.current) {
+        stopSingingRef.current();
+        stopSingingRef.current = null;
+        setIsSinging(false);
+      }
 
       const now = Date.now();
       if (now - lastTriggerTimeRef.current < 200) return;
       lastTriggerTimeRef.current = now;
-
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      if (clientX !== undefined && clientY !== undefined && sectionRef.current) {
-        const sectionRect = sectionRef.current.getBoundingClientRect();
-        setReaction({
-          text,
-          x: clientX - sectionRect.left,
-          y: clientY - sectionRect.top - 15,
-        });
-      } else if (canvasRef.current && sectionRef.current) {
-        const cRect = canvasRef.current.getBoundingClientRect();
-        const sRect = sectionRef.current.getBoundingClientRect();
-        setReaction({
-          text,
-          x: cRect.left - sRect.left + cRect.width / 2,
-          y: cRect.top - sRect.top + cRect.height * 0.25,
-        });
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        setReaction(null);
-      }, 1800);
 
       playCartoonSound();
       speakPhrase(text);
@@ -342,12 +575,7 @@ export function LearnPreviewSection() {
       if (coords && !isInsideBody(coords.relX, coords.relY)) {
         return;
       }
-      triggerReaction(
-        e.target?.name || "chest",
-        coords?.clientX,
-        coords?.clientY,
-        coords?.relY
-      );
+      triggerReaction(e.target?.name || "chest", coords?.relY);
     },
     [triggerReaction]
   );
@@ -389,7 +617,7 @@ export function LearnPreviewSection() {
 
       setTimeout(() => {
         if (pendingClickRef.current) {
-          triggerReaction(part, e.clientX, e.clientY, relY);
+          triggerReaction(part, relY);
           pendingClickRef.current = null;
         }
       }, 60);
@@ -408,18 +636,6 @@ export function LearnPreviewSection() {
         className="-top-40 left-0 md:left-40 lg:left-60 md:-top-20"
         fill="white"
       />
-
-      {reaction && (
-        <div
-          className="pointer-events-none absolute z-30 transition-all duration-200"
-          style={{ left: reaction.x, top: reaction.y }}
-        >
-          <div className="relative -translate-x-1/2 -translate-y-full rounded-2xl bg-white px-4 py-2 font-display text-xs sm:text-sm font-bold text-black shadow-2xl border-2 border-accent-violet animate-bounce">
-            <span>{reaction.text}</span>
-            <div className="absolute left-1/2 -bottom-1.5 h-3 w-3 -translate-x-1/2 rotate-45 bg-white border-r-2 border-b-2 border-accent-violet" />
-          </div>
-        </div>
-      )}
 
       <div className="pointer-events-none absolute -top-24 right-1/4 w-[500px] h-[500px] rounded-full bg-accent-violet/10 blur-[140px]" />
       <div className="pointer-events-none absolute -bottom-24 left-1/4 w-[450px] h-[450px] rounded-full bg-accent-cyan/10 blur-[130px]" />
@@ -462,6 +678,38 @@ export function LearnPreviewSection() {
               onLoad={handleSplineLoad}
               onSplineMouseDown={handleSplineMouseDown}
             />
+
+            <button
+              type="button"
+              onClick={handleSingClick}
+              onPointerDown={(e) => e.stopPropagation()}
+              title="Sing a song"
+              aria-label="Make character sing"
+              className={`absolute bottom-5 right-5 sm:bottom-7 sm:right-7 z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center backdrop-blur-xl border transition-all duration-300 hover:scale-110 active:scale-95 group focus:outline-none ${
+                isSinging
+                  ? "bg-white/[0.18] border-accent-violet/60 ring-2 ring-accent-violet/60 shadow-[0_0_25px_rgba(139,92,246,0.6)]"
+                  : "bg-white/[0.08] hover:bg-white/[0.18] border-white/20 hover:border-white/40 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]"
+              }`}
+            >
+              <svg
+                className={`w-5 h-5 sm:w-6 sm:h-6 transition-all duration-300 ${
+                  isSinging
+                    ? "text-accent-cyan scale-110 animate-pulse"
+                    : "text-white/80 group-hover:text-white"
+                }`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"
+                />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
