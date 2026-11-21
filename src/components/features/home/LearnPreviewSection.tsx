@@ -11,60 +11,70 @@ const REAL_SONGS = [
   {
     title: "Starboy",
     artist: "The Weeknd ft. Daft Punk",
+    bpm: 93,
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/11/71/d6/1171d6ad-3c96-e027-2af6-58028426588c/mzaf_15137631797407745471.plus.aac.p.m4a",
   },
   {
     title: "One of the Girls",
     artist: "The Weeknd, JENNIE & Lily-Rose Depp",
+    bpm: 118,
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9e/2f/1f/9e2f1f11-20a8-767a-0e33-9029028a7024/mzaf_1603981766065362477.plus.aac.p.m4a",
   },
   {
     title: "Die For You",
     artist: "The Weeknd",
+    bpm: 134,
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/50/50/1a/50501a86-bd74-e90d-8a56-68c9b5e6e7d6/mzaf_4588197682084244913.plus.aac.p.m4a",
   },
   {
     title: "Save Your Tears",
     artist: "The Weeknd",
+    bpm: 118,
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/8b/38/17/8b3817e4-c0e9-7e02-2654-3e2ecee93603/mzaf_18415642125637540903.plus.aac.p.m4a",
   },
   {
     title: "The Hills",
     artist: "The Weeknd",
+    bpm: 113,
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/0b/70/c8/0b70c898-ec23-3131-5d17-aa7417045013/mzaf_3059117378996578649.plus.aac.p.m4a",
   },
   {
     title: "Creepin'",
     artist: "Metro Boomin, The Weeknd & 21 Savage",
+    bpm: 98,
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/47/ba/83/47ba83bd-ff6a-d4b2-f126-545a170f0775/mzaf_2932236241939206370.plus.aac.p.m4a",
   },
   {
     title: "Kill Bill",
     artist: "SZA",
+    bpm: 89,
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/45/2b/ea/452bead6-c7f5-82d4-f5f7-ec876014b4cc/mzaf_2905911853279084717.plus.aac.p.m4a",
   },
   {
     title: "Snooze",
     artist: "SZA",
+    bpm: 143,
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/b3/9b/ca/b39bca57-2627-1aec-77af-cbf551205394/mzaf_4430383240210492712.plus.aac.p.m4a",
   },
   {
     title: "Pink + White",
     artist: "Frank Ocean",
+    bpm: 160,
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ba/11/dc/ba11dccd-16d2-9cd8-13f0-85b73acc0a09/mzaf_1304250511099243436.plus.aac.p.m4a",
   },
   {
     title: "Saturn",
     artist: "SZA",
+    bpm: 178,
     audioSrc:
       "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/7c/28/b3/7c28b3ed-9aa9-6454-92c6-e46d20849bed/mzaf_518591709818271733.plus.aac.p.m4a",
   },
@@ -344,47 +354,116 @@ export function LearnPreviewSection() {
     });
   }, []);
 
+  const splineAppRef = useRef<Application | null>(null);
+
   useEffect(() => {
     if (!isPlayingSong) return;
 
     let animFrame: number;
-    const startTime = Date.now();
+    const startTime = performance.now();
+    const song =
+      currentSongIndexRef.current >= 0
+        ? REAL_SONGS[currentSongIndexRef.current]
+        : REAL_SONGS[0];
+    const bpm = song?.bpm || 118;
+    const beatFreq = (bpm / 60) * Math.PI * 2;
 
-    const grooveLoop = () => {
+    const app = splineAppRef.current;
+    let baseHeadRot: { x: number; y: number; z: number } | null = null;
+    let baseBodyRot: { x: number; y: number; z: number } | null = null;
+
+    try {
+      const head = app?.findObjectByName("Head");
+      const body = app?.findObjectByName("Body");
+      if (head) baseHeadRot = { ...head.rotation };
+      if (body) baseBodyRot = { ...body.rotation };
+    } catch {}
+
+    const danceLoop = (currentTime: number) => {
       const canvas =
         canvasRef.current || sectionRef.current?.querySelector("canvas");
+
+      const t = (currentTime - startTime) / 1000;
+      const beatPhase = t * beatFreq;
+
       if (canvas) {
         const rect = canvas.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
 
-        const elapsed = (Date.now() - startTime) / 1000;
-        const swayX = Math.sin(elapsed * 4.2) * (rect.width * 0.12);
-        const bobY = Math.abs(Math.sin(elapsed * 4.2)) * (rect.height * 0.05);
+        const swayX =
+          Math.sin(beatPhase * 0.5) * (rect.width * 0.28) +
+          Math.sin(beatPhase * 0.25) * (rect.width * 0.08);
+
+        const bobY =
+          Math.sin(beatPhase) * (rect.height * 0.10) +
+          Math.abs(Math.sin(beatPhase * 0.5)) * (rect.height * 0.08);
+
+        const danceX = centerX + swayX;
+        const danceY = centerY - (rect.height * 0.04) + bobY;
 
         const syntheticEvent = new PointerEvent("pointermove", {
           bubbles: true,
           cancelable: true,
-          clientX: centerX + swayX,
-          clientY: centerY - bobY,
+          clientX: danceX,
+          clientY: danceY,
           pointerId: 1,
           pointerType: "mouse",
         });
 
         Object.defineProperty(syntheticEvent, "pageX", {
-          value: centerX + swayX + window.scrollX,
+          value: danceX + window.scrollX,
         });
         Object.defineProperty(syntheticEvent, "pageY", {
-          value: centerY - bobY + window.scrollY,
+          value: danceY + window.scrollY,
         });
 
         canvas.dispatchEvent(syntheticEvent);
       }
-      animFrame = requestAnimationFrame(grooveLoop);
+
+      if (app) {
+        try {
+          const head = app.findObjectByName("Head");
+          const body = app.findObjectByName("Body");
+
+          if (head && baseHeadRot) {
+            const headTiltZ = Math.sin(beatPhase * 0.5) * 0.14;
+            const headNodX = Math.sin(beatPhase) * 0.10;
+            head.rotation.z = baseHeadRot.z + headTiltZ;
+            head.rotation.x = baseHeadRot.x + headNodX;
+          }
+
+          if (body && baseBodyRot) {
+            const bodySwayZ = Math.sin(beatPhase * 0.5) * 0.08;
+            const bodyBobX = Math.sin(beatPhase) * 0.05;
+            body.rotation.z = baseBodyRot.z + bodySwayZ;
+            body.rotation.x = baseBodyRot.x + bodyBobX;
+          }
+        } catch {}
+      }
+
+      animFrame = requestAnimationFrame(danceLoop);
     };
 
-    animFrame = requestAnimationFrame(grooveLoop);
-    return () => cancelAnimationFrame(animFrame);
+    animFrame = requestAnimationFrame(danceLoop);
+
+    return () => {
+      cancelAnimationFrame(animFrame);
+      if (app) {
+        try {
+          const head = app.findObjectByName("Head");
+          const body = app.findObjectByName("Body");
+          if (head && baseHeadRot) {
+            head.rotation.z = baseHeadRot.z;
+            head.rotation.x = baseHeadRot.x;
+          }
+          if (body && baseBodyRot) {
+            body.rotation.z = baseBodyRot.z;
+            body.rotation.x = baseBodyRot.x;
+          }
+        } catch {}
+      }
+    };
   }, [isPlayingSong]);
 
   const triggerReaction = useCallback(
@@ -402,37 +481,44 @@ export function LearnPreviewSection() {
     []
   );
 
-  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLElement>) => {
-    const canvas =
-      canvasRef.current || sectionRef.current?.querySelector("canvas");
-    if (!canvas) return;
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent<HTMLElement>) => {
+      if (isPlayingSong) return;
 
-    if (e.target !== canvas && !canvas.contains(e.target as Node)) {
-      canvas.dispatchEvent(new PointerEvent("pointerenter", { bubbles: true }));
+      const canvas =
+        canvasRef.current || sectionRef.current?.querySelector("canvas");
+      if (!canvas) return;
 
-      const syntheticEvent = new PointerEvent("pointermove", {
-        bubbles: true,
-        cancelable: true,
-        clientX: e.clientX,
-        clientY: e.clientY,
-        screenX: e.screenX,
-        screenY: e.screenY,
-        pointerId: e.pointerId ?? 1,
-        pointerType: e.pointerType ?? "mouse",
-      });
+      if (e.target !== canvas && !canvas.contains(e.target as Node)) {
+        canvas.dispatchEvent(new PointerEvent("pointerenter", { bubbles: true }));
 
-      Object.defineProperty(syntheticEvent, "pageX", {
-        value: e.pageX || e.clientX + window.scrollX,
-      });
-      Object.defineProperty(syntheticEvent, "pageY", {
-        value: e.pageY || e.clientY + window.scrollY,
-      });
+        const syntheticEvent = new PointerEvent("pointermove", {
+          bubbles: true,
+          cancelable: true,
+          clientX: e.clientX,
+          clientY: e.clientY,
+          screenX: e.screenX,
+          screenY: e.screenY,
+          pointerId: e.pointerId ?? 1,
+          pointerType: e.pointerType ?? "mouse",
+        });
 
-      canvas.dispatchEvent(syntheticEvent);
-    }
-  }, []);
+        Object.defineProperty(syntheticEvent, "pageX", {
+          value: e.pageX || e.clientX + window.scrollX,
+        });
+        Object.defineProperty(syntheticEvent, "pageY", {
+          value: e.pageY || e.clientY + window.scrollY,
+        });
+
+        canvas.dispatchEvent(syntheticEvent);
+      }
+    },
+    [isPlayingSong]
+  );
 
   const handlePointerLeave = useCallback(() => {
+    if (isPlayingSong) return;
+
     const canvas =
       canvasRef.current || sectionRef.current?.querySelector("canvas");
     if (!canvas) return;
@@ -458,9 +544,10 @@ export function LearnPreviewSection() {
     });
 
     canvas.dispatchEvent(centerEvent);
-  }, []);
+  }, [isPlayingSong]);
 
   const handleSplineLoad = useCallback((app: Application) => {
+    splineAppRef.current = app;
     canvasRef.current = app.canvas;
   }, []);
 
