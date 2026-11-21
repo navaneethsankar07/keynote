@@ -50,8 +50,8 @@ export function GetStartedButton({
     "overflow-hidden rounded-full border border-white/20 px-8",
     "bg-zinc-950 text-white text-sm sm:text-base font-semibold tracking-wide",
     "transition-all duration-300 shadow-[0_0_25px_rgba(0,0,0,0.5)]",
-    "hover:border-zinc-300/60 hover:text-zinc-900 hover:shadow-[0_0_35px_rgba(255,255,255,0.18)]",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+    "hover:border-violet-400/60 hover:text-white hover:shadow-[0_12px_40px_rgba(139,92,246,0.4),inset_0_1px_2px_rgba(255,255,255,0.45)]",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
     className ?? "",
   ].join(" ");
 
@@ -62,12 +62,12 @@ export function GetStartedButton({
         className={[
           "pointer-events-none absolute left-1/2 top-1/2 h-80 w-80",
           "-translate-x-1/2 -translate-y-1/2 scale-0 rounded-full",
-          "bg-zinc-200",
+          "bg-gradient-to-r from-violet-600 via-indigo-600 to-accent-violet",
           "transition-transform duration-500 ease-out",
           "group-hover:scale-100 group-focus-visible:scale-100",
         ].join(" ")}
       />
-      <span className="relative z-10 transition-colors duration-300 text-white group-hover:text-zinc-900">
+      <span className="relative z-10 transition-colors duration-300 text-white">
         {label}
       </span>
       <svg
@@ -80,7 +80,7 @@ export function GetStartedButton({
         strokeWidth={2.2}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="relative z-10 transition-transform duration-150 ease-linear text-white group-hover:text-zinc-900"
+        className="relative z-10 transition-transform duration-150 ease-linear text-white"
         style={{ transform: `rotate(${angle}deg)` }}
       >
         <line x1="5" y1="12" x2="19" y2="12" />
