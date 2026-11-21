@@ -26,21 +26,20 @@ const DISC = 64;
 const BLOCK = 80;
 const FILLET = 28;
 
-export function NotchedProjectCard(props: NotchedProjectCardProps) {
-  const {
-    href,
-    title,
-    description,
-    image,
-    imageAlt = "",
-    badge,
-    tags = [],
-    screen,
-    dim = screen ? 0.45 : 0,
-    monochrome = false,
-    surface = "#07080e",
-    className,
-  } = props;
+export function NotchedProjectCard({
+  href,
+  title,
+  description,
+  image,
+  imageAlt = "",
+  badge,
+  tags = [],
+  screen,
+  dim = screen ? 0.45 : 0,
+  monochrome = false,
+  surface = "#07080e",
+  className,
+}: NotchedProjectCardProps) {
   const tone = monochrome
     ? "grayscale transition-[filter,scale] duration-500 group-hover:grayscale-0 group-focus-visible:grayscale-0"
     : "transition-[scale] duration-500";
@@ -130,16 +129,7 @@ export function NotchedProjectCard(props: NotchedProjectCardProps) {
 
         <span
           aria-hidden
-          className={cn(
-            "absolute bottom-0 right-0 flex items-center justify-center rounded-full overflow-hidden z-30",
-            "backdrop-blur-xl border border-white/30 border-t-white/60 border-b-violet-400/30",
-            "bg-gradient-to-b from-white/20 via-violet-400/25 to-violet-500/20",
-            "shadow-[inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-2px_4px_rgba(139,92,246,0.3),0_8px_24px_rgba(0,0,0,0.35)]",
-            "transition-all duration-300 ease-out group-hover:scale-105",
-            "group-hover:bg-gradient-to-b group-hover:from-violet-700/85 group-hover:via-violet-800/90 group-hover:to-violet-950/95",
-            "group-hover:border-violet-400/50 group-hover:border-t-violet-300/80",
-            "group-hover:shadow-[0_12px_32px_rgba(109,40,217,0.55),inset_0_1.5px_2px_rgba(255,255,255,0.6)]"
-          )}
+          className="absolute bottom-0 right-0 flex items-center justify-center rounded-full overflow-hidden backdrop-blur-xl bg-[#0e101a]/75 text-white border border-[#a78bfa]/40 shadow-[0_0_22px_rgba(167,139,250,0.22),inset_0_1px_1.5px_rgba(255,255,255,0.45),inset_0_-1px_2px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-105 group-hover:bg-gradient-to-r group-hover:from-violet-600 group-hover:via-indigo-600 group-hover:to-accent-violet group-hover:border-violet-400/70 group-hover:shadow-[0_0_30px_rgba(139,92,246,0.5),inset_0_1px_2px_rgba(255,255,255,0.5)] z-30"
           style={{
             width: DISC,
             height: DISC,
@@ -147,9 +137,9 @@ export function NotchedProjectCard(props: NotchedProjectCardProps) {
         >
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-x-2 top-1 h-[45%] rounded-t-full bg-gradient-to-b from-white/40 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-300"
+            className="pointer-events-none absolute inset-x-3.5 top-1 h-[1.5px] rounded-full bg-gradient-to-r from-transparent via-white/80 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"
           />
-          <ArrowUpRight className="relative z-10 size-5 text-white transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
+          <ArrowUpRight className="size-5 text-white transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" />
         </span>
       </div>
 
