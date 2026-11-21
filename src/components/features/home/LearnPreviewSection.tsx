@@ -1,43 +1,12 @@
 "use client";
 
-import React, { useRef, useCallback, useEffect } from "react";
-import type { Application } from "@splinetool/runtime";
+import React from "react";
 import { Button } from "@/components/ui/Button";
 import { ArrowRightIcon } from "@/components/ui/Icons";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 
 export function LearnPreviewSection() {
-  const splineAppRef = useRef<Application | null>(null);
-
-  const applyZoom = useCallback(() => {
-    if (!splineAppRef.current) return;
-    const zoom =
-      typeof window !== "undefined"
-        ? window.innerWidth < 640
-          ? 0.55
-          : window.innerWidth < 1024
-          ? 0.62
-          : 0.68
-        : 0.68;
-    splineAppRef.current.setZoom(zoom);
-  }, []);
-
-  const handleSplineLoad = useCallback(
-    (spline: Application) => {
-      splineAppRef.current = spline;
-      applyZoom();
-      setTimeout(applyZoom, 100);
-      setTimeout(applyZoom, 300);
-    },
-    [applyZoom]
-  );
-
-  useEffect(() => {
-    window.addEventListener("resize", applyZoom);
-    return () => window.removeEventListener("resize", applyZoom);
-  }, [applyZoom]);
-
   return (
     <section className="relative py-20 sm:py-28 md:py-32 border-t border-white/5 bg-[#07080e]/50 overflow-hidden">
       <Spotlight
@@ -76,11 +45,10 @@ export function LearnPreviewSection() {
             </div>
           </div>
 
-          <div className="flex-1 relative w-full h-[520px] sm:h-[580px] lg:h-[680px] xl:h-[720px] min-h-[480px] flex items-center justify-center">
+          <div className="flex-1 relative w-full h-[420px] sm:h-[480px] lg:h-[580px] min-h-[400px]">
             <SplineScene
               scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
               className="w-full h-full"
-              onLoad={handleSplineLoad}
             />
           </div>
         </div>
