@@ -13,8 +13,7 @@ export function AudioLabPreviewSection() {
       title: "BPM Tapper",
       description:
         "Tap along to any song in real time to calculate exact tempo with millisecond averaging.",
-      image:
-        "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1200&auto=format&fit=crop",
+      image: "/images/tools/bpm-tapper.jpg",
       badge: "Real-Time",
       tags: ["Tempo", "Rhythm", "Averaging"],
       accent: "#8B5CF6",
@@ -25,8 +24,7 @@ export function AudioLabPreviewSection() {
       title: "Metronome",
       description:
         "Visual timekeeping with customizable subdivision clicks, swing accents, and time signatures.",
-      image:
-        "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200&auto=format&fit=crop",
+      image: "/images/tools/metronome.jpg",
       badge: "Precision",
       tags: ["Timekeeping", "Subdivision", "Meter"],
       accent: "#06B6D4",
@@ -37,10 +35,9 @@ export function AudioLabPreviewSection() {
       title: "Pitch & Note Explorer",
       description:
         "Calibrate and explore frequency to note conversions from sub-bass to hypersonic overtones.",
-      image:
-        "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=1200&auto=format&fit=crop",
+      image: "/images/tools/pitch-explorer.jpg",
       badge: "Frequency",
-      tags: ["Tuning", "Hertz", "Harmonics"],
+      tags: ["Tuning", "440 Hz", "Harmonics"],
       accent: "#C084FC",
       href: "/audio-lab",
     },
@@ -49,8 +46,7 @@ export function AudioLabPreviewSection() {
       title: "Scale Explorer",
       description:
         "Interactive diatonic, pentatonic, and exotic scale generator with instant step formulas.",
-      image:
-        "https://images.unsplash.com/photo-1552422535-c45813c61732?q=80&w=1200&auto=format&fit=crop",
+      image: "/images/tools/scale-explorer.jpg",
       badge: "Modal Theory",
       tags: ["Scales", "Modes", "Voicings"],
       accent: "#818CF8",
@@ -61,8 +57,7 @@ export function AudioLabPreviewSection() {
       title: "Interval Explorer",
       description:
         "Calculate semitone spans, inverted intervals, and psychoacoustic consonance rankings.",
-      image:
-        "https://images.unsplash.com/photo-1612225330812-01a9c6b355ec?q=80&w=1200&auto=format&fit=crop",
+      image: "/images/tools/interval-explorer.jpg",
       badge: "Acoustics",
       tags: ["Intervals", "Consonance", "Harmony"],
       accent: "#22D3EE",
@@ -73,8 +68,7 @@ export function AudioLabPreviewSection() {
       title: "Waveform Visualizer",
       description:
         "High-definition time-domain waveforms and spectral overtone waterfalls for visual inspection.",
-      image:
-        "https://images.unsplash.com/photo-1558584724-0e4d32ca55a4?q=80&w=1200&auto=format&fit=crop",
+      image: "/images/tools/waveform-visualizer.jpg",
       badge: "Spectral FFT",
       tags: ["Waveform", "Spectrogram", "Audio FFT"],
       accent: "#34D399",
