@@ -26,20 +26,21 @@ const DISC = 64;
 const BLOCK = 80;
 const FILLET = 28;
 
-export function NotchedProjectCard({
-  href,
-  title,
-  description,
-  image,
-  imageAlt = "",
-  badge,
-  tags = [],
-  screen,
-  dim = screen ? 0.45 : 0,
-  monochrome = false,
-  surface = "#07080e",
-  className,
-}: NotchedProjectCardProps) {
+export function NotchedProjectCard(props: NotchedProjectCardProps) {
+  const {
+    href,
+    title,
+    description,
+    image,
+    imageAlt = "",
+    badge,
+    tags = [],
+    screen,
+    dim = screen ? 0.45 : 0,
+    monochrome = false,
+    surface = "#07080e",
+    className,
+  } = props;
   const tone = monochrome
     ? "grayscale transition-[filter,scale] duration-500 group-hover:grayscale-0 group-focus-visible:grayscale-0"
     : "transition-[scale] duration-500";
@@ -127,22 +128,29 @@ export function NotchedProjectCard({
           />
         ))}
 
-        <div
+        <span
           aria-hidden
-          className="absolute bottom-0 right-0 flex items-center justify-center z-30 pointer-events-none"
+          className={cn(
+            "absolute bottom-0 right-0 flex items-center justify-center rounded-full overflow-hidden z-30",
+            "backdrop-blur-xl border border-white/30 border-t-white/60 border-b-violet-400/30",
+            "bg-gradient-to-b from-white/20 via-violet-400/25 to-violet-500/20",
+            "shadow-[inset_0_1.5px_1px_rgba(255,255,255,0.7),inset_0_-2px_4px_rgba(139,92,246,0.3),0_8px_24px_rgba(0,0,0,0.35)]",
+            "transition-all duration-300 ease-out group-hover:scale-105",
+            "group-hover:bg-gradient-to-b group-hover:from-violet-700/85 group-hover:via-violet-800/90 group-hover:to-violet-950/95",
+            "group-hover:border-violet-400/50 group-hover:border-t-violet-300/80",
+            "group-hover:shadow-[0_12px_32px_rgba(109,40,217,0.55),inset_0_1.5px_2px_rgba(255,255,255,0.6)]"
+          )}
           style={{
             width: DISC,
             height: DISC,
           }}
         >
-          <div className="tactile-btn w-12 h-12 text-[14px]">
-            <div className="button-outer">
-              <div className="button-inner">
-                <ArrowUpRight className="arrow-icon w-5 h-5" strokeWidth={2.4} />
-              </div>
-            </div>
-          </div>
-        </div>
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-x-2 top-1 h-[45%] rounded-t-full bg-gradient-to-b from-white/40 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-300"
+          />
+          <ArrowUpRight className="relative z-10 size-5 text-white transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
+        </span>
       </div>
 
       <h3 className="mt-5 font-display text-2xl font-bold tracking-tight text-white group-hover:text-white transition-colors">
