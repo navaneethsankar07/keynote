@@ -38,8 +38,6 @@ export function NotchedProjectCard({
   dim = screen ? 0.45 : 0,
   monochrome = false,
   surface = "#07080e",
-  accent,
-  accentForeground = "#ffffff",
   className,
 }: NotchedProjectCardProps) {
   const tone = monochrome
@@ -129,25 +127,22 @@ export function NotchedProjectCard({
           />
         ))}
 
-        <span
+        <div
           aria-hidden
-          className={cn(
-            "absolute bottom-0 right-0 flex items-center justify-center rounded-full bg-white/10 text-white transition-[background-color,color,scale] duration-300 group-hover:scale-105 border border-white/10 shadow-lg z-30",
-            accent
-              ? "group-hover:bg-[var(--card-accent)] group-hover:text-[var(--card-accent-fg)] group-hover:border-transparent"
-              : "group-hover:bg-accent-violet group-hover:text-white"
-          )}
-          style={
-            {
-              width: DISC,
-              height: DISC,
-              "--card-accent": accent,
-              "--card-accent-fg": accentForeground,
-            } as React.CSSProperties
-          }
+          className="absolute bottom-0 right-0 flex items-center justify-center z-30 pointer-events-none"
+          style={{
+            width: DISC,
+            height: DISC,
+          }}
         >
-          <ArrowUpRight className="size-5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-        </span>
+          <div className="tactile-btn w-12 h-12 text-[14px]">
+            <div className="button-outer">
+              <div className="button-inner">
+                <ArrowUpRight className="arrow-icon w-5 h-5" strokeWidth={2.4} />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <h3 className="mt-5 font-display text-2xl font-bold tracking-tight text-white group-hover:text-white transition-colors">
