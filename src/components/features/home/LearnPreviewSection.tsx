@@ -1,14 +1,80 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useCallback } from "react";
+import type { Application } from "@splinetool/runtime";
 import { Button } from "@/components/ui/Button";
 import { ArrowRightIcon } from "@/components/ui/Icons";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 
 export function LearnPreviewSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const splineRef = useRef<Application | null>(null);
+  const isHoveredRef = useRef(false);
+
+  const handlePointerEnter = useCallback(() => {
+    isHoveredRef.current = true;
+    if (splineRef.current) {
+      try {
+        splineRef.current.canvas?.dispatchEvent(
+          new PointerEvent("pointerenter", { bubbles: true, cancelable: true })
+        );
+        splineRef.current.setGlobalEvents(true);
+      } catch {}
+    }
+  }, []);
+
+  const handlePointerMove = useCallback(() => {
+    if (!isHoveredRef.current) {
+      handlePointerEnter();
+    }
+  }, [handlePointerEnter]);
+
+  const handlePointerLeave = useCallback(() => {
+    isHoveredRef.current = false;
+    if (splineRef.current) {
+      try {
+        splineRef.current.setGlobalEvents(false);
+        const canvas = splineRef.current.canvas;
+        if (canvas) {
+          const rect = canvas.getBoundingClientRect();
+          canvas.dispatchEvent(
+            new PointerEvent("pointermove", {
+              bubbles: true,
+              cancelable: true,
+              clientX: rect.left + rect.width / 2,
+              clientY: rect.top + rect.height / 2,
+            })
+          );
+          canvas.dispatchEvent(
+            new PointerEvent("pointerleave", { bubbles: true, cancelable: true })
+          );
+        }
+      } catch {}
+    }
+  }, []);
+
+  const handleSplineLoad = useCallback((app: Application) => {
+    splineRef.current = app;
+    if (sectionRef.current?.matches(":hover")) {
+      isHoveredRef.current = true;
+      try {
+        app.canvas?.dispatchEvent(
+          new PointerEvent("pointerenter", { bubbles: true, cancelable: true })
+        );
+        app.setGlobalEvents(true);
+      } catch {}
+    }
+  }, []);
+
   return (
-    <section className="relative py-20 sm:py-28 md:py-32 border-t border-white/5 bg-[#07080e]/50 overflow-hidden">
+    <section
+      ref={sectionRef}
+      onPointerEnter={handlePointerEnter}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+      className="relative py-20 sm:py-28 md:py-32 border-t border-white/5 bg-[#07080e]/50 overflow-hidden"
+    >
       <Spotlight
         className="-top-40 left-0 md:left-40 lg:left-60 md:-top-20"
         fill="white"
@@ -49,6 +115,7 @@ export function LearnPreviewSection() {
             <SplineScene
               scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
               className="w-full h-full"
+              onLoad={handleSplineLoad}
             />
           </div>
         </div>
