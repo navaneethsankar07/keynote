@@ -48,9 +48,9 @@ export function GetStartedButton({
   const sharedClasses = [
     "group relative inline-flex h-14 items-center justify-center gap-2",
     "overflow-hidden rounded-full border border-white/20 px-8",
-    "bg-white text-zinc-950 text-sm sm:text-base font-semibold tracking-wide",
-    "transition-all duration-300 shadow-[0_0_25px_rgba(255,255,255,0.15)]",
-    "hover:border-white/50 hover:text-white hover:shadow-[0_0_35px_rgba(255,255,255,0.25)]",
+    "bg-zinc-950 text-white text-sm sm:text-base font-semibold tracking-wide",
+    "transition-all duration-300 shadow-[0_0_25px_rgba(0,0,0,0.5)]",
+    "hover:border-white/60 hover:text-zinc-950 hover:shadow-[0_0_35px_rgba(255,255,255,0.2)]",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
     className ?? "",
   ].join(" ");
@@ -62,12 +62,12 @@ export function GetStartedButton({
         className={[
           "pointer-events-none absolute left-1/2 top-1/2 h-5 w-5",
           "-translate-x-1/2 -translate-y-1/2 scale-0 rounded-full",
-          "bg-zinc-950 border border-white/20",
+          "bg-white",
           "transition-transform duration-500 ease-out",
           "group-hover:scale-[40] group-focus-visible:scale-[40]",
         ].join(" ")}
       />
-      <span className="relative z-10 transition-colors duration-300 group-hover:text-white">
+      <span className="relative z-10 transition-colors duration-300 text-white group-hover:text-zinc-950">
         {label}
       </span>
       <svg
@@ -80,7 +80,7 @@ export function GetStartedButton({
         strokeWidth={2.2}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="relative z-10 transition-transform duration-150 ease-linear text-zinc-950 group-hover:text-white"
+        className="relative z-10 transition-transform duration-150 ease-linear text-white group-hover:text-zinc-950"
         style={{ transform: `rotate(${angle}deg)` }}
       >
         <line x1="5" y1="12" x2="19" y2="12" />

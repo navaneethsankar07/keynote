@@ -22,15 +22,7 @@ export function FinalCtaSection() {
       />
 
       <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
-        <div className="flex items-center justify-center gap-3 mb-8">
-          <span className="relative flex size-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
-          </span>
-          <span className="text-xs sm:text-sm font-medium tracking-[0.25em] uppercase text-text-secondary/80">
-            Audio Intelligence Ready
-          </span>
-        </div>
+
 
         <div className="group relative cursor-pointer inline-block mx-auto mb-6">
           <div className="flex flex-col items-center">
