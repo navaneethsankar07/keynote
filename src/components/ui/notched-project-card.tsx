@@ -129,7 +129,7 @@ export function NotchedProjectCard({
 
         <span
           aria-hidden
-          className="absolute bottom-0 right-0 flex items-center justify-center rounded-full overflow-hidden backdrop-blur-xl bg-[#0e101a]/75 text-white border border-[#a78bfa]/40 shadow-[0_0_22px_rgba(167,139,250,0.22),inset_0_1px_1.5px_rgba(255,255,255,0.45),inset_0_-1px_2px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-105 group-hover:bg-gradient-to-r group-hover:from-violet-600 group-hover:via-indigo-600 group-hover:to-accent-violet group-hover:border-violet-400/70 group-hover:shadow-[0_0_30px_rgba(139,92,246,0.5),inset_0_1px_2px_rgba(255,255,255,0.5)] z-30"
+          className="absolute bottom-0 right-0 flex items-center justify-center rounded-full overflow-hidden backdrop-blur-xl bg-[#0e101a]/75 text-white border border-[#a78bfa]/40 shadow-[0_0_22px_rgba(167,139,250,0.22),inset_0_1px_1.5px_rgba(255,255,255,0.45),inset_0_-1px_2px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-105 group-hover:bg-[#7c3aed] group-hover:border-[#7c3aed] group-hover:shadow-[0_0_30px_rgba(124,58,237,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] z-30"
           style={{
             width: DISC,
             height: DISC,
@@ -139,7 +139,7 @@ export function NotchedProjectCard({
             aria-hidden
             className="pointer-events-none absolute inset-x-3.5 top-1 h-[1.5px] rounded-full bg-gradient-to-r from-transparent via-white/80 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"
           />
-          <ArrowUpRight className="size-5 text-white transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" />
+          <ArrowUpRight className="size-5 text-white" />
         </span>
       </div>
 
