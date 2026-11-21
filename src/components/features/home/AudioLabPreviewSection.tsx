@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { SlidersIcon, ArrowRightIcon } from "@/components/ui/Icons";
+import { ArrowRightIcon } from "@/components/ui/Icons";
 import { NotchedProjectCard } from "@/components/ui/notched-project-card";
 
 export function AudioLabPreviewSection() {
@@ -14,8 +13,6 @@ export function AudioLabPreviewSection() {
       description:
         "Tap along to any song in real time to calculate exact tempo with millisecond averaging.",
       image: "/images/tools/bpm-tapper.jpg",
-      badge: "Real-Time",
-      tags: ["Tempo", "Rhythm", "Averaging"],
       accent: "#8B5CF6",
       href: "/audio-lab",
     },
@@ -25,8 +22,6 @@ export function AudioLabPreviewSection() {
       description:
         "Visual timekeeping with customizable subdivision clicks, swing accents, and time signatures.",
       image: "/images/tools/metronome.jpg",
-      badge: "Precision",
-      tags: ["Timekeeping", "Subdivision", "Meter"],
       accent: "#06B6D4",
       href: "/audio-lab",
     },
@@ -36,8 +31,6 @@ export function AudioLabPreviewSection() {
       description:
         "Calibrate and explore frequency to note conversions from sub-bass to hypersonic overtones.",
       image: "/images/tools/pitch-explorer.jpg",
-      badge: "Frequency",
-      tags: ["Tuning", "440 Hz", "Harmonics"],
       accent: "#C084FC",
       href: "/audio-lab",
     },
@@ -47,8 +40,6 @@ export function AudioLabPreviewSection() {
       description:
         "Interactive diatonic, pentatonic, and exotic scale generator with instant step formulas.",
       image: "/images/tools/scale-explorer.jpg",
-      badge: "Modal Theory",
-      tags: ["Scales", "Modes", "Voicings"],
       accent: "#818CF8",
       href: "/audio-lab",
     },
@@ -58,8 +49,6 @@ export function AudioLabPreviewSection() {
       description:
         "Calculate semitone spans, inverted intervals, and psychoacoustic consonance rankings.",
       image: "/images/tools/interval-explorer.jpg",
-      badge: "Acoustics",
-      tags: ["Intervals", "Consonance", "Harmony"],
       accent: "#22D3EE",
       href: "/audio-lab",
     },
@@ -69,8 +58,6 @@ export function AudioLabPreviewSection() {
       description:
         "High-definition time-domain waveforms and spectral overtone waterfalls for visual inspection.",
       image: "/images/tools/waveform-visualizer.jpg",
-      badge: "Spectral FFT",
-      tags: ["Waveform", "Spectrogram", "Audio FFT"],
       accent: "#34D399",
       href: "/audio-lab",
     },
@@ -80,11 +67,6 @@ export function AudioLabPreviewSection() {
     <section className="relative py-24 sm:py-32 border-t border-white/5 bg-[#07080e]/60 overflow-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-16 sm:mb-20">
-          <Badge variant="cyan" size="md" className="mb-4">
-            <SlidersIcon size={13} className="text-accent-cyan" />
-            <span>Interactive Tools</span>
-          </Badge>
-
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-text-primary leading-[1.15]">
             Explore music{" "}
             <span className="bg-gradient-to-r from-cyan-300 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
@@ -106,8 +88,6 @@ export function AudioLabPreviewSection() {
               title={tool.title}
               description={tool.description}
               image={tool.image}
-              badge={tool.badge}
-              tags={tool.tags}
               accent={tool.accent}
               surface="#07080e"
             />
