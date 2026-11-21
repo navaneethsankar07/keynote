@@ -1,12 +1,7 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React from "react";
 import Link from "next/link";
-
-function shortestAngle(from: number, to: number) {
-  const diff = ((to - from + 540) % 360) - 180;
-  return from + diff;
-}
 
 export interface GetStartedButtonProps {
   label?: string;
@@ -21,36 +16,12 @@ export function GetStartedButton({
   href,
   className,
 }: GetStartedButtonProps) {
-  const btnRef = useRef<HTMLButtonElement | HTMLAnchorElement | null>(null);
-  const [angle, setAngle] = useState(-45);
-  const lastAngleRef = useRef(-45);
-
-  const handleMouseMove = (
-    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
-  ) => {
-    const rect = btnRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const rawAngle =
-      Math.atan2(e.clientY - cy, e.clientX - cx) * (180 / Math.PI);
-    const nextAngle = shortestAngle(lastAngleRef.current, rawAngle);
-    lastAngleRef.current = nextAngle;
-    setAngle(nextAngle);
-  };
-
-  const resetAngle = () => {
-    const nextAngle = shortestAngle(lastAngleRef.current, -45);
-    lastAngleRef.current = nextAngle;
-    setAngle(nextAngle);
-  };
-
   const sharedClasses = [
-    "group relative inline-flex h-14 items-center justify-center gap-2",
+    "group relative inline-flex h-14 items-center justify-center gap-2.5",
     "overflow-hidden rounded-full border border-white/20 px-8",
     "bg-zinc-950 text-white text-sm sm:text-base font-semibold tracking-wide",
     "transition-all duration-300 shadow-[0_0_25px_rgba(0,0,0,0.5)]",
-    "hover:border-violet-400/60 hover:text-white hover:shadow-[0_12px_40px_rgba(139,92,246,0.4),inset_0_1px_2px_rgba(255,255,255,0.45)]",
+    "hover:border-violet-400/60 hover:shadow-[0_12px_40px_rgba(139,92,246,0.35)]",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
     className ?? "",
   ].join(" ");
@@ -80,8 +51,7 @@ export function GetStartedButton({
         strokeWidth={2.2}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="relative z-10 transition-transform duration-150 ease-linear text-white"
-        style={{ transform: `rotate(${angle}deg)` }}
+        className="relative z-10 text-white transition-transform duration-300 ease-out -rotate-45 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
       >
         <line x1="5" y1="12" x2="19" y2="12" />
         <polyline points="12 5 19 12 12 19" />
@@ -92,11 +62,8 @@ export function GetStartedButton({
   if (href) {
     return (
       <Link
-        ref={btnRef as React.RefObject<HTMLAnchorElement>}
         href={href}
         onClick={onClick}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={resetAngle}
         aria-label={label}
         className={sharedClasses}
       >
@@ -107,11 +74,8 @@ export function GetStartedButton({
 
   return (
     <button
-      ref={btnRef as React.RefObject<HTMLButtonElement>}
       type="button"
       onClick={onClick}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={resetAngle}
       aria-label={label}
       className={sharedClasses}
     >
@@ -121,4 +85,3 @@ export function GetStartedButton({
 }
 
 export default GetStartedButton;
-
