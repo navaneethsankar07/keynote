@@ -9,27 +9,78 @@ import { Spotlight } from "@/components/ui/spotlight";
 
 const getReactionForTarget = (name: string): string => {
   const lower = name.toLowerCase();
+
   if (lower.includes("eye")) {
-    const eyePhrases = ["Ohh, my eye!", "Ow! Not my eye!", "Hey, watch my eye!"];
+    const eyePhrases = [
+      "Ohh, my eye!",
+      "Ow! Not my eye!",
+      "Hey, watch my eye!",
+      "My eye! I need that to see!",
+    ];
     return eyePhrases[Math.floor(Math.random() * eyePhrases.length)];
   }
+
   if (lower.includes("head") || lower.includes("hair")) {
-    const headPhrases = ["Ouch! Watch the hair!", "Ow, my head!", "Hey, careful up there!"];
+    const headPhrases = [
+      "Ouch! Watch my head!",
+      "Ow, my head!",
+      "Hey, watch the hair!",
+      "Don't touch my head!",
+    ];
     return headPhrases[Math.floor(Math.random() * headPhrases.length)];
   }
+
+  if (lower.includes("ear")) {
+    const earPhrases = [
+      "Ow, my ear!",
+      "Hey, that's my ear!",
+      "Too close to the ear!",
+    ];
+    return earPhrases[Math.floor(Math.random() * earPhrases.length)];
+  }
+
+  if (lower.includes("chest") || lower.includes("body") || lower.includes("fusedbody")) {
+    const chestPhrases = [
+      "Ouch, my chest!",
+      "Hey, what are you doing to my chest?!",
+      "Oof, right in the chest!",
+      "Don't poke my chest!",
+    ];
+    return chestPhrases[Math.floor(Math.random() * chestPhrases.length)];
+  }
+
+  if (lower.includes("belly")) {
+    const bellyPhrases = [
+      "Ouch! That tickles!",
+      "Oof, not the belly!",
+      "Hey, personal space!",
+    ];
+    return bellyPhrases[Math.floor(Math.random() * bellyPhrases.length)];
+  }
+
   if (lower.includes("arm") || lower.includes("hand") || lower.includes("forearm")) {
-    const armPhrases = ["What are you doing?!", "Hey, that's my hand!", "Don't pull my arm!"];
+    const armPhrases = [
+      "Hey, that's my hand!",
+      "Don't grab my arm!",
+      "What are you doing?!",
+      "Hey, hands off!",
+    ];
     return armPhrases[Math.floor(Math.random() * armPhrases.length)];
   }
-  if (lower.includes("belly") || lower.includes("body")) {
-    const bodyPhrases = ["Ouch! That tickles!", "Oof, what are you doing?!", "Hey, personal space!"];
-    return bodyPhrases[Math.floor(Math.random() * bodyPhrases.length)];
+
+  if (lower.includes("leg") || lower.includes("foot")) {
+    const legPhrases = [
+      "Ow, my leg!",
+      "Hey, watch my feet!",
+      "Oof, watch your step!",
+    ];
+    return legPhrases[Math.floor(Math.random() * legPhrases.length)];
   }
+
   const genericPhrases = [
     "Ouch!",
-    "Ohh, my eye!",
-    "What are you doing?!",
-    "Hey, stop that!",
+    "Hey, what are you doing?!",
+    "Stop poking me!",
     "Oof! Watch it!",
   ];
   return genericPhrases[Math.floor(Math.random() * genericPhrases.length)];
@@ -104,11 +155,12 @@ export function LearnPreviewSection() {
   const [reaction, setReaction] = useState<{ text: string; x: number; y: number } | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastTriggerTimeRef = useRef(0);
+  const pendingClickRef = useRef<{ clientX: number; clientY: number } | null>(null);
 
   const triggerReaction = useCallback(
     (targetName: string, clientX?: number, clientY?: number) => {
       const now = Date.now();
-      if (now - lastTriggerTimeRef.current < 250) return;
+      if (now - lastTriggerTimeRef.current < 200) return;
       lastTriggerTimeRef.current = now;
 
       const text = getReactionForTarget(targetName);
@@ -208,26 +260,49 @@ export function LearnPreviewSection() {
 
   const handleSplineMouseDown = useCallback(
     (e: SplineEvent) => {
-      triggerReaction(e.target?.name || "body");
+      const coords = pendingClickRef.current;
+      pendingClickRef.current = null;
+      triggerReaction(e.target?.name || "chest", coords?.clientX, coords?.clientY);
     },
     [triggerReaction]
   );
 
   const handleCanvasContainerPointerDown = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
+      pendingClickRef.current = { clientX: e.clientX, clientY: e.clientY };
+
       const canvas = canvasRef.current || e.currentTarget.querySelector("canvas");
       if (canvas) {
         const rect = canvas.getBoundingClientRect();
+        const relX = (e.clientX - rect.left) / rect.width;
         const relY = (e.clientY - rect.top) / rect.height;
-        let part = "body";
-        if (relY < 0.38) {
-          part = "eye";
-        } else if (relY < 0.58) {
-          part = "head";
-        } else {
-          part = "belly";
+
+        let part = "chest";
+        if (relX < 0.35 || relX > 0.65) {
+          if (relY > 0.38 && relY < 0.72) {
+            part = "arm";
+          }
         }
-        triggerReaction(part, e.clientX, e.clientY);
+        if (part !== "arm") {
+          if (relY < 0.32) {
+            part = "head";
+          } else if (relY < 0.44) {
+            part = "eye";
+          } else if (relY < 0.62) {
+            part = "chest";
+          } else if (relY < 0.76) {
+            part = "belly";
+          } else {
+            part = "leg";
+          }
+        }
+
+        setTimeout(() => {
+          if (pendingClickRef.current) {
+            triggerReaction(part, e.clientX, e.clientY);
+            pendingClickRef.current = null;
+          }
+        }, 50);
       }
     },
     [triggerReaction]
