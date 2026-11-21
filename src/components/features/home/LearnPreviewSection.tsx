@@ -7,8 +7,34 @@ import { ArrowRightIcon } from "@/components/ui/Icons";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
 
-const getReactionForTarget = (name: string, relativeY?: number): string => {
+const isInsideBody = (relX: number, relY: number): boolean => {
+  if (relY < 0.20 || relY > 0.96) return false;
+  if (relX < 0.18 || relX > 0.78) return false;
+
+  if (relY < 0.46) {
+    return relX >= 0.35 && relX <= 0.62;
+  }
+
+  if (relY <= 0.74) {
+    return relX >= 0.18 && relX <= 0.78;
+  }
+
+  return relX >= 0.28 && relX <= 0.68;
+};
+
+const getReactionForTarget = (name: string, relativeY?: number): string | null => {
   const lower = name.toLowerCase();
+
+  if (
+    lower.includes("rectangle") ||
+    lower.includes("scene") ||
+    lower.includes("camera") ||
+    lower.includes("light") ||
+    lower.includes("plane") ||
+    lower.includes("background")
+  ) {
+    return null;
+  }
 
   if (lower.includes("neck")) {
     const neckPhrases = [
@@ -121,13 +147,19 @@ const getReactionForTarget = (name: string, relativeY?: number): string => {
     return legPhrases[Math.floor(Math.random() * legPhrases.length)];
   }
 
-  const genericPhrases = [
-    "Ouch!",
-    "Hey, what are you doing?!",
-    "Stop poking me!",
-    "Oof! Watch it!",
-  ];
-  return genericPhrases[Math.floor(Math.random() * genericPhrases.length)];
+  if (lower.includes("cube") || lower.includes("cylinder")) {
+    if (relativeY !== undefined) {
+      if (relativeY >= 0.38 && relativeY < 0.46) {
+        return "Ow, my neck!";
+      }
+      if (relativeY < 0.38) {
+        return "Ouch! Watch my head!";
+      }
+    }
+    return "Ouch, my chest!";
+  }
+
+  return null;
 };
 
 const playCartoonSound = () => {
@@ -199,15 +231,16 @@ export function LearnPreviewSection() {
   const [reaction, setReaction] = useState<{ text: string; x: number; y: number } | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastTriggerTimeRef = useRef(0);
-  const pendingClickRef = useRef<{ clientX: number; clientY: number; relY?: number } | null>(null);
+  const pendingClickRef = useRef<{ clientX: number; clientY: number; relX: number; relY: number } | null>(null);
 
   const triggerReaction = useCallback(
     (targetName: string, clientX?: number, clientY?: number, relY?: number) => {
+      const text = getReactionForTarget(targetName, relY);
+      if (!text) return;
+
       const now = Date.now();
       if (now - lastTriggerTimeRef.current < 200) return;
       lastTriggerTimeRef.current = now;
-
-      const text = getReactionForTarget(targetName, relY);
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -306,6 +339,9 @@ export function LearnPreviewSection() {
     (e: SplineEvent) => {
       const coords = pendingClickRef.current;
       pendingClickRef.current = null;
+      if (coords && !isInsideBody(coords.relX, coords.relY)) {
+        return;
+      }
       triggerReaction(
         e.target?.name || "chest",
         coords?.clientX,
@@ -319,42 +355,44 @@ export function LearnPreviewSection() {
   const handleCanvasContainerPointerDown = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       const canvas = canvasRef.current || e.currentTarget.querySelector("canvas");
-      if (canvas) {
-        const rect = canvas.getBoundingClientRect();
-        const relX = (e.clientX - rect.left) / rect.width;
-        const relY = (e.clientY - rect.top) / rect.height;
+      if (!canvas) return;
 
-        pendingClickRef.current = { clientX: e.clientX, clientY: e.clientY, relY };
+      const rect = canvas.getBoundingClientRect();
+      const relX = (e.clientX - rect.left) / rect.width;
+      const relY = (e.clientY - rect.top) / rect.height;
 
-        let part = "chest";
-        if (relX < 0.32 || relX > 0.68) {
-          if (relY > 0.35 && relY < 0.72) {
-            part = "arm";
-          }
+      if (!isInsideBody(relX, relY)) return;
+
+      pendingClickRef.current = { clientX: e.clientX, clientY: e.clientY, relX, relY };
+
+      let part = "chest";
+      if (relX < 0.35 || relX > 0.65) {
+        if (relY > 0.38 && relY < 0.74) {
+          part = "arm";
         }
-        if (part !== "arm") {
-          if (relY < 0.30) {
-            part = "head";
-          } else if (relY < 0.38) {
-            part = "eye";
-          } else if (relY < 0.46) {
-            part = "neck";
-          } else if (relY < 0.60) {
-            part = "chest";
-          } else if (relY < 0.74) {
-            part = "belly";
-          } else {
-            part = "leg";
-          }
-        }
-
-        setTimeout(() => {
-          if (pendingClickRef.current) {
-            triggerReaction(part, e.clientX, e.clientY, relY);
-            pendingClickRef.current = null;
-          }
-        }, 50);
       }
+      if (part !== "arm") {
+        if (relY < 0.30) {
+          part = "head";
+        } else if (relY < 0.38) {
+          part = "eye";
+        } else if (relY < 0.46) {
+          part = "neck";
+        } else if (relY < 0.60) {
+          part = "chest";
+        } else if (relY < 0.74) {
+          part = "belly";
+        } else {
+          part = "leg";
+        }
+      }
+
+      setTimeout(() => {
+        if (pendingClickRef.current) {
+          triggerReaction(part, e.clientX, e.clientY, relY);
+          pendingClickRef.current = null;
+        }
+      }, 60);
     },
     [triggerReaction]
   );
@@ -416,7 +454,7 @@ export function LearnPreviewSection() {
 
           <div
             onPointerDown={handleCanvasContainerPointerDown}
-            className="flex-1 relative w-full h-[420px] sm:h-[480px] lg:h-[580px] min-h-[400px] cursor-pointer"
+            className="flex-1 relative w-full h-[420px] sm:h-[480px] lg:h-[580px] min-h-[400px]"
           >
             <SplineScene
               scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
