@@ -1,38 +1,12 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import Image from "next/image";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { ArrowRightIcon } from "@/components/ui/Icons";
 import { Spotlight } from "@/components/ui/spotlight";
 
 export function LearnPreviewSection() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const springConfig = { damping: 20, stiffness: 100 };
-  const smoothX = useSpring(mouseX, springConfig);
-  const smoothY = useSpring(mouseY, springConfig);
-
-  const rotateX = useTransform(smoothY, [-0.5, 0.5], [5, -5]);
-  const rotateY = useTransform(smoothX, [-0.5, 0.5], [-6, 6]);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    mouseX.set(x);
-    mouseY.set(y);
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
-  };
-
   return (
     <section className="relative py-20 sm:py-28 md:py-32 border-t border-white/5 bg-[#07080e]/50 overflow-hidden">
       <Spotlight
@@ -71,36 +45,16 @@ export function LearnPreviewSection() {
             </div>
           </div>
 
-          <div
-            ref={containerRef}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            className="flex-1 relative w-full flex items-center justify-center min-h-[460px] sm:min-h-[520px] lg:min-h-[620px] perspective-[1000px]"
-          >
-            <div className="pointer-events-none absolute w-[380px] h-[380px] rounded-full bg-accent-cyan/15 blur-[120px]" />
-            <div className="pointer-events-none absolute w-[320px] h-[320px] rounded-full bg-accent-violet/15 blur-[100px] translate-y-24" />
-
-            <motion.div
-              style={{ rotateX, rotateY }}
-              animate={{ y: [0, -10, 0] }}
-              transition={{
-                y: {
-                  duration: 4.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                },
-              }}
-              className="relative z-10 w-full max-w-[420px] sm:max-w-[480px] lg:max-w-[520px] aspect-[896/1200] flex items-center justify-center filter drop-shadow-[0_25px_40px_rgba(0,0,0,0.8)]"
-            >
-              <Image
-                src="/images/3d/music-robot.jpg"
-                alt="Keynote Music Theory Robot with vintage radio head and complete legs and feet"
-                fill
-                priority
-                sizes="(max-width: 768px) 100vw, 520px"
-                className="object-contain rounded-3xl select-none pointer-events-none"
-              />
-            </motion.div>
+          <div className="flex-1 relative w-full h-[450px] sm:h-[520px] lg:h-[620px] flex items-center justify-center">
+            <Image
+              src="/images/3d/robot-character.png"
+              alt="Music Theory AI Character"
+              width={896}
+              height={1200}
+              unoptimized
+              priority
+              className="h-full w-auto object-contain max-h-[620px] drop-shadow-[0_25px_60px_rgba(0,0,0,0.9)] transition-transform duration-500 ease-out hover:scale-[1.03]"
+            />
           </div>
         </div>
       </div>
