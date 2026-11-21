@@ -69,12 +69,12 @@ export function FinalCtaSection() {
         <div className="mt-16 pt-8 border-t border-white/5 flex flex-wrap items-center justify-center gap-6 text-xs font-mono text-text-muted">
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            <span>Lossless Audio Precision</span>
+            <span>Real-Time BPM & Key Detection</span>
           </div>
           <span>•</span>
-          <div>12 Diatonic Modes</div>
+          <div>Chord & Harmonic Progression Mapping</div>
           <span>•</span>
-          <div>Full Stem Separation Ready</div>
+          <div>Interactive Audio Lab & Theory Hub</div>
         </div>
       </div>
     </section>
