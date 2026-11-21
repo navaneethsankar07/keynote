@@ -51,7 +51,6 @@ export function LearnPreviewSection() {
               alt="Music Theory AI Character"
               width={896}
               height={1200}
-              unoptimized
               priority
               className="h-full w-auto object-contain max-h-[620px] drop-shadow-[0_25px_60px_rgba(0,0,0,0.9)] transition-transform duration-500 ease-out hover:scale-[1.03]"
             />
