@@ -2,8 +2,6 @@
 
 import React from "react";
 import Image from "next/image";
-import { Badge } from "@/components/ui/Badge";
-import { LayersIcon } from "@/components/ui/Icons";
 
 const musicalDimensions = [
   {
@@ -13,70 +11,64 @@ const musicalDimensions = [
     image3d: "/images/3d/metronome.png",
     imageAlt: "3D Metronome",
     bgClass: "bg-[#e32832]",
-    textTitleClass: "text-[#171717]",
-    textDescClass: "text-[#171717]/85",
-    shadowClass: "shadow-[0_20px_50px_-10px_rgba(227,40,50,0.35)]",
-    imgWrapClass: "bottom-0 right-2 sm:right-4 w-[140px] sm:w-[180px] md:w-[200px] h-[160px] sm:h-[200px] md:h-[220px]",
+    textTitleClass: "text-white",
+    textDescClass: "text-white/85",
+    shadowClass: "hover:shadow-[0_20px_50px_rgba(227,40,50,0.35)]",
   },
   {
     title: "Harmony",
     description:
-      "Explore chords, chord progressions, harmonic relationships, and tonal context. Unpack how tension and resolution drive emotional momentum.",
+      "Explore the chords, progressions, voice leading, and harmonic movement that create emotional depth, tension, and resolution across every measure.",
     image3d: "/images/3d/piano.png",
-    imageAlt: "3D Piano",
-    bgClass: "bg-[#171717] border border-white/10 hover:border-white/20",
+    imageAlt: "3D Grand Piano",
+    bgClass: "bg-[#16171d] border border-white/10",
     textTitleClass: "text-white",
-    textDescClass: "text-white/70",
-    shadowClass: "shadow-[0_20px_50px_-10px_rgba(0,0,0,0.7)]",
-    imgWrapClass: "bottom-0 right-2 sm:right-4 w-[150px] sm:w-[190px] md:w-[210px] h-[150px] sm:h-[190px] md:h-[210px]",
+    textDescClass: "text-zinc-400",
+    shadowClass: "hover:shadow-[0_20px_50px_rgba(0,0,0,0.6)]",
   },
   {
     title: "Melody",
     description:
-      "Understand melodic movement, pitch relationships, phrasing, and recurring motifs. Follow how vocal curves lift across chorus peaks and resolve into verses.",
+      "Trace the vocal or lead contours, pitch movements, motifs, and expressive phrasing that make hooks memorable, singable, and emotionally resonant.",
     image3d: "/images/3d/microphone.png",
-    imageAlt: "3D Studio Microphone",
-    bgClass: "bg-[#171717] border border-white/10 hover:border-white/20",
+    imageAlt: "3D Vintage Microphone",
+    bgClass: "bg-[#16171d] border border-white/10",
     textTitleClass: "text-white",
-    textDescClass: "text-white/70",
-    shadowClass: "shadow-[0_20px_50px_-10px_rgba(0,0,0,0.7)]",
-    imgWrapClass: "bottom-0 right-4 sm:right-8 w-[110px] sm:w-[140px] md:w-[160px] h-[160px] sm:h-[210px] md:h-[230px]",
+    textDescClass: "text-zinc-400",
+    shadowClass: "hover:shadow-[0_20px_50px_rgba(0,0,0,0.6)]",
   },
   {
     title: "Tonality",
     description:
-      "Explore the musical key, scale, tonal center, and relationship between notes. Trace how modal shifts inject subtle color changes into songs.",
+      "Identify the musical key, tonic center, modal color, and harmonic stability. Observe how modulations shift mood from major hope to minor introspection.",
     image3d: "/images/3d/guitar.png",
     imageAlt: "3D Electric Guitar",
-    bgClass: "bg-[#2873ec]",
-    textTitleClass: "text-[#171717]",
-    textDescClass: "text-[#171717]/85",
-    shadowClass: "shadow-[0_20px_50px_-10px_rgba(40,115,236,0.35)]",
-    imgWrapClass: "bottom-0 right-2 sm:right-4 w-[150px] sm:w-[190px] md:w-[210px] h-[150px] sm:h-[190px] md:h-[210px]",
+    bgClass: "bg-[#2563eb]",
+    textTitleClass: "text-white",
+    textDescClass: "text-white/85",
+    shadowClass: "hover:shadow-[0_20px_50px_rgba(37,99,235,0.4)]",
   },
   {
     title: "Structure",
     description:
-      "Discover how a song is organized into sections such as intro, verse, chorus, bridge, and outro. Trace the arrangement timeline and energy dynamics.",
+      "Map how a track transitions through intro, verse, pre-chorus, hook, bridge, drop, and outro to build dramatic arc, pacing, and dynamic release.",
     image3d: "/images/3d/headphones.png",
     imageAlt: "3D Studio Headphones",
-    bgClass: "bg-[#171717] border border-white/10 hover:border-white/20",
+    bgClass: "bg-[#16171d] border border-white/10",
     textTitleClass: "text-white",
-    textDescClass: "text-white/70",
-    shadowClass: "shadow-[0_20px_50px_-10px_rgba(0,0,0,0.7)]",
-    imgWrapClass: "bottom-0 right-2 sm:right-4 w-[140px] sm:w-[180px] md:w-[200px] h-[160px] sm:h-[200px] md:h-[220px]",
+    textDescClass: "text-zinc-400",
+    shadowClass: "hover:shadow-[0_20px_50px_rgba(0,0,0,0.6)]",
   },
   {
     title: "Instruments & Sound",
     description:
-      "Explore the instruments, sound layers, textures, and musical elements that contribute to the song's sonic identity and acoustic space.",
+      "Identify the core instrumentation, synthesizer textures, acoustic timbres, and spatial production techniques that craft the track's distinctive sonic identity.",
     image3d: "/images/3d/violin.png",
     imageAlt: "3D Classical Violin",
-    bgClass: "bg-[#171717] border border-white/10 hover:border-white/20",
+    bgClass: "bg-[#e32832]",
     textTitleClass: "text-white",
-    textDescClass: "text-white/70",
-    shadowClass: "shadow-[0_20px_50px_-10px_rgba(0,0,0,0.7)]",
-    imgWrapClass: "bottom-0 right-2 sm:right-4 w-[150px] sm:w-[190px] md:w-[210px] h-[150px] sm:h-[190px] md:h-[210px]",
+    textDescClass: "text-white/85",
+    shadowClass: "hover:shadow-[0_20px_50px_rgba(227,40,50,0.35)]",
   },
 ];
 
@@ -85,11 +77,6 @@ export function MusicalDnaSection() {
     <section className="relative py-24 sm:py-32 border-t border-white/5 bg-background overflow-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto mb-16 sm:mb-20">
-          <Badge variant="cyan" size="md" className="mb-4">
-            <LayersIcon size={13} className="text-accent-cyan" />
-            <span>Musical DNA</span>
-          </Badge>
-
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-text-primary leading-[1.15]">
             What you can discover{" "}
             <span className="bg-gradient-to-r from-cyan-300 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
@@ -115,25 +102,23 @@ export function MusicalDnaSection() {
                 >
                   {item.title}
                 </h3>
-
                 <p
-                  className={`mt-2.5 sm:mt-3 text-xs sm:text-sm leading-relaxed font-sans ${item.textDescClass}`}
+                  className={`mt-3 text-xs sm:text-sm leading-relaxed font-sans line-clamp-3 sm:line-clamp-4 ${item.textDescClass}`}
                 >
                   {item.description}
                 </p>
               </div>
 
-              <div
-                className={`absolute pointer-events-none transition-transform duration-500 ease-out group-hover:scale-105 group-hover:-translate-y-1.5 flex items-end justify-end ${item.imgWrapClass}`}
-              >
-                <Image
-                  src={item.image3d}
-                  alt={item.imageAlt}
-                  width={240}
-                  height={240}
-                  className="w-full h-full object-contain drop-shadow-[0_20px_30px_rgba(0,0,0,0.6)]"
-                  priority
-                />
+              <div className="absolute right-0 bottom-0 top-0 w-[42%] sm:w-[40%] flex items-center justify-center p-3 sm:p-4 overflow-hidden pointer-events-none">
+                <div className="relative w-full h-full max-h-[190px] sm:max-h-[210px] transform transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-translate-y-1">
+                  <Image
+                    src={item.image3d}
+                    alt={item.imageAlt}
+                    fill
+                    className="object-contain object-right-bottom drop-shadow-[0_15px_30px_rgba(0,0,0,0.7)]"
+                    sizes="(max-width: 768px) 40vw, 25vw"
+                  />
+                </div>
               </div>
             </div>
           ))}
