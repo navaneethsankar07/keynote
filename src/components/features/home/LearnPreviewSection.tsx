@@ -1,15 +1,48 @@
 "use client";
 
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useState, useEffect } from "react";
 import type { Application } from "@splinetool/runtime";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ArrowRightIcon } from "@/components/ui/Icons";
 import { SplineScene } from "@/components/ui/splite";
 import { Spotlight } from "@/components/ui/spotlight";
+import { cn } from "@/lib/utils";
 
 export function LearnPreviewSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [isFadingOut, setIsFadingOut] = useState(false);
+
+  useEffect(() => {
+    try {
+      const hasSeen = sessionStorage.getItem("keynote_welcome_seen");
+      if (!hasSeen) {
+        sessionStorage.setItem("keynote_welcome_seen", "true");
+        const raf = requestAnimationFrame(() => {
+          setShowWelcome(true);
+        });
+
+        const timer = setTimeout(() => {
+          setIsFadingOut(true);
+          setTimeout(() => setShowWelcome(false), 600);
+        }, 5500);
+
+        return () => {
+          cancelAnimationFrame(raf);
+          clearTimeout(timer);
+        };
+      }
+    } catch {
+      // Storage unavailable or blocked
+    }
+  }, []);
+
+  const handleDismiss = useCallback(() => {
+    setIsFadingOut(true);
+    setTimeout(() => setShowWelcome(false), 300);
+  }, []);
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLElement>) => {
     const canvas =
@@ -117,29 +150,34 @@ export function LearnPreviewSection() {
           </div>
 
           <div className="flex-1 relative w-full h-[420px] sm:h-[480px] lg:h-[580px] min-h-[400px]">
-            <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20 max-w-[280px] sm:max-w-[320px] pointer-events-none select-none character-bubble-float">
-              <div className="relative rounded-2xl sm:rounded-3xl border border-white/20 bg-[#090b14]/85 backdrop-blur-2xl p-4 sm:p-5 shadow-[0_16px_40px_rgba(0,0,0,0.7),inset_0_1px_1.5px_rgba(255,255,255,0.35),inset_0_-1.5px_2px_rgba(255,255,255,0.65),0_0_28px_rgba(139,92,246,0.2)]">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="relative flex size-2">
+            {showWelcome && (
+              <div
+                className={cn(
+                  "absolute bottom-4 left-4 sm:bottom-6 sm:left-6 z-20 pointer-events-auto transition-all duration-700 ease-out",
+                  isFadingOut
+                    ? "opacity-0 translate-y-2 pointer-events-none"
+                    : "opacity-100 translate-y-0"
+                )}
+              >
+                <div className="flex items-center gap-2 rounded-full border border-white/10 bg-[#090a12]/80 backdrop-blur-md px-3.5 py-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)]">
+                  <span className="relative flex size-1.5">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
-                    <span className="relative inline-flex size-2 rounded-full bg-cyan-400" />
+                    <span className="relative inline-flex size-1.5 rounded-full bg-cyan-400" />
                   </span>
-                  <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-cyan-300 font-semibold">
-                    Keynote Guide
+                  <span className="text-xs font-sans font-medium text-neutral-200 tracking-tight select-none">
+                    Welcome to the world of music
                   </span>
+                  <button
+                    type="button"
+                    onClick={handleDismiss}
+                    className="ml-0.5 text-white/40 hover:text-white transition-colors cursor-pointer p-0.5 rounded-full"
+                    aria-label="Dismiss welcome message"
+                  >
+                    <X className="size-3" />
+                  </button>
                 </div>
-                <p className="font-display text-sm sm:text-base font-bold text-white tracking-tight leading-snug">
-                  &ldquo;Welcome to the world of music!&rdquo;
-                </p>
-                <p className="mt-1 text-xs text-neutral-300 leading-relaxed font-sans">
-                  Move your cursor to look around — let&apos;s explore harmony, rhythm, and melody together.
-                </p>
-                <span
-                  className="absolute -bottom-2 right-10 sm:right-14 w-4 h-4 rotate-45 bg-[#090b14] border-r border-b border-white/20 shadow-[1px_1px_2px_rgba(255,255,255,0.5)]"
-                  aria-hidden="true"
-                />
               </div>
-            </div>
+            )}
 
             <SplineScene
               scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"

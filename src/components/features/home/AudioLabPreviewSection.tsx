@@ -69,7 +69,7 @@ export function AudioLabPreviewSection() {
         <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-16 sm:mb-20">
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-text-primary leading-[1.15]">
             Explore music{" "}
-            <span className="bg-gradient-to-r from-cyan-300 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-purple-300 via-indigo-200 to-purple-200 bg-clip-text text-transparent">
               beyond the song.
             </span>
           </h2>

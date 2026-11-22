@@ -85,19 +85,6 @@ body {
   }
 }
 
-@keyframes character-bubble-float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-.character-bubble-float {
-  animation: character-bubble-float 4s ease-in-out infinite;
-}
-
 .hero-enter-fade {
   animation: hero-fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -110,7 +97,6 @@ body {
   .hero-enter-fade,
   .hero-enter-slide,
   .frequency-pulse-tick,
-  .character-bubble-float,
   .rot-card::before {
     animation: none !important;
     opacity: 1 !important;
