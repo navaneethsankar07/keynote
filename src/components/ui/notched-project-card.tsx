@@ -120,21 +120,24 @@ export function NotchedProjectCard({
               ...pos,
               width: FILLET,
               height: FILLET,
-              background: `radial-gradient(circle at top left, transparent ${
-                FILLET - 0.5
-              }px, ${surface} ${FILLET}px)`,
+              background: `radial-gradient(circle at top left, transparent ${FILLET - 0.5
+                }px, ${surface} ${FILLET}px)`,
             }}
           />
         ))}
 
         <span
           aria-hidden
-          className="absolute bottom-0 right-0 flex items-center justify-center rounded-full overflow-hidden backdrop-blur-xl bg-[#0e101a]/75 text-white border border-[#a78bfa]/40 shadow-[0_0_22px_rgba(167,139,250,0.22),inset_0_1px_1.5px_rgba(255,255,255,0.45),inset_0_-1.5px_2px_rgba(255,255,255,0.6)] transition-all duration-300 group-hover:bg-[#7c3aed] group-hover:border-[#7c3aed] group-hover:shadow-[0_0_30px_rgba(124,58,237,0.5),inset_0_1px_2px_rgba(255,255,255,0.4),inset_0_-1.5px_2px_rgba(255,255,255,0.6)] z-30"
+          className="absolute bottom-0 right-0 flex items-center justify-center rounded-full overflow-hidden backdrop-blur-xl  text-white border border-[#a78bfa]/10 shadow-[0_0_15px_rgba(167,139,250,0.22),inset_0_1px_1.5px_rgba(255,255,255,0.45),inset_0_-1.5px_2px_rgba(255,255,255,0.6)] transition-all duration-300 group-hover:bg-violet-500/90  group-hover:shadow-[0_0_30px_rgba(124,58,237,0.5),inset_0_1px_2px_rgba(255,255,255,0.4),inset_0_-1.5px_2px_rgba(255,255,255,0.6)] z-30"
           style={{
             width: DISC,
             height: DISC,
           }}
         >
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-x-3.5 top-1 h-[1.5px] rounded-full bg-gradient-to-r from-transparent via-white/0 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+          />
           <ArrowUpRight className="size-5 text-white" />
         </span>
       </div>
