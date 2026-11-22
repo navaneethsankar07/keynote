@@ -129,7 +129,7 @@ export function NotchedProjectCard({
 
         <span
           aria-hidden
-          className="absolute bottom-0 right-0 flex items-center justify-center rounded-full overflow-hidden backdrop-blur-xl bg-[#0e101a]/75 text-white border border-[#a78bfa]/40 shadow-[0_0_22px_rgba(167,139,250,0.22),inset_0_1px_1.5px_rgba(255,255,255,0.45),inset_0_-1px_2px_rgba(0,0,0,0.5)] transition-all duration-300 group-hover:scale-105 group-hover:bg-[#7c3aed] group-hover:border-[#7c3aed] group-hover:shadow-[0_0_30px_rgba(124,58,237,0.5),inset_0_1px_2px_rgba(255,255,255,0.4)] z-30"
+          className="absolute bottom-0 right-0 flex items-center justify-center rounded-full overflow-hidden backdrop-blur-xl bg-[#0e101a]/75 text-white border border-[#a78bfa]/40 shadow-[0_0_22px_rgba(167,139,250,0.22),inset_0_1px_1.5px_rgba(255,255,255,0.45),inset_0_-1.5px_2px_rgba(255,255,255,0.6)] transition-all duration-300 group-hover:bg-[#7c3aed] group-hover:border-[#7c3aed] group-hover:shadow-[0_0_30px_rgba(124,58,237,0.5),inset_0_1px_2px_rgba(255,255,255,0.4),inset_0_-1.5px_2px_rgba(255,255,255,0.6)] z-30"
           style={{
             width: DISC,
             height: DISC,

@@ -34,7 +34,7 @@ export function FinalCtaSection() {
               </span>
               <span className="block overflow-hidden mt-1">
                 <span className="block transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] delay-75 group-hover:-translate-y-[8%]">
-                  <span className="bg-gradient-to-r from-purple-400 via-indigo-200 to-cyan-300 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-purple-300 via-indigo-200 to-purple-200 bg-clip-text text-transparent">
                     have more to reveal.
                   </span>
                 </span>

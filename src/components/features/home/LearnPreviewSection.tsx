@@ -117,6 +117,30 @@ export function LearnPreviewSection() {
           </div>
 
           <div className="flex-1 relative w-full h-[420px] sm:h-[480px] lg:h-[580px] min-h-[400px]">
+            <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20 max-w-[280px] sm:max-w-[320px] pointer-events-none select-none character-bubble-float">
+              <div className="relative rounded-2xl sm:rounded-3xl border border-white/20 bg-[#090b14]/85 backdrop-blur-2xl p-4 sm:p-5 shadow-[0_16px_40px_rgba(0,0,0,0.7),inset_0_1px_1.5px_rgba(255,255,255,0.35),inset_0_-1.5px_2px_rgba(255,255,255,0.65),0_0_28px_rgba(139,92,246,0.2)]">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="relative flex size-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
+                    <span className="relative inline-flex size-2 rounded-full bg-cyan-400" />
+                  </span>
+                  <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.2em] text-cyan-300 font-semibold">
+                    Keynote Guide
+                  </span>
+                </div>
+                <p className="font-display text-sm sm:text-base font-bold text-white tracking-tight leading-snug">
+                  &ldquo;Welcome to the world of music!&rdquo;
+                </p>
+                <p className="mt-1 text-xs text-neutral-300 leading-relaxed font-sans">
+                  Move your cursor to look around — let&apos;s explore harmony, rhythm, and melody together.
+                </p>
+                <span
+                  className="absolute -bottom-2 right-10 sm:right-14 w-4 h-4 rotate-45 bg-[#090b14] border-r border-b border-white/20 shadow-[1px_1px_2px_rgba(255,255,255,0.5)]"
+                  aria-hidden="true"
+                />
+              </div>
+            </div>
+
             <SplineScene
               scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
               className="w-full h-full"

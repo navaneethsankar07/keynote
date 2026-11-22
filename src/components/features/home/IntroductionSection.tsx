@@ -474,7 +474,7 @@ export function IntroductionSection() {
         <h2 className="font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-text-primary leading-[1.12]">
           Every song has a story{" "}
           <br />
-          <span className="bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-300 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-purple-300 via-indigo-200 to-purple-200 bg-clip-text text-transparent">
             beyond its sound.
           </span>
         </h2>
