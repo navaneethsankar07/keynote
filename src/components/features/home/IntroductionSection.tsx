@@ -461,15 +461,6 @@ export function IntroductionSection() {
         preload="metadata"
       />
 
-      <div
-        className="pointer-events-none absolute -top-32 right-1/4 w-[560px] h-[560px] rounded-full bg-accent-violet/10 blur-[150px]"
-        aria-hidden="true"
-      />
-      <div
-        className="pointer-events-none absolute -bottom-32 left-1/4 w-[500px] h-[500px] rounded-full bg-accent-cyan/10 blur-[140px]"
-        aria-hidden="true"
-      />
-
       <div className="relative z-10 text-center max-w-5xl mx-auto shrink-0 pt-2 sm:pt-4">
         <h2 className="font-display text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-text-primary leading-[1.12]">
           Every song has a story{" "}

@@ -133,3 +133,42 @@ export const ROADMAP_PHASES: RoadmapMilestone[] = [
   },
 ];
 
+export interface HarmonicPalette {
+  name: string;
+  tubes: string[];
+  lights: string[];
+  staffColor: string;
+  accentColor: string;
+}
+
+export const HARMONIC_PALETTES: HarmonicPalette[] = [
+  {
+    name: "Aeolian",
+    tubes: ["#7c3aed", "#0891b2", "#6366f1"],
+    lights: ["#5b21b6", "#0e7490", "#6d28d9", "#0284c7"],
+    staffColor: "#8b5cf6",
+    accentColor: "#06b6d4",
+  },
+  {
+    name: "Dorian",
+    tubes: ["#0284c7", "#4f46e5", "#7c3aed"],
+    lights: ["#0369a1", "#4338ca", "#0891b2", "#5b21b6"],
+    staffColor: "#38bdf8",
+    accentColor: "#6366f1",
+  },
+  {
+    name: "Lydian",
+    tubes: ["#0ea5e9", "#7c3aed", "#e11d48"],
+    lights: ["#0284c7", "#5b21b6", "#be123c", "#38bdf8"],
+    staffColor: "#60a5fa",
+    accentColor: "#f43f5e",
+  },
+  {
+    name: "Mixolydian",
+    tubes: ["#d97706", "#7c3aed", "#0284c7"],
+    lights: ["#b45309", "#5b21b6", "#0891b2", "#d97706"],
+    staffColor: "#f59e0b",
+    accentColor: "#7c3aed",
+  },
+];
+

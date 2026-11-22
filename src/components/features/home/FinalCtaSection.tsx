@@ -3,10 +3,11 @@
 import React from "react";
 import { GetStartedButton } from "@/components/ui/get-started-button";
 import { ShinyButton } from "@/components/ui/shiny-button";
+import { StudioEqualizer } from "./StudioEqualizer";
 
 export function FinalCtaSection() {
   return (
-    <section className="relative py-28 sm:py-36 border-t border-white/5 bg-[#06070c] overflow-hidden">
+    <section className="relative pt-24 sm:pt-32 pb-0 border-t border-white/5 bg-[#06070c] overflow-hidden">
       <div
         className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[450px] max-w-[130vw] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.12)_0%,rgba(6,182,212,0.04)_45%,transparent_75%)] blur-3xl -z-10"
         aria-hidden="true"
@@ -22,8 +23,6 @@ export function FinalCtaSection() {
       />
 
       <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
-
-
         <div className="group relative cursor-pointer inline-block mx-auto mb-6">
           <div className="flex flex-col items-center">
             <h2 className="relative text-center text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-text-primary leading-[1.12] transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]">
@@ -76,6 +75,10 @@ export function FinalCtaSection() {
           <span>•</span>
           <div>Interactive Audio Lab & Theory Hub</div>
         </div>
+      </div>
+
+      <div className="mt-14 sm:mt-20 w-full relative z-10">
+        <StudioEqualizer />
       </div>
     </section>
   );
