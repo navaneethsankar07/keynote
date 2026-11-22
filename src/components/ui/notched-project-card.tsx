@@ -135,10 +135,6 @@ export function NotchedProjectCard({
             height: DISC,
           }}
         >
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-x-3.5 top-1 h-[1.5px] rounded-full bg-gradient-to-r from-transparent via-white/80 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300"
-          />
           <ArrowUpRight className="size-5 text-white" />
         </span>
       </div>
