@@ -146,4 +146,22 @@ body {
   animation-duration: 2.2s;
 }
 
+/* Custom Keynote Arrow & Hand Pointer Cursors */
+html,
+body {
+  cursor: url('/images/cursors/cursor-default.png') 3 2, auto;
+}
+
+a,
+button:not(:disabled),
+[role="button"],
+.cursor-pointer,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+select {
+  cursor: url('/images/cursors/cursor-pointer.png') 5 1, pointer;
+}
+
+
 

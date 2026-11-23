@@ -5,9 +5,8 @@ import type { TubesApp } from "threejs-components/build/cursors/tubes1.min.js";
 import { useAnimation } from "@/context/AnimationContext";
 import { StudioEqualizer } from "./StudioEqualizer";
 
-// Custom Luminous Audio Reticle Mouse Cursor (Cyan & Violet, 32x32)
-const CUSTOM_CURSOR_URL =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='8.5' stroke='%2322d3ee' stroke-width='1.2' stroke-opacity='0.8'/%3E%3Cline x1='16' y1='2' x2='16' y2='6' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='16' y1='26' x2='16' y2='30' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='2' y1='16' x2='6' y2='16' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Cline x1='26' y1='16' x2='30' y2='16' stroke='%23a78bfa' stroke-width='1.5' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23ffffff'/%3E%3C/svg%3E\") 16 16, crosshair";
+// Custom Arrow Cursor (Hotspot at tip (3, 2))
+const CUSTOM_CURSOR_URL = "url('/images/cursors/cursor-default.png') 3 2, auto";
 
 interface TubesSoundscapeProps {
   className?: string;
@@ -28,7 +27,7 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
       const canvas = containerRef.current.querySelector("canvas");
       if (canvas) {
         canvas.className = `absolute inset-0 h-full w-full transition-opacity duration-700 pointer-events-auto ${
-          isAnimationActive ? "opacity-90" : "opacity-0 pointer-events-none"
+          isAnimationActive ? "opacity-60" : "opacity-0 pointer-events-none"
         }`;
         canvas.style.cursor = isAnimationActive ? CUSTOM_CURSOR_URL : "default";
       }
@@ -131,7 +130,7 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
     // Dynamically create clean canvas
     const canvas = document.createElement("canvas");
     canvas.className = `absolute inset-0 h-full w-full transition-opacity duration-700 pointer-events-auto ${
-      isAnimationActiveRef.current ? "opacity-90" : "opacity-0 pointer-events-none"
+      isAnimationActiveRef.current ? "opacity-60" : "opacity-0 pointer-events-none"
     }`;
     canvas.style.cursor = isAnimationActiveRef.current ? CUSTOM_CURSOR_URL : "default";
     container.appendChild(canvas);
@@ -160,15 +159,15 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
         const TubesCursor = module.default;
         const app = TubesCursor(canvas, {
           bloom: {
-            strength: 1.4,
-            radius: 0.6,
-            threshold: 0.08,
+            strength: 0.35,
+            radius: 0.4,
+            threshold: 0.2,
           },
           tubes: {
-            colors: activePalette?.tubes || ["#8b5cf6", "#06b6d4", "#7c3aed"],
+            colors: activePalette?.tubes || ["#7c3aed", "#0891b2", "#6366f1"],
             lights: {
-              intensity: 240,
-              colors: activePalette?.lights || ["#6d28d9", "#06b6d4", "#a855f7", "#38bdf8"],
+              intensity: 60,
+              colors: activePalette?.lights || ["#5b21b6", "#0e7490", "#6d28d9", "#0284c7"],
             },
           },
           sleepRadiusX: 280,
@@ -246,9 +245,9 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
       aria-hidden="true"
       style={{ cursor: isAnimationActive ? CUSTOM_CURSOR_URL : "default" }}
     >
-      {/* Background ambient radial glow */}
+      {/* Background ambient radial glow (subtle, non-glaring) */}
       <div
-        className="pointer-events-none absolute top-[-5%] left-1/2 -translate-x-1/2 h-[650px] w-[1000px] max-w-[130vw] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.22)_0%,rgba(6,182,212,0.08)_45%,transparent_70%)] blur-3xl"
+        className="pointer-events-none absolute top-[-5%] left-1/2 -translate-x-1/2 h-[650px] w-[1000px] max-w-[130vw] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(124,58,237,0.08)_0%,rgba(6,182,212,0.02)_45%,transparent_70%)] blur-3xl"
         aria-hidden="true"
       />
 
