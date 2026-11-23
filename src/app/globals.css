@@ -146,22 +146,149 @@ body {
   animation-duration: 2.2s;
 }
 
-/* Custom Keynote Arrow & Hand Pointer Cursors */
+/* ==========================================================================
+   Universal Custom Keynote Cursors
+   ========================================================================== */
+
+/* Universal default arrow cursor for entire website and all standard elements */
 html,
-body {
+body,
+*,
+*::before,
+*::after {
   cursor: url('/images/cursors/cursor-default.png') 3 2, auto;
 }
 
+/* Custom hand pointer cursor for all interactive, link, button, and clickable elements */
 a,
+a *,
 button:not(:disabled),
+button:not(:disabled) *,
 [role="button"],
+[role="button"] *,
+[role="link"],
+[role="link"] *,
+[role="tab"],
+[role="tab"] *,
+[role="menuitem"],
+[role="menuitem"] *,
 .cursor-pointer,
+.cursor-pointer *,
+label,
+label *,
+select,
+select *,
+summary,
+summary *,
+[style*="cursor: pointer"],
+[style*="cursor: pointer"] *,
+[style*="cursor:pointer"],
+[style*="cursor:pointer"] *,
+.dcc-slide,
+.dcc-slide *,
+.dcc-btn,
+.dcc-btn *,
+.dcc-ctrl,
+.dcc-ctrl *,
 input[type="button"],
 input[type="submit"],
 input[type="reset"],
-select {
-  cursor: url('/images/cursors/cursor-pointer.png') 5 1, pointer;
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"] {
+  cursor: url('/images/cursors/cursor-pointer.png') 4 1, pointer !important;
 }
+
+/* Form text input fields */
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+textarea,
+[contenteditable="true"] {
+  cursor: text !important;
+}
+
+/* Disabled states */
+button:disabled,
+button:disabled *,
+.cursor-not-allowed,
+.cursor-not-allowed *,
+[disabled],
+[disabled] * {
+  cursor: not-allowed !important;
+}
+
+/* Dragging interactions */
+.cursor-grab {
+  cursor: grab !important;
+}
+
+.cursor-grabbing,
+.cursor-grabbing *,
+[data-dragging],
+[data-dragging] * {
+  cursor: grabbing !important;
+}
+
+/* ==========================================================================
+   Tiny Sleek Modern Scrollbar
+   ========================================================================== */
+
+/* Firefox & standard CSS */
+html,
+body,
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(167, 139, 250, 0.28) transparent;
+}
+
+/* WebKit (Chrome, Safari, Edge, Brave, Opera) */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(167, 139, 250, 0.22);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(167, 139, 250, 0.55);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgba(139, 92, 246, 0.85);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Utility scrollbar helpers */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 
 
 
