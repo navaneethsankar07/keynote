@@ -4,7 +4,7 @@ export function AnalyzerHeader() {
   return (
     <div className="text-center max-w-3xl mx-auto space-y-4">
       {/* Main Headline */}
-      <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-text-primary leading-[1.15]">
+      <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-text-primary leading-[1.15]">
         Explore the DNA of a{" "}
         <span className="bg-gradient-to-r from-purple-300 via-indigo-200 to-purple-200 bg-clip-text text-transparent">
           song.
