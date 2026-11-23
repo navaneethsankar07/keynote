@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useCallback } from "react";
-import { UploadCloud, FileAudio, AlertCircle, ShieldCheck, Loader2 } from "lucide-react";
+import { UploadCloud, FileAudio, AlertCircle, Loader2 } from "lucide-react";
 import { MAX_AUDIO_FILE_SIZE_MB, SUPPORTED_AUDIO_EXTENSIONS } from "@/lib/audio-utils";
 import { AudioValidationError } from "@/types/analyzer";
 
@@ -183,12 +183,6 @@ export function AudioDropzone({
           </button>
         </div>
       )}
-
-      {/* Privacy Guarantee Footer Note */}
-      <div className="flex items-center justify-center gap-2 text-xs font-mono text-text-muted text-center pt-1">
-        <ShieldCheck size={14} className="text-emerald-400 shrink-0" />
-        <span>100% Client-Side Ingestion • Audio is decoded locally and never uploaded to any server.</span>
-      </div>
     </div>
   );
 }
