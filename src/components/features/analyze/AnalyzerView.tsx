@@ -1,22 +1,36 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { ArrowRight, RefreshCw, Trash2, Sparkles } from "lucide-react";
-import { AnalyzerMode, AnalyzerWorkflowState, AudioFileMetadata, AudioValidationError } from "@/types/analyzer";
+import { ArrowRight, RefreshCw, Trash2, Sparkles, AlertCircle } from "lucide-react";
+import {
+  AnalyzerMode,
+  AnalyzerWorkflowState,
+  AudioFileMetadata,
+  AudioValidationError,
+  RhythmAnalysisResult,
+  AnalysisProgress,
+} from "@/types/analyzer";
 import { validateAndDecodeAudio } from "@/lib/audio-utils";
+import { analyzeRhythmAndTempo } from "@/lib/audio-analysis";
 import { AnalyzerHeader } from "./AnalyzerHeader";
 import { InputModeSelector } from "./InputModeSelector";
 import { AudioDropzone } from "./AudioDropzone";
 import { SongSearchPlaceholder } from "./SongSearchPlaceholder";
 import { AudioWaveformPlayer } from "./AudioWaveformPlayer";
 import { AudioMetadataCard } from "./AudioMetadataCard";
-import { AnalysisStandbyView } from "./AnalysisStandbyView";
+import { AnalysisProgressView } from "./AnalysisProgressView";
+import { RhythmAnalysisView } from "./RhythmAnalysisView";
 
 export function AnalyzerView() {
   const [mode, setMode] = useState<AnalyzerMode>("upload");
   const [workflowState, setWorkflowState] = useState<AnalyzerWorkflowState>("idle");
   const [metadata, setMetadata] = useState<AudioFileMetadata | null>(null);
   const [validationError, setValidationError] = useState<AudioValidationError | null>(null);
+
+  // Analysis state
+  const [analysisResult, setAnalysisResult] = useState<RhythmAnalysisResult | null>(null);
+  const [analysisProgress, setAnalysisProgress] = useState<AnalysisProgress | null>(null);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
 
   // Keep track of current objectUrl for clean memory release
   const activeObjectUrlRef = useRef<string | null>(null);
@@ -33,6 +47,9 @@ export function AnalyzerView() {
 
   const handleFileSelected = async (file: File) => {
     setValidationError(null);
+    setAnalysisError(null);
+    setAnalysisResult(null);
+    setAnalysisProgress(null);
     setWorkflowState("loading");
 
     // Clean up previous URL if any
@@ -61,6 +78,9 @@ export function AnalyzerView() {
     }
     setMetadata(null);
     setValidationError(null);
+    setAnalysisResult(null);
+    setAnalysisProgress(null);
+    setAnalysisError(null);
     setWorkflowState("idle");
   };
 
@@ -78,9 +98,40 @@ export function AnalyzerView() {
     }
   };
 
-  const handleStartAnalysis = () => {
-    if (metadata && workflowState === "ready") {
-      setWorkflowState("standby");
+  const handleStartAnalysis = async () => {
+    if (!metadata || workflowState === "analyzing") return;
+
+    setWorkflowState("analyzing");
+    setAnalysisError(null);
+
+    try {
+      let buffer = metadata.audioBuffer;
+
+      // Decode on-the-fly if buffer was not retained
+      if (!buffer) {
+        const AudioCtxClass =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        const ctx = new AudioCtxClass();
+        const arrayBuffer = await metadata.file.arrayBuffer();
+        buffer = await ctx.decodeAudioData(arrayBuffer);
+        ctx.close().catch(() => {});
+      }
+
+      const result = await analyzeRhythmAndTempo(buffer, {
+        onProgress: (p) => setAnalysisProgress(p),
+      });
+
+      setAnalysisResult(result);
+      setWorkflowState("analyzed");
+    } catch (err) {
+      console.error("Audio analysis failed:", err);
+      setAnalysisError(
+        err instanceof Error
+          ? err.message
+          : "Rhythm and tempo analysis could not be completed on this file."
+      );
+      setWorkflowState("ready");
     }
   };
 
@@ -108,11 +159,11 @@ export function AnalyzerView() {
       />
 
       <div className="w-full max-w-4xl mx-auto space-y-10 sm:space-y-12 my-auto">
-        {/* Page Header */}
+        {/* Page Header (always visible for brand continuity) */}
         <AnalyzerHeader />
 
-        {/* Input Mode Selector (Upload vs Search) */}
-        {workflowState !== "standby" && (
+        {/* Input Mode Selector (Upload vs Search, only shown before analysis starts) */}
+        {workflowState !== "analyzed" && workflowState !== "analyzing" && (
           <InputModeSelector
             mode={mode}
             onModeChange={(newMode) => {
@@ -124,16 +175,35 @@ export function AnalyzerView() {
         )}
 
         {/* View Switching Logic based on mode & state */}
-        {mode === "search" && workflowState !== "standby" ? (
+        {mode === "search" && workflowState !== "analyzed" && workflowState !== "analyzing" ? (
           <SongSearchPlaceholder onSwitchToUpload={() => setMode("upload")} />
-        ) : workflowState === "standby" && metadata ? (
-          <AnalysisStandbyView
+        ) : workflowState === "analyzing" && metadata ? (
+          <AnalysisProgressView progress={analysisProgress} fileName={metadata.fileName} />
+        ) : workflowState === "analyzed" && metadata && analysisResult ? (
+          <RhythmAnalysisView
             metadata={metadata}
+            analysis={analysisResult}
             onBackToPreview={handleBackToPreview}
+            onReanalyze={handleStartAnalysis}
             onReset={handleRemoveFile}
           />
         ) : metadata && workflowState === "ready" ? (
           <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Analysis Error Notification if previous run failed */}
+            {analysisError && (
+              <div className="rounded-2xl border border-rose-500/30 bg-rose-950/20 p-4 flex items-start gap-3 shadow-lg">
+                <AlertCircle size={18} className="text-rose-400 shrink-0 mt-0.5" />
+                <div className="flex-1 space-y-1">
+                  <h4 className="text-xs sm:text-sm font-semibold text-rose-300">
+                    Analysis Incomplete
+                  </h4>
+                  <p className="text-xs text-rose-200/80 leading-relaxed">
+                    {analysisError}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Interactive Waveform & Player */}
             <AudioWaveformPlayer key={metadata.objectUrl} metadata={metadata} />
 

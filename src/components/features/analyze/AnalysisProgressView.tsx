@@ -1,0 +1,85 @@
+"use client";
+
+import React from "react";
+import { Cpu, Loader2 } from "lucide-react";
+import { AnalysisProgress } from "@/lib/audio-analysis/types";
+
+interface AnalysisProgressViewProps {
+  progress: AnalysisProgress | null;
+  fileName: string;
+}
+
+export function AnalysisProgressView({ progress, fileName }: AnalysisProgressViewProps) {
+  const percent = progress?.percent ?? 15;
+  const message = progress?.message ?? "Preparing client-side audio analysis...";
+
+  return (
+    <div className="max-w-2xl mx-auto rounded-3xl border border-white/10 bg-surface/90 backdrop-blur-xl p-8 sm:p-12 text-center shadow-2xl space-y-7 relative overflow-hidden select-none animate-in fade-in zoom-in-95 duration-300">
+      {/* Background Subtle Radial Glow */}
+      <div
+        className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-64 w-96 rounded-full bg-accent-violet/15 blur-3xl"
+        aria-hidden="true"
+      />
+
+      {/* Center Animated DSP Icon */}
+      <div className="relative z-10 flex flex-col items-center justify-center space-y-4">
+        <div className="h-20 w-20 rounded-3xl bg-surface-elevated text-accent-violet flex items-center justify-center border border-accent-violet/30 shadow-[0_0_30px_rgba(139,92,246,0.3)] relative">
+          <Cpu size={36} className="text-accent-cyan" />
+          <div className="absolute -inset-1.5 rounded-3xl border border-accent-cyan/30 animate-pulse pointer-events-none" />
+        </div>
+
+        <div className="space-y-1.5">
+          <span className="text-xs font-mono uppercase tracking-wider text-accent-cyan">
+            Signal Processing In Progress
+          </span>
+          <h3 className="font-display text-xl sm:text-2xl font-bold text-text-primary">
+            Analyzing Rhythm & Tempo
+          </h3>
+          <p className="text-xs font-mono text-text-muted truncate max-w-sm mx-auto">
+            {fileName}
+          </p>
+        </div>
+      </div>
+
+      {/* Real Progress Bar */}
+      <div className="space-y-2 max-w-md mx-auto">
+        <div className="h-2 w-full rounded-full bg-surface-elevated border border-white/5 overflow-hidden">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-accent-violet to-accent-cyan transition-all duration-300 ease-out shadow-[0_0_12px_rgba(6,182,212,0.5)]"
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+
+        <div className="flex items-center justify-between text-[11px] font-mono text-text-muted px-1">
+          <span className="flex items-center gap-1.5 text-text-secondary">
+            <Loader2 size={12} className="animate-spin text-accent-cyan" />
+            <span>{message}</span>
+          </span>
+          <span className="font-bold text-accent-violet">{percent}%</span>
+        </div>
+      </div>
+
+      {/* Real Stage Indicators */}
+      <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/5 text-left">
+        {[
+          { label: "1. Onset Novelty", active: percent >= 25, done: percent > 25 },
+          { label: "2. Autocorrelation", active: percent >= 60, done: percent > 60 },
+          { label: "3. Beat Tracking", active: percent >= 85, done: percent >= 100 },
+        ].map((step, idx) => (
+          <div
+            key={idx}
+            className={`p-2 rounded-xl border text-[11px] font-mono transition-colors ${
+              step.done
+                ? "border-emerald-500/20 bg-emerald-950/10 text-emerald-300"
+                : step.active
+                ? "border-accent-violet/30 bg-accent-violet/10 text-accent-cyan animate-pulse"
+                : "border-white/5 bg-white/[0.02] text-text-muted"
+            }`}
+          >
+            {step.label}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

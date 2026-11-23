@@ -249,6 +249,7 @@ export async function validateAndDecodeAudio(
         channels,
         objectUrl,
         peaks,
+        audioBuffer,
       },
     };
   } catch (err) {
