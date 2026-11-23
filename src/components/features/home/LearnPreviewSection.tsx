@@ -159,18 +159,22 @@ export function LearnPreviewSection() {
                     : "opacity-100 translate-y-0"
                 )}
               >
-                <div className="flex items-center gap-2 rounded-full border border-white/10 bg-[#090a12]/80 backdrop-blur-md px-3.5 py-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.15)]">
+                <div className="relative flex items-center gap-2.5 rounded-full border border-white/15 bg-[#0a0a0f]/80 backdrop-blur-xl px-4 py-2 shadow-[0_10px_30px_rgba(0,0,0,0.7),inset_0_1px_1.5px_rgba(255,255,255,0.4),inset_0_-1.5px_2px_rgba(255,255,255,0.65)] select-none">
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-x-4 top-1 h-[1px] rounded-full bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-80"
+                  />
                   <span className="relative flex size-1.5">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75" />
                     <span className="relative inline-flex size-1.5 rounded-full bg-cyan-400" />
                   </span>
-                  <span className="text-xs font-sans font-medium text-neutral-200 tracking-tight select-none">
+                  <span className="text-xs font-sans font-medium text-white tracking-tight select-none">
                     Welcome to the world of music
                   </span>
                   <button
                     type="button"
                     onClick={handleDismiss}
-                    className="ml-0.5 text-white/40 hover:text-white transition-colors cursor-pointer p-0.5 rounded-full"
+                    className="ml-1 text-white/50 hover:text-white transition-colors cursor-pointer p-0.5 rounded-full hover:bg-white/10"
                     aria-label="Dismiss welcome message"
                   >
                     <X className="size-3" />
