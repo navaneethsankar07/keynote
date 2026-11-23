@@ -159,7 +159,7 @@ export function LearnPreviewSection() {
                     : "opacity-100 translate-y-0"
                 )}
               >
-                <div className="relative flex items-center gap-2.5 rounded-full border border-white/15 bg-[#0a0a0f]/80 backdrop-blur-xl px-4 py-2 shadow-[0_10px_30px_rgba(0,0,0,0.7),inset_0_1px_1.5px_rgba(255,255,255,0.4),inset_0_-1.5px_2px_rgba(255,255,255,0.65)] select-none">
+                <div className="relative flex items-center gap-2.5 rounded-full border border-white/10 bg-[#0a0a0f]/80 backdrop-blur-xl px-4 py-2 shadow-[0_0_8px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3.5px_rgba(255,255,255,0.09),inset_-3px_-3px_0.5px_-3.5px_rgba(255,255,255,0.85),inset_1px_1px_1px_-0.5px_rgba(255,255,255,0.6),inset_-1px_-1px_1px_-0.5px_rgba(255,255,255,0.6),inset_0_0_6px_6px_rgba(255,255,255,0.12),inset_0_0_2px_2px_rgba(255,255,255,0.06),0_0_12px_rgba(0,0,0,0.15)] select-none">
                   <span
                     aria-hidden
                     className="pointer-events-none absolute inset-x-4 top-1 h-[1px] rounded-full bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-80"

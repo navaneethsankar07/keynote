@@ -28,7 +28,7 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
       const canvas = containerRef.current.querySelector("canvas");
       if (canvas) {
         canvas.className = `absolute inset-0 h-full w-full transition-opacity duration-700 pointer-events-auto ${
-          isAnimationActive ? "opacity-65" : "opacity-0 pointer-events-none"
+          isAnimationActive ? "opacity-90" : "opacity-0 pointer-events-none"
         }`;
         canvas.style.cursor = isAnimationActive ? CUSTOM_CURSOR_URL : "default";
       }
@@ -131,7 +131,7 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
     // Dynamically create clean canvas
     const canvas = document.createElement("canvas");
     canvas.className = `absolute inset-0 h-full w-full transition-opacity duration-700 pointer-events-auto ${
-      isAnimationActiveRef.current ? "opacity-65" : "opacity-0 pointer-events-none"
+      isAnimationActiveRef.current ? "opacity-90" : "opacity-0 pointer-events-none"
     }`;
     canvas.style.cursor = isAnimationActiveRef.current ? CUSTOM_CURSOR_URL : "default";
     container.appendChild(canvas);
