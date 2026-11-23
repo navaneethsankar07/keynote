@@ -5,8 +5,8 @@ import type { TubesApp } from "threejs-components/build/cursors/tubes1.min.js";
 import { useAnimation } from "@/context/AnimationContext";
 import { StudioEqualizer } from "./StudioEqualizer";
 
-// Custom Arrow Cursor (Hotspot at tip (3, 2))
-const CUSTOM_CURSOR_URL = "url('/images/cursors/cursor-default.png') 3 2, auto";
+// Custom Arrow Cursor (Hotspot at tip (2, 1))
+const CUSTOM_CURSOR_URL = "url('/images/cursors/cursor-default.png') 2 1, auto";
 
 interface TubesSoundscapeProps {
   className?: string;

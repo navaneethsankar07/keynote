@@ -156,7 +156,7 @@ body,
 *,
 *::before,
 *::after {
-  cursor: url('/images/cursors/cursor-default.png') 3 2, auto;
+  cursor: url('/images/cursors/cursor-default.png') 2 1, auto;
 }
 
 /* Custom hand pointer cursor for all interactive, link, button, and clickable elements */
@@ -196,7 +196,7 @@ input[type="reset"],
 input[type="checkbox"],
 input[type="radio"],
 input[type="range"] {
-  cursor: url('/images/cursors/cursor-pointer.png') 4 1, pointer !important;
+  cursor: url('/images/cursors/cursor-pointer.png') 2 1, pointer !important;
 }
 
 /* Form text input fields */
