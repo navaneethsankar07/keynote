@@ -136,15 +136,8 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
     canvas.style.cursor = isAnimationActiveRef.current ? CUSTOM_CURSOR_URL : "default";
     container.appendChild(canvas);
 
-    let isPointerDown = false;
-    const handlePointerDown = (e: PointerEvent) => {
-      if (e.isPrimary) isPointerDown = true;
-    };
-    const handlePointerUp = (e: PointerEvent) => {
-      if (e.isPrimary) isPointerDown = false;
-    };
     const handlePointerMove = (e: PointerEvent) => {
-      if (isPointerDown && isAnimationActiveRef.current) {
+      if (isAnimationActiveRef.current) {
         canvas.dispatchEvent(
           new MouseEvent("mousemove", {
             clientX: e.clientX,
@@ -155,9 +148,6 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
       }
     };
 
-    window.addEventListener("pointerdown", handlePointerDown);
-    window.addEventListener("pointerup", handlePointerUp);
-    window.addEventListener("pointercancel", handlePointerUp);
     window.addEventListener("pointermove", handlePointerMove);
 
     import("threejs-components/build/cursors/tubes1.min.js")
@@ -169,12 +159,22 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
 
         const TubesCursor = module.default;
         const app = TubesCursor(canvas, {
+          bloom: {
+            strength: 1.4,
+            radius: 0.6,
+            threshold: 0.08,
+          },
           tubes: {
-            colors: activePalette?.tubes || ["#7c3aed", "#0891b2", "#6366f1"],
+            colors: activePalette?.tubes || ["#8b5cf6", "#06b6d4", "#7c3aed"],
             lights: {
-              colors: activePalette?.lights || ["#5b21b6", "#0e7490", "#6d28d9", "#0284c7"],
+              intensity: 240,
+              colors: activePalette?.lights || ["#6d28d9", "#06b6d4", "#a855f7", "#38bdf8"],
             },
           },
+          sleepRadiusX: 280,
+          sleepRadiusY: 140,
+          sleepTimeScale1: 0.7,
+          sleepTimeScale2: 1.4,
         });
 
         appRef.current = app;
@@ -191,9 +191,6 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
     return () => {
       isDestroyed = true;
 
-      window.removeEventListener("pointerdown", handlePointerDown);
-      window.removeEventListener("pointerup", handlePointerUp);
-      window.removeEventListener("pointercancel", handlePointerUp);
       window.removeEventListener("pointermove", handlePointerMove);
 
       window.addEventListener = originalWindowAddEventListener;
@@ -245,13 +242,13 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
 
   return (
     <div
-      className={`absolute inset-0 -z-10 overflow-hidden select-none ${className}`}
+      className={`absolute inset-0 z-0 overflow-hidden select-none ${className}`}
       aria-hidden="true"
       style={{ cursor: isAnimationActive ? CUSTOM_CURSOR_URL : "default" }}
     >
       {/* Background ambient radial glow */}
       <div
-        className="pointer-events-none absolute top-[-5%] left-1/2 -translate-x-1/2 h-[650px] w-[1000px] max-w-[130vw] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(124,58,237,0.09)_0%,rgba(6,182,212,0.03)_45%,transparent_70%)] blur-3xl"
+        className="pointer-events-none absolute top-[-5%] left-1/2 -translate-x-1/2 h-[650px] w-[1000px] max-w-[130vw] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.22)_0%,rgba(6,182,212,0.08)_45%,transparent_70%)] blur-3xl"
         aria-hidden="true"
       />
 
@@ -265,9 +262,12 @@ export function TubesSoundscape({ className = "" }: TubesSoundscapeProps) {
       {/* --- PROFESSIONAL STUDIO-GRADE FULL-WIDTH FFT EQUALIZER --- */}
       <StudioEqualizer className="absolute bottom-0 left-0 right-0 z-20" />
 
-      {/* Fallback for reduced motion / non-webgl */}
+      {/* Fallback for reduced motion / non-webgl / Brave Shields */}
       {!isWebGLSupported && (
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_30%,rgba(139,92,246,0.15),rgba(6,182,212,0.05),transparent_80%)]" />
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_35%,rgba(139,92,246,0.22),rgba(6,182,212,0.12),transparent_75%)]" />
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] rounded-full bg-gradient-to-r from-violet-600/25 via-cyan-500/20 to-indigo-600/25 blur-3xl animate-pulse" />
+        </div>
       )}
 
       {/* Smooth bottom vignette fade into background */}

@@ -8,7 +8,7 @@ import { TubesSoundscape } from "./TubesSoundscape";
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex flex-col justify-center items-center overflow-hidden pt-20 pb-16 sm:pt-24 sm:pb-24">
+    <section className="relative isolate min-h-screen flex flex-col justify-center items-center overflow-hidden pt-20 pb-16 sm:pt-24 sm:pb-24">
       <TubesSoundscape />
 
       <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 my-auto">
