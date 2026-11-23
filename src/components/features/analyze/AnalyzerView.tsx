@@ -91,10 +91,10 @@ export function AnalyzerView() {
   };
 
   return (
-    <div className="relative isolate min-h-[calc(100vh-80px)] py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
+    <div className="relative isolate min-h-[calc(100vh-80px)] flex flex-col justify-center py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
       {/* Background Decorative Ambient Radial Glow */}
       <div
-        className="pointer-events-none absolute top-10 left-1/2 -translate-x-1/2 h-[450px] w-[800px] max-w-[120vw] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(124,58,237,0.08)_0%,rgba(6,182,212,0.02)_50%,transparent_70%)] blur-3xl -z-10"
+        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[550px] w-[950px] max-w-[130vw] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(124,58,237,0.08)_0%,rgba(6,182,212,0.02)_50%,transparent_70%)] blur-3xl -z-10"
         aria-hidden="true"
       />
 
