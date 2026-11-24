@@ -27,6 +27,13 @@ import {
   MelodyMotifOccurrence,
   MelodyAnalysisResult,
   MelodyConfidenceLevel,
+  SongSection,
+  SectionGroup,
+  SectionTransition,
+  StructureSimilarityPair,
+  StructureAnalysisResult,
+  SectionBoundaryConfidence,
+  SectionCharacteristics,
 } from "@/lib/audio-analysis/types";
 
 export interface AudioFileMetadata {
@@ -88,4 +95,11 @@ export type {
   MelodyMotifOccurrence,
   MelodyAnalysisResult,
   MelodyConfidenceLevel,
+  SongSection,
+  SectionGroup,
+  SectionTransition,
+  StructureSimilarityPair,
+  StructureAnalysisResult,
+  SectionBoundaryConfidence,
+  SectionCharacteristics,
 };

@@ -102,6 +102,7 @@ export interface FullSongAnalysisResult {
   chords: ChordAnalysisResult;
   progression: ProgressionAnalysisResult;
   melody: MelodyAnalysisResult;
+  structure: StructureAnalysisResult;
   duration: number;
   analyzedSampleCount: number;
   analysisTimeMs: number;
@@ -179,6 +180,7 @@ export type AnalysisStage =
   | "chord_detection"
   | "progression_analysis"
   | "melody_extraction"
+  | "structure_analysis"
   | "complete";
 
 export type ChordQuality =
@@ -339,5 +341,81 @@ export interface MelodyAnalysisResult {
   voicedDurationSec: number;
   voicedPercentage: number; // 0 - 100%
   isReliable: boolean;
+  analysisSummary: string;
+}
+
+/* ==========================================================================
+   Musical Structure & Song Section Analysis Types (Phase 10)
+   ========================================================================== */
+
+export type SectionBoundaryConfidence = "high" | "moderate" | "low";
+
+export interface SectionCharacteristics {
+  energy: number; // 0.0 - 1.0 (mean RMS energy)
+  energyDynamics: number; // 0.0 - 1.0 (energy standard deviation / variance)
+  spectralBrightness: number; // 0.0 - 1.0 (mean spectral centroid)
+  rhythmicDensity: number; // onsets per second
+  harmonicPurity: number; // 0.0 - 1.0 (clarity of tonal chroma)
+  dominantChord: string | null;
+  chordChangeCount: number;
+  melodicVoicingRatio: number; // 0 - 100% (percentage with detected melody)
+  melodyPitchRange: string | null; // e.g. "C4 - G5"
+}
+
+export interface SongSection {
+  id: string; // e.g. "section-1-0.00"
+  label: string; // e.g. "Intro", "Verse 1", "Chorus 1", "Section A"
+  neutralLabel: string; // e.g. "Section A", "Section B"
+  group: string; // e.g. "A", "B", "C", "Intro", "Outro"
+  groupIndex: number; // 0, 1, 2...
+  occurrenceIndex: number; // 1, 2, 3... (e.g. Verse 1 vs Verse 2)
+  startTime: number; // in seconds
+  endTime: number; // in seconds
+  duration: number; // in seconds
+  boundaryConfidence: SectionBoundaryConfidence;
+  confidenceScore: number; // 0.0 - 1.0
+  characteristics: SectionCharacteristics;
+  similarSectionIds: string[]; // IDs of sections with high feature similarity
+  isRepeated: boolean;
+  color: string; // Hex color for consistent visualization
+}
+
+export interface SectionGroup {
+  group: string; // e.g. "A", "B", "Intro", "Outro"
+  label: string; // e.g. "Chorus (Group B)" or "Section A"
+  sectionIds: string[];
+  occurrenceCount: number;
+  totalDuration: number;
+  averageEnergy: number;
+  color: string;
+}
+
+export interface SectionTransition {
+  fromSectionId: string;
+  toSectionId: string;
+  time: number;
+  transitionType: "abrupt" | "gradual";
+  changeMagnitude: number; // 0.0 - 1.0
+}
+
+export interface StructureSimilarityPair {
+  sectionAId: string;
+  sectionBId: string;
+  similarity: number; // 0.0 - 1.0
+  similarityType: "near_identical" | "strong" | "partial" | "weak";
+}
+
+export interface StructureAnalysisResult {
+  sections: SongSection[];
+  totalSections: number;
+  sectionSequence: string[]; // e.g. ["Intro", "Verse 1", "Chorus 1", "Verse 2", "Chorus 2", "Outro"]
+  formSummary: string; // e.g. "Intro → A → B → A → B → Outro"
+  neutralFormSummary: string; // e.g. "A → B → A → C → B"
+  groups: SectionGroup[];
+  transitions: SectionTransition[];
+  similarityPairs: StructureSimilarityPair[];
+  hasIntro: boolean;
+  hasOutro: boolean;
+  structuralComplexity: "minimal" | "standard" | "complex" | "through_composed";
   analysisSummary: string;
 }

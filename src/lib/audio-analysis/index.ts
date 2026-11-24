@@ -4,6 +4,7 @@ import {
   FullSongAnalysisResult,
   ChordAnalysisResult,
   MelodyAnalysisResult,
+  StructureAnalysisResult,
 } from "./types";
 import { extractOnsetEnvelope } from "./onset-detection";
 import { estimateTempo } from "./tempo";
@@ -13,6 +14,7 @@ import { detectMusicalKey } from "./key-detection";
 import { detectChords } from "./chord-detection";
 import { analyzeChordProgression } from "./progression-analysis";
 import { extractMelody } from "./melody-extraction";
+import { analyzeSongStructure } from "./structure-analysis";
 
 export * from "./types";
 export * from "./onset-detection";
@@ -24,6 +26,7 @@ export * from "./chord-templates";
 export * from "./chord-detection";
 export * from "./progression-analysis";
 export * from "./melody-extraction";
+export * from "./structure-analysis";
 
 export interface AnalyzeSongOptions {
   onProgress?: (progress: AnalysisProgress) => void;
@@ -213,10 +216,51 @@ export async function analyzeSongAudio(
     };
   }
 
-  // Stage 9: Complete
+  // Stage 9: Musical Structure & Song Section Analysis (Phase 10)
+  onProgress?.({
+    stage: "structure_analysis",
+    message: "Detecting structural boundaries, macro form & recurring sections...",
+    percent: 96,
+  });
+  await yieldToMain();
+
+  let structure: StructureAnalysisResult;
+  try {
+    structure = await analyzeSongStructure(
+      audioBuffer,
+      { chords, melody, tempo, beats, key },
+      {
+        onProgress: (pct, msg) => {
+          onProgress?.({
+            stage: "structure_analysis",
+            message: msg,
+            percent: 92 + Math.round((pct / 100) * 6),
+          });
+        },
+      }
+    );
+  } catch (structErr) {
+    console.error("Structure analysis error, proceeding with fallback:", structErr);
+    structure = {
+      sections: [],
+      totalSections: 0,
+      sectionSequence: [],
+      formSummary: "N/A",
+      neutralFormSummary: "N/A",
+      groups: [],
+      transitions: [],
+      similarityPairs: [],
+      hasIntro: false,
+      hasOutro: false,
+      structuralComplexity: "minimal",
+      analysisSummary: "Structural section analysis encountered an error on this signal.",
+    };
+  }
+
+  // Stage 10: Complete
   onProgress?.({
     stage: "complete",
-    message: "Full acoustic, tonal, harmonic, and melodic analysis complete.",
+    message: "Full acoustic, tonal, harmonic, melodic, and structural analysis complete.",
     percent: 100,
   });
   await yieldToMain();
@@ -230,6 +274,7 @@ export async function analyzeSongAudio(
     chords,
     progression,
     melody,
+    structure,
     duration,
     analyzedSampleCount: audioBuffer.length,
     analysisTimeMs: Math.round(endTime - startTime),
