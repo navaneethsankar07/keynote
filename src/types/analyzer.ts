@@ -34,6 +34,15 @@ import {
   StructureAnalysisResult,
   SectionBoundaryConfidence,
   SectionCharacteristics,
+  InstrumentFamily,
+  InstrumentSpecificity,
+  InstrumentConfidenceLevel,
+  InstrumentDetection,
+  VocalAnalysis,
+  PercussionAnalysis,
+  BassAnalysis,
+  TimbreProfile,
+  InstrumentAnalysisResult,
 } from "@/lib/audio-analysis/types";
 
 export interface AudioFileMetadata {
@@ -102,4 +111,13 @@ export type {
   StructureAnalysisResult,
   SectionBoundaryConfidence,
   SectionCharacteristics,
+  InstrumentFamily,
+  InstrumentSpecificity,
+  InstrumentConfidenceLevel,
+  InstrumentDetection,
+  VocalAnalysis,
+  PercussionAnalysis,
+  BassAnalysis,
+  TimbreProfile,
+  InstrumentAnalysisResult,
 };

@@ -5,6 +5,7 @@ import {
   ChordAnalysisResult,
   MelodyAnalysisResult,
   StructureAnalysisResult,
+  InstrumentAnalysisResult,
 } from "./types";
 import { extractOnsetEnvelope } from "./onset-detection";
 import { estimateTempo } from "./tempo";
@@ -15,6 +16,10 @@ import { detectChords } from "./chord-detection";
 import { analyzeChordProgression } from "./progression-analysis";
 import { extractMelody } from "./melody-extraction";
 import { analyzeSongStructure } from "./structure-analysis";
+import {
+  analyzeInstrumentsAndSounds,
+  createEmptyInstrumentResult,
+} from "./instrument-analysis";
 
 export * from "./types";
 export * from "./onset-detection";
@@ -27,6 +32,7 @@ export * from "./chord-detection";
 export * from "./progression-analysis";
 export * from "./melody-extraction";
 export * from "./structure-analysis";
+export * from "./instrument-analysis";
 
 export interface AnalyzeSongOptions {
   onProgress?: (progress: AnalysisProgress) => void;
@@ -220,7 +226,7 @@ export async function analyzeSongAudio(
   onProgress?.({
     stage: "structure_analysis",
     message: "Detecting structural boundaries, macro form & recurring sections...",
-    percent: 96,
+    percent: 92,
   });
   await yieldToMain();
 
@@ -234,7 +240,7 @@ export async function analyzeSongAudio(
           onProgress?.({
             stage: "structure_analysis",
             message: msg,
-            percent: 92 + Math.round((pct / 100) * 6),
+            percent: 88 + Math.round((pct / 100) * 5),
           });
         },
       }
@@ -257,10 +263,40 @@ export async function analyzeSongAudio(
     };
   }
 
-  // Stage 10: Complete
+  // Stage 10: Instrument & Sound Identification (Phase 11)
+  onProgress?.({
+    stage: "instrument_analysis",
+    message: "Identifying instrument families, sound sources & timbral texture...",
+    percent: 95,
+  });
+  await yieldToMain();
+
+  let instruments: InstrumentAnalysisResult;
+  try {
+    instruments = await analyzeInstrumentsAndSounds(
+      audioBuffer,
+      { chords, melody, tempo, beats },
+      {
+        onProgress: (pct, msg) => {
+          onProgress?.({
+            stage: "instrument_analysis",
+            message: msg,
+            percent: 94 + Math.round((pct / 100) * 5),
+          });
+        },
+      }
+    );
+  } catch (instErr) {
+    console.error("Instrument analysis error, proceeding with fallback:", instErr);
+    instruments = createEmptyInstrumentResult(
+      "Instrument and sound identification could not be resolved on this audio signal."
+    );
+  }
+
+  // Stage 11: Complete
   onProgress?.({
     stage: "complete",
-    message: "Full acoustic, tonal, harmonic, melodic, and structural analysis complete.",
+    message: "Full acoustic, tonal, harmonic, melodic, structural, and timbral analysis complete.",
     percent: 100,
   });
   await yieldToMain();
@@ -275,6 +311,7 @@ export async function analyzeSongAudio(
     progression,
     melody,
     structure,
+    instruments,
     duration,
     analyzedSampleCount: audioBuffer.length,
     analysisTimeMs: Math.round(endTime - startTime),

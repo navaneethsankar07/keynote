@@ -19,6 +19,7 @@ import {
   Music2,
   Layers,
   Repeat,
+  Disc,
 } from "lucide-react";
 import {
   RhythmAnalysisResult,
@@ -35,6 +36,7 @@ import { MelodyTimeline } from "./MelodyTimeline";
 import { MelodyAnalysisCard } from "./MelodyAnalysisCard";
 import { StructureTimeline } from "./StructureTimeline";
 import { StructureAnalysisCard } from "./StructureAnalysisCard";
+import { InstrumentAnalysisCard } from "./InstrumentAnalysisCard";
 
 interface RhythmAnalysisViewProps {
   metadata: AudioFileMetadata;
@@ -44,7 +46,15 @@ interface RhythmAnalysisViewProps {
   onReset: () => void;
 }
 
-type ViewTab = "all" | "structure" | "melody" | "progressions" | "chords" | "tonality" | "rhythm";
+type ViewTab =
+  | "all"
+  | "instruments"
+  | "structure"
+  | "melody"
+  | "progressions"
+  | "chords"
+  | "tonality"
+  | "rhythm";
 
 export function RhythmAnalysisView({
   metadata,
@@ -69,6 +79,7 @@ export function RhythmAnalysisView({
   const progressionResult = "progression" in analysis ? analysis.progression : null;
   const melodyResult = "melody" in analysis ? analysis.melody : null;
   const structureResult = "structure" in analysis ? analysis.structure : null;
+  const instrumentResult = "instruments" in analysis ? analysis.instruments : null;
 
   // Audio event listeners
   useEffect(() => {
@@ -222,6 +233,12 @@ export function RhythmAnalysisView({
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
+            {instrumentResult && instrumentResult.detections.length > 0 && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-violet/15 border border-accent-violet/30 text-accent-cyan text-xs font-mono font-medium">
+                <Disc size={13} className="text-accent-violet" />
+                <span>Timbre: {instrumentResult.detections.length} sources</span>
+              </span>
+            )}
             {structureResult && structureResult.totalSections > 0 && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-cyan/15 border border-accent-cyan/30 text-accent-cyan text-xs font-mono font-medium">
                 <Layers size={13} className="text-accent-cyan" />
@@ -436,6 +453,20 @@ export function RhythmAnalysisView({
           >
             All Dimensions
           </button>
+          {instrumentResult && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("instruments")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer ${
+                activeTab === "instruments"
+                  ? "bg-accent-violet text-white font-semibold shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                  : "bg-white/5 text-text-muted hover:text-text-primary hover:bg-white/10"
+              }`}
+            >
+              <Disc size={13} />
+              <span>Instruments & Timbre</span>
+            </button>
+          )}
           {structureResult && (
             <button
               type="button"
@@ -519,6 +550,13 @@ export function RhythmAnalysisView({
             <span>Rhythm & Tempo</span>
           </button>
         </div>
+
+        {/* --- SECTION: INSTRUMENT & SOUND IDENTIFICATION (PHASE 11) --- */}
+        {instrumentResult && (activeTab === "all" || activeTab === "instruments") && (
+          <div className="space-y-6 pt-2 animate-in fade-in duration-200">
+            <InstrumentAnalysisCard instrumentResult={instrumentResult} />
+          </div>
+        )}
 
         {/* --- SECTION 0: MUSICAL STRUCTURE & SECTION ANALYSIS (PHASE 10) --- */}
         {structureResult && (activeTab === "all" || activeTab === "structure") && (

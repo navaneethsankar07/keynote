@@ -103,6 +103,7 @@ export interface FullSongAnalysisResult {
   progression: ProgressionAnalysisResult;
   melody: MelodyAnalysisResult;
   structure: StructureAnalysisResult;
+  instruments: InstrumentAnalysisResult;
   duration: number;
   analyzedSampleCount: number;
   analysisTimeMs: number;
@@ -181,6 +182,7 @@ export type AnalysisStage =
   | "progression_analysis"
   | "melody_extraction"
   | "structure_analysis"
+  | "instrument_analysis"
   | "complete";
 
 export type ChordQuality =
@@ -417,5 +419,93 @@ export interface StructureAnalysisResult {
   hasIntro: boolean;
   hasOutro: boolean;
   structuralComplexity: "minimal" | "standard" | "complex" | "through_composed";
+  analysisSummary: string;
+}
+
+/* ==========================================================================
+   Instrument & Sound Identification Types (Phase 11)
+   ========================================================================== */
+
+export type InstrumentFamily =
+  | "voice"
+  | "percussion"
+  | "bass"
+  | "keyboard"
+  | "strings"
+  | "wind_brass"
+  | "electronic"
+  | "ambient_fx";
+
+export type InstrumentSpecificity = "family" | "candidate";
+
+export type InstrumentConfidenceLevel = "high" | "moderate" | "low" | "uncertain";
+
+export interface InstrumentDetection {
+  id: string;
+  name: string; // e.g. "Lead Vocals", "Acoustic Drum Kit", "Acoustic Piano", "Electric Bass Guitar", "Synthesizer Pad"
+  family: InstrumentFamily;
+  familyLabel: string; // e.g. "Voice & Vocals", "Drums & Percussion", "Bass Instruments", "Keyboards", "Strings"
+  specificity: InstrumentSpecificity; // "family" (broad) vs "candidate" (specific)
+  confidence: number; // 0.0 - 1.0 calibrated algorithmic score
+  confidenceLevel: InstrumentConfidenceLevel;
+  presencePercentage: number; // 0 - 100% of analyzed song
+  frequencyRange: string; // e.g. "130 Hz – 3,500 Hz"
+  timbralCues: string[]; // e.g. ["Vocal formant resonance in 800-2400Hz", "Pitch vibrato modulation"]
+  isAcoustic: boolean;
+  isElectronic: boolean;
+  color: string;
+}
+
+export interface VocalAnalysis {
+  detected: boolean;
+  classification: "lead_vocals" | "backing_vocals" | "choir" | "instrumental_only" | "uncertain";
+  confidence: number; // 0.0 - 1.0
+  presencePercentage: number; // 0 - 100%
+  formantClarity: number; // 0.0 - 1.0
+  description: string;
+}
+
+export interface PercussionAnalysis {
+  detected: boolean;
+  percussionType: "drum_kit" | "electronic_drums" | "hand_percussion" | "minimal_percussion" | "none";
+  hasKick: boolean;
+  hasSnare: boolean;
+  hasHiHats: boolean;
+  transientSharpness: number; // 0.0 - 1.0
+  rhythmicDrive: number; // 0.0 - 1.0
+  confidence: number; // 0.0 - 1.0
+  description: string;
+}
+
+export interface BassAnalysis {
+  detected: boolean;
+  bassType: "bass_guitar" | "synth_bass" | "sub_bass" | "low_keys" | "none" | "uncertain";
+  fundamentalFrequencyRange: string; // e.g. "45 Hz – 180 Hz"
+  subBassEnergyRatio: number; // 0.0 - 1.0
+  confidence: number; // 0.0 - 1.0
+  description: string;
+}
+
+export interface TimbreProfile {
+  brightness: "bright" | "balanced" | "dark";
+  spectralCentroidHz: number; // Mean centroid in Hz
+  spectralRolloffHz: number; // 85% energy rolloff in Hz
+  spectralFlatness: number; // 0.0 (pure tones) - 1.0 (white noise)
+  harmonicity: number; // 0.0 - 1.0 (harmonic-to-noise ratio)
+  dynamicRangeDb: number; // Peak to RMS dynamic spread
+  acousticness: number; // 0.0 (synthesized) - 1.0 (natural acoustic)
+  electronicness: number; // 0.0 - 1.0
+  dominantTexture: string; // e.g. "Harmonically Rich & Warm", "Punchy & Bright", "Deep Synthetic"
+}
+
+export interface InstrumentAnalysisResult {
+  detections: InstrumentDetection[];
+  familiesPresent: InstrumentFamily[];
+  vocal: VocalAnalysis;
+  percussion: PercussionAnalysis;
+  bass: BassAnalysis;
+  timbre: TimbreProfile;
+  overallAcousticVsElectronic: "acoustic" | "electronic" | "hybrid";
+  confidence: number; // 0.0 - 1.0
   analysisSummary: string;
 }
