@@ -101,6 +101,7 @@ export interface FullSongAnalysisResult {
   key: KeyAnalysisResult;
   chords: ChordAnalysisResult;
   progression: ProgressionAnalysisResult;
+  melody: MelodyAnalysisResult;
   duration: number;
   analyzedSampleCount: number;
   analysisTimeMs: number;
@@ -177,6 +178,7 @@ export type AnalysisStage =
   | "key_detection"
   | "chord_detection"
   | "progression_analysis"
+  | "melody_extraction"
   | "complete";
 
 export type ChordQuality =
@@ -221,4 +223,121 @@ export interface AnalysisProgress {
   stage: AnalysisStage;
   message: string;
   percent: number;
+}
+
+/* ==========================================================================
+   Melody & Melodic Analysis Types (Phase 9)
+   ========================================================================== */
+
+export type MelodyConfidenceLevel = "high" | "moderate" | "low" | "uncertain";
+
+export interface MelodyNoteEvent {
+  id: string;
+  midiPitch: number; // Rounded MIDI pitch number, e.g. 60 for C4
+  frequency: number; // Hz, e.g. 261.63
+  noteName: PitchClass; // Pitch class without octave, e.g. "C"
+  octave: number; // Octave number, e.g. 4
+  name: string; // Full name with octave, e.g. "C4"
+  startTime: number; // Start timestamp in seconds
+  endTime: number; // End timestamp in seconds
+  duration: number; // Duration in seconds
+  confidence: number; // 0.0 - 1.0 calibrated algorithmic score
+  confidenceLevel: MelodyConfidenceLevel;
+  isUncertain: boolean;
+  salienceScore: number; // Peak harmonic salience strength
+}
+
+export type MelodicDirection = "ascending" | "descending" | "repeated";
+
+export interface MelodicContourPoint {
+  time: number;
+  midiPitch: number;
+  noteName: string;
+}
+
+export interface MelodicContour {
+  ascendingCount: number;
+  descendingCount: number;
+  repeatedCount: number;
+  ascendingPercentage: number; // 0 - 100%
+  descendingPercentage: number; // 0 - 100%
+  repeatedPercentage: number; // 0 - 100%
+  directionChanges: number; // Number of contour inflection turns
+  stepwiseCount: number;
+  leapCount: number;
+  stepwisePercentage: number; // 0 - 100% (1-2 semitones)
+  leapPercentage: number; // 0 - 100% (>= 3 semitones)
+  localPeaksCount: number;
+  localValleysCount: number;
+  dominantDirection: string; // e.g. "Ascending", "Descending", "Balanced"
+  contourType: string; // e.g. "Arch-shaped", "Wave-like / Undulating", "Stepwise Progression", "Ascending Climb", "Cascading Descent"
+  contourPoints: MelodicContourPoint[];
+}
+
+export interface IntervalOccurrence {
+  semitones: number;
+  name: string; // e.g. "Unison", "Minor 2nd", "Major 2nd", etc.
+  count: number;
+  percentage: number; // 0 - 100%
+  isStepwise: boolean;
+  isLeap: boolean;
+}
+
+export interface MelodicIntervalStats {
+  mostCommonInterval: string;
+  mostCommonSemitones: number;
+  averageIntervalSemitones: number;
+  stepwiseRatio: number; // 0.0 - 1.0
+  leapRatio: number; // 0.0 - 1.0
+  distribution: IntervalOccurrence[];
+  totalIntervals: number;
+}
+
+export interface MelodicRange {
+  lowestNote: {
+    midiPitch: number;
+    name: string;
+    frequency: number;
+  };
+  highestNote: {
+    midiPitch: number;
+    name: string;
+    frequency: number;
+  };
+  semitoneRange: number;
+  octaveSpan: number;
+  spanDescription: string; // e.g. "2 octaves, 4 semitones (28 semitones)"
+}
+
+export interface MelodyMotifOccurrence {
+  startTime: number;
+  endTime: number;
+  duration: number;
+  startIndex: number;
+  endIndex: number;
+}
+
+export interface MelodyMotif {
+  id: string;
+  notes: string[]; // e.g. ["E4", "G4", "A4"]
+  intervalDeltas: number[]; // e.g. [+3, +2]
+  patternName: string; // e.g. "E4 → G4 → A4"
+  repetitionCount: number;
+  occurrences: MelodyMotifOccurrence[];
+  isTransposed: boolean;
+  confidence: number; // 0.0 - 1.0
+}
+
+export interface MelodyAnalysisResult {
+  notes: MelodyNoteEvent[];
+  totalNotes: number;
+  contour: MelodicContour;
+  intervalStats: MelodicIntervalStats;
+  range: MelodicRange | null;
+  motifs: MelodyMotif[];
+  averageConfidence: number; // 0.0 - 1.0
+  voicedDurationSec: number;
+  voicedPercentage: number; // 0 - 100%
+  isReliable: boolean;
+  analysisSummary: string;
 }

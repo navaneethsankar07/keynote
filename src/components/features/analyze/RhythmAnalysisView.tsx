@@ -31,6 +31,8 @@ import { ChromaVisualizer } from "./ChromaVisualizer";
 import { ChordTimeline } from "./ChordTimeline";
 import { ChordAnalysisCard } from "./ChordAnalysisCard";
 import { ChordProgressionView } from "./ChordProgressionView";
+import { MelodyTimeline } from "./MelodyTimeline";
+import { MelodyAnalysisCard } from "./MelodyAnalysisCard";
 
 interface RhythmAnalysisViewProps {
   metadata: AudioFileMetadata;
@@ -40,7 +42,7 @@ interface RhythmAnalysisViewProps {
   onReset: () => void;
 }
 
-type ViewTab = "all" | "progressions" | "chords" | "tonality" | "rhythm";
+type ViewTab = "all" | "melody" | "progressions" | "chords" | "tonality" | "rhythm";
 
 export function RhythmAnalysisView({
   metadata,
@@ -63,6 +65,7 @@ export function RhythmAnalysisView({
   const keyResult = "key" in analysis ? analysis.key : null;
   const chordResult = "chords" in analysis ? analysis.chords : null;
   const progressionResult = "progression" in analysis ? analysis.progression : null;
+  const melodyResult = "melody" in analysis ? analysis.melody : null;
 
   // Audio event listeners
   useEffect(() => {
@@ -205,7 +208,7 @@ export function RhythmAnalysisView({
         <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/10">
           <div>
             <span className="text-[10px] font-mono uppercase tracking-wider text-accent-cyan">
-              DSP Audio Intelligence • Phases 5, 6 & 7
+              DSP Audio Intelligence • Phases 5, 6, 7, 8 & 9
             </span>
             <h2 className="font-display text-xl sm:text-2xl font-bold text-text-primary">
               Full Song Analysis Results
@@ -216,6 +219,12 @@ export function RhythmAnalysisView({
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
+            {melodyResult && melodyResult.totalNotes > 0 && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-violet/15 border border-accent-violet/30 text-accent-cyan text-xs font-mono font-medium">
+                <Music2 size={13} className="text-accent-violet" />
+                <span>Melody: {melodyResult.totalNotes} notes</span>
+              </span>
+            )}
             {keyResult && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-cyan/15 border border-accent-cyan/30 text-accent-cyan text-xs font-mono font-medium">
                 <Music2 size={13} />
@@ -418,6 +427,20 @@ export function RhythmAnalysisView({
           >
             All Dimensions
           </button>
+          {melodyResult && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("melody")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer ${
+                activeTab === "melody"
+                  ? "bg-accent-violet text-white font-semibold shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                  : "bg-white/5 text-text-muted hover:text-text-primary hover:bg-white/10"
+              }`}
+            >
+              <Music2 size={13} />
+              <span>Melody & Pitch</span>
+            </button>
+          )}
           {progressionResult && (
             <button
               type="button"
@@ -473,6 +496,26 @@ export function RhythmAnalysisView({
             <span>Rhythm & Tempo</span>
           </button>
         </div>
+
+        {/* --- SECTION 0: MELODY & PITCH ANALYSIS (PHASE 9) --- */}
+        {melodyResult && (activeTab === "all" || activeTab === "melody") && (
+          <div className="space-y-6 pt-2 animate-in fade-in duration-200">
+            <div className="rounded-3xl border border-white/10 bg-surface/90 backdrop-blur-xl p-6 sm:p-8 space-y-6 shadow-2xl">
+              <MelodyTimeline
+                melodyResult={melodyResult}
+                currentTime={currentTime}
+                duration={duration}
+                onSeek={seekToTime}
+              />
+            </div>
+
+            <MelodyAnalysisCard
+              melodyResult={melodyResult}
+              currentTime={currentTime}
+              onSeek={seekToTime}
+            />
+          </div>
+        )}
 
         {/* --- SECTION 1: CHORD PROGRESSION & HARMONIC ANALYSIS (PHASE 8) --- */}
         {progressionResult && (activeTab === "all" || activeTab === "progressions") && (

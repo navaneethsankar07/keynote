@@ -17,6 +17,16 @@ import {
   ChordTransition,
   ChordDistributionItem,
   HarmonicDegree,
+  MelodyNoteEvent,
+  MelodicContour,
+  MelodicContourPoint,
+  MelodicIntervalStats,
+  IntervalOccurrence,
+  MelodicRange,
+  MelodyMotif,
+  MelodyMotifOccurrence,
+  MelodyAnalysisResult,
+  MelodyConfidenceLevel,
 } from "@/lib/audio-analysis/types";
 
 export interface AudioFileMetadata {
@@ -68,4 +78,14 @@ export type {
   ChordTransition,
   ChordDistributionItem,
   HarmonicDegree,
+  MelodyNoteEvent,
+  MelodicContour,
+  MelodicContourPoint,
+  MelodicIntervalStats,
+  IntervalOccurrence,
+  MelodicRange,
+  MelodyMotif,
+  MelodyMotifOccurrence,
+  MelodyAnalysisResult,
+  MelodyConfidenceLevel,
 };

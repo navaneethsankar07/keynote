@@ -14,13 +14,14 @@ export function AnalysisProgressView({ progress, fileName }: AnalysisProgressVie
   const message = progress?.message ?? "Preparing client-side audio DSP analysis...";
 
   const steps = [
-    { label: "1. Onset Novelty", threshold: 15 },
-    { label: "2. Tempo & BPM", threshold: 32 },
-    { label: "3. Beat Tracking", threshold: 48 },
-    { label: "4. Chroma Profile", threshold: 64 },
-    { label: "5. Key & Scale", threshold: 78 },
-    { label: "6. Chords", threshold: 88 },
-    { label: "7. Progressions", threshold: 95 },
+    { label: "1. Onset", threshold: 12 },
+    { label: "2. Tempo & BPM", threshold: 25 },
+    { label: "3. Beat Grid", threshold: 38 },
+    { label: "4. Chroma", threshold: 50 },
+    { label: "5. Key & Scale", threshold: 62 },
+    { label: "6. Chords", threshold: 74 },
+    { label: "7. Progression", threshold: 84 },
+    { label: "8. Melody", threshold: 94 },
   ];
 
   return (
@@ -78,7 +79,7 @@ export function AnalysisProgressView({ progress, fileName }: AnalysisProgressVie
       </div>
 
       {/* Real Stage Indicators */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 pt-2 border-t border-white/5 text-left">
+      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2 pt-2 border-t border-white/5 text-left">
         {steps.map((step, idx) => {
           const isDone = percent > step.threshold;
           const isActive = percent >= step.threshold && !isDone;

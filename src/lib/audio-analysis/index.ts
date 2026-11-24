@@ -3,6 +3,7 @@ import {
   AnalysisProgress,
   FullSongAnalysisResult,
   ChordAnalysisResult,
+  MelodyAnalysisResult,
 } from "./types";
 import { extractOnsetEnvelope } from "./onset-detection";
 import { estimateTempo } from "./tempo";
@@ -11,6 +12,7 @@ import { extractChromaDistribution } from "./chroma";
 import { detectMusicalKey } from "./key-detection";
 import { detectChords } from "./chord-detection";
 import { analyzeChordProgression } from "./progression-analysis";
+import { extractMelody } from "./melody-extraction";
 
 export * from "./types";
 export * from "./onset-detection";
@@ -21,6 +23,7 @@ export * from "./key-detection";
 export * from "./chord-templates";
 export * from "./chord-detection";
 export * from "./progression-analysis";
+export * from "./melody-extraction";
 
 export interface AnalyzeSongOptions {
   onProgress?: (progress: AnalysisProgress) => void;
@@ -111,7 +114,7 @@ export async function analyzeSongAudio(
   onProgress?.({
     stage: "chord_detection",
     message: "Analyzing chord roots, qualities, and timeline...",
-    percent: 85,
+    percent: 74,
   });
   await yieldToMain();
 
@@ -122,7 +125,7 @@ export async function analyzeSongAudio(
         onProgress?.({
           stage: "chord_detection",
           message: msg,
-          percent: 78 + Math.round((pct / 100) * 12),
+          percent: 68 + Math.round((pct / 100) * 10),
         });
       },
     });
@@ -143,16 +146,77 @@ export async function analyzeSongAudio(
   onProgress?.({
     stage: "progression_analysis",
     message: "Identifying recurring progressions, transitions & Roman numerals...",
-    percent: 95,
+    percent: 84,
   });
   await yieldToMain();
 
   const progression = analyzeChordProgression(chords.segments, key, duration);
 
-  // Stage 8: Complete
+  // Stage 8: Melody & Melodic Line Extraction (Phase 9)
+  onProgress?.({
+    stage: "melody_extraction",
+    message: "Extracting dominant melody notes, contour & recurring motifs...",
+    percent: 92,
+  });
+  await yieldToMain();
+
+  let melody: MelodyAnalysisResult;
+  try {
+    melody = await extractMelody(audioBuffer, {
+      onProgress: (pct, msg) => {
+        onProgress?.({
+          stage: "melody_extraction",
+          message: msg,
+          percent: 85 + Math.round((pct / 100) * 12),
+        });
+      },
+    });
+  } catch (melodyErr) {
+    console.error("Melody extraction error, proceeding with fallback:", melodyErr);
+    melody = {
+      notes: [],
+      totalNotes: 0,
+      contour: {
+        ascendingCount: 0,
+        descendingCount: 0,
+        repeatedCount: 0,
+        ascendingPercentage: 0,
+        descendingPercentage: 0,
+        repeatedPercentage: 0,
+        directionChanges: 0,
+        stepwiseCount: 0,
+        leapCount: 0,
+        stepwisePercentage: 0,
+        leapPercentage: 0,
+        localPeaksCount: 0,
+        localValleysCount: 0,
+        dominantDirection: "N/A",
+        contourType: "Unvoiced / Diffuse",
+        contourPoints: [],
+      },
+      intervalStats: {
+        mostCommonInterval: "N/A",
+        mostCommonSemitones: 0,
+        averageIntervalSemitones: 0,
+        stepwiseRatio: 0,
+        leapRatio: 0,
+        distribution: [],
+        totalIntervals: 0,
+      },
+      range: null,
+      motifs: [],
+      averageConfidence: 0,
+      voicedDurationSec: 0,
+      voicedPercentage: 0,
+      isReliable: false,
+      analysisSummary: "Melodic extraction encountered an error or polyphonic ambiguity on this signal.",
+    };
+  }
+
+  // Stage 9: Complete
   onProgress?.({
     stage: "complete",
-    message: "Full acoustic, tonal, and harmonic analysis complete.",
+    message: "Full acoustic, tonal, harmonic, and melodic analysis complete.",
     percent: 100,
   });
   await yieldToMain();
@@ -165,6 +229,7 @@ export async function analyzeSongAudio(
     key,
     chords,
     progression,
+    melody,
     duration,
     analyzedSampleCount: audioBuffer.length,
     analysisTimeMs: Math.round(endTime - startTime),
