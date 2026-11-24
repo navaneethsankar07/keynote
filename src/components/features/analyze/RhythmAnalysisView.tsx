@@ -20,6 +20,7 @@ import {
   Layers,
   Repeat,
   Disc,
+  Compass,
 } from "lucide-react";
 import {
   RhythmAnalysisResult,
@@ -37,6 +38,7 @@ import { MelodyAnalysisCard } from "./MelodyAnalysisCard";
 import { StructureTimeline } from "./StructureTimeline";
 import { StructureAnalysisCard } from "./StructureAnalysisCard";
 import { InstrumentAnalysisCard } from "./InstrumentAnalysisCard";
+import { GenreAnalysisCard } from "./GenreAnalysisCard";
 
 interface RhythmAnalysisViewProps {
   metadata: AudioFileMetadata;
@@ -48,6 +50,7 @@ interface RhythmAnalysisViewProps {
 
 type ViewTab =
   | "all"
+  | "genre"
   | "instruments"
   | "structure"
   | "melody"
@@ -80,6 +83,7 @@ export function RhythmAnalysisView({
   const melodyResult = "melody" in analysis ? analysis.melody : null;
   const structureResult = "structure" in analysis ? analysis.structure : null;
   const instrumentResult = "instruments" in analysis ? analysis.instruments : null;
+  const genreResult = "genre" in analysis ? analysis.genre : null;
 
   // Audio event listeners
   useEffect(() => {
@@ -233,6 +237,12 @@ export function RhythmAnalysisView({
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
+            {genreResult && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-cyan/15 border border-accent-cyan/30 text-accent-cyan text-xs font-mono font-medium">
+                <Compass size={13} className="text-accent-cyan" />
+                <span>Style: {genreResult.primaryGenre.genre.split("/")[0].trim()}</span>
+              </span>
+            )}
             {instrumentResult && instrumentResult.detections.length > 0 && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-violet/15 border border-accent-violet/30 text-accent-cyan text-xs font-mono font-medium">
                 <Disc size={13} className="text-accent-violet" />
@@ -453,6 +463,20 @@ export function RhythmAnalysisView({
           >
             All Dimensions
           </button>
+          {genreResult && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("genre")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer ${
+                activeTab === "genre"
+                  ? "bg-accent-violet text-white font-semibold shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                  : "bg-white/5 text-text-muted hover:text-text-primary hover:bg-white/10"
+              }`}
+            >
+              <Compass size={13} />
+              <span>Genre & Style</span>
+            </button>
+          )}
           {instrumentResult && (
             <button
               type="button"
@@ -550,6 +574,13 @@ export function RhythmAnalysisView({
             <span>Rhythm & Tempo</span>
           </button>
         </div>
+
+        {/* --- SECTION: GENRE & MUSICAL STYLE ANALYSIS (PHASE 12) --- */}
+        {genreResult && (activeTab === "all" || activeTab === "genre") && (
+          <div className="space-y-6 pt-2 animate-in fade-in duration-200">
+            <GenreAnalysisCard genreResult={genreResult} />
+          </div>
+        )}
 
         {/* --- SECTION: INSTRUMENT & SOUND IDENTIFICATION (PHASE 11) --- */}
         {instrumentResult && (activeTab === "all" || activeTab === "instruments") && (

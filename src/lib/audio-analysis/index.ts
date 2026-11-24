@@ -6,6 +6,7 @@ import {
   MelodyAnalysisResult,
   StructureAnalysisResult,
   InstrumentAnalysisResult,
+  GenreAnalysisResult,
 } from "./types";
 import { extractOnsetEnvelope } from "./onset-detection";
 import { estimateTempo } from "./tempo";
@@ -20,6 +21,10 @@ import {
   analyzeInstrumentsAndSounds,
   createEmptyInstrumentResult,
 } from "./instrument-analysis";
+import {
+  analyzeGenreAndStyle,
+  createEmptyGenreResult,
+} from "./genre-analysis";
 
 export * from "./types";
 export * from "./onset-detection";
@@ -33,6 +38,7 @@ export * from "./progression-analysis";
 export * from "./melody-extraction";
 export * from "./structure-analysis";
 export * from "./instrument-analysis";
+export * from "./genre-analysis";
 
 export interface AnalyzeSongOptions {
   onProgress?: (progress: AnalysisProgress) => void;
@@ -293,10 +299,39 @@ export async function analyzeSongAudio(
     );
   }
 
-  // Stage 11: Complete
+  // Stage 11: Genre & Musical Style Analysis (Phase 12)
+  onProgress?.({
+    stage: "genre_analysis",
+    message: "Evaluating multi-dimensional style archetypes, traits & influences...",
+    percent: 98,
+  });
+  await yieldToMain();
+
+  let genre: GenreAnalysisResult;
+  try {
+    genre = await analyzeGenreAndStyle(
+      { tempo, beats, key, chords, progression, melody, structure, instruments },
+      {
+        onProgress: (pct, msg) => {
+          onProgress?.({
+            stage: "genre_analysis",
+            message: msg,
+            percent: 96 + Math.round((pct / 100) * 3),
+          });
+        },
+      }
+    );
+  } catch (genreErr) {
+    console.error("Genre analysis error, proceeding with fallback:", genreErr);
+    genre = createEmptyGenreResult(
+      "Genre and musical style analysis could not be resolved on this audio signal."
+    );
+  }
+
+  // Stage 12: Complete
   onProgress?.({
     stage: "complete",
-    message: "Full acoustic, tonal, harmonic, melodic, structural, and timbral analysis complete.",
+    message: "Full acoustic, tonal, harmonic, melodic, structural, timbral, and genre analysis complete.",
     percent: 100,
   });
   await yieldToMain();
@@ -312,6 +347,7 @@ export async function analyzeSongAudio(
     melody,
     structure,
     instruments,
+    genre,
     duration,
     analyzedSampleCount: audioBuffer.length,
     analysisTimeMs: Math.round(endTime - startTime),

@@ -43,6 +43,12 @@ import {
   BassAnalysis,
   TimbreProfile,
   InstrumentAnalysisResult,
+  PrimaryGenreName,
+  GenreConfidenceLevel,
+  GenreCandidate,
+  SectionStyleVariation,
+  StyleTraitRadar,
+  GenreAnalysisResult,
 } from "@/lib/audio-analysis/types";
 
 export interface AudioFileMetadata {
@@ -120,4 +126,10 @@ export type {
   BassAnalysis,
   TimbreProfile,
   InstrumentAnalysisResult,
+  PrimaryGenreName,
+  GenreConfidenceLevel,
+  GenreCandidate,
+  SectionStyleVariation,
+  StyleTraitRadar,
+  GenreAnalysisResult,
 };

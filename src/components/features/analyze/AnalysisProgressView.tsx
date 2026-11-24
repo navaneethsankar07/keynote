@@ -15,15 +15,16 @@ export function AnalysisProgressView({ progress, fileName }: AnalysisProgressVie
 
   const steps = [
     { label: "1. Onset", threshold: 10 },
-    { label: "2. Tempo & BPM", threshold: 25 },
-    { label: "3. Beat Grid", threshold: 40 },
-    { label: "4. Chroma", threshold: 55 },
-    { label: "5. Key & Scale", threshold: 68 },
-    { label: "6. Chords", threshold: 76 },
-    { label: "7. Progression", threshold: 84 },
-    { label: "8. Melody", threshold: 88 },
-    { label: "9. Structure", threshold: 92 },
-    { label: "10. Instruments", threshold: 96 },
+    { label: "2. Tempo & BPM", threshold: 24 },
+    { label: "3. Beat Grid", threshold: 38 },
+    { label: "4. Chroma", threshold: 52 },
+    { label: "5. Key & Scale", threshold: 64 },
+    { label: "6. Chords", threshold: 72 },
+    { label: "7. Progression", threshold: 80 },
+    { label: "8. Melody", threshold: 86 },
+    { label: "9. Structure", threshold: 90 },
+    { label: "10. Instruments", threshold: 94 },
+    { label: "11. Genre", threshold: 98 },
   ];
 
   return (
@@ -81,7 +82,7 @@ export function AnalysisProgressView({ progress, fileName }: AnalysisProgressVie
       </div>
 
       {/* Real Stage Indicators */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 md:grid-cols-10 gap-1.5 pt-2 border-t border-white/5 text-left">
+      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-11 gap-1.5 pt-2 border-t border-white/5 text-left">
         {steps.map((step, idx) => {
           const isDone = percent > step.threshold;
           const isActive = percent >= step.threshold && !isDone;

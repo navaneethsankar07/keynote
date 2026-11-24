@@ -104,6 +104,7 @@ export interface FullSongAnalysisResult {
   melody: MelodyAnalysisResult;
   structure: StructureAnalysisResult;
   instruments: InstrumentAnalysisResult;
+  genre: GenreAnalysisResult;
   duration: number;
   analyzedSampleCount: number;
   analysisTimeMs: number;
@@ -183,6 +184,7 @@ export type AnalysisStage =
   | "melody_extraction"
   | "structure_analysis"
   | "instrument_analysis"
+  | "genre_analysis"
   | "complete";
 
 export type ChordQuality =
@@ -508,4 +510,72 @@ export interface InstrumentAnalysisResult {
   overallAcousticVsElectronic: "acoustic" | "electronic" | "hybrid";
   confidence: number; // 0.0 - 1.0
   analysisSummary: string;
+}
+
+/* ==========================================================================
+   Genre & Musical Style Analysis Types (Phase 12)
+   ========================================================================== */
+
+export type PrimaryGenreName =
+  | "Electronic / Dance"
+  | "Rock / Alternative"
+  | "Pop / Modern Commercial"
+  | "Hip-Hop / Urban"
+  | "Acoustic / Folk"
+  | "Classical / Orchestral"
+  | "Jazz / Blues"
+  | "R&B / Soul / Funk"
+  | "Metal / Heavy Rock"
+  | "Ambient / Cinematic"
+  | "Experimental / Avant-Garde"
+  | "Uncertain / Insufficient Evidence";
+
+export type GenreConfidenceLevel =
+  | "high"
+  | "moderate"
+  | "low"
+  | "speculative"
+  | "uncertain";
+
+export interface GenreCandidate {
+  genre: string;
+  subgenre: string | null;
+  confidence: number; // 0.0 - 1.0 calibrated similarity/affinity score
+  confidenceLevel: GenreConfidenceLevel;
+  affinityPercentage: number; // 0 - 100% relative stylistic fit
+  supportingEvidence: string[];
+  contradictingFactors: string[];
+  culturalContextNote?: string;
+}
+
+export interface SectionStyleVariation {
+  sectionId: string;
+  sectionName: string;
+  startTime: number;
+  endTime: number;
+  dominantStyle: string;
+  stylisticContrast: "consistent" | "notable_shift" | "dramatic_contrast";
+  divergentFeatures: string[];
+}
+
+export interface StyleTraitRadar {
+  danceability: number; // 0.0 - 1.0
+  energy: number; // 0.0 - 1.0
+  acousticness: number; // 0.0 - 1.0
+  instrumentalness: number; // 0.0 - 1.0
+  harmonicComplexity: number; // 0.0 - 1.0
+  rhythmicSyncopation: number; // 0.0 - 1.0
+}
+
+export interface GenreAnalysisResult {
+  primaryGenre: GenreCandidate;
+  secondaryGenres: GenreCandidate[];
+  hybridStyleLabel: string | null;
+  isAmbiguous: boolean;
+  ambiguityReason?: string;
+  styleTraits: StyleTraitRadar;
+  sectionVariations: SectionStyleVariation[];
+  hasSectionVariation: boolean;
+  analysisSummary: string;
+  methodologyNote: string;
 }
