@@ -21,6 +21,7 @@ import {
   Repeat,
   Disc,
   Compass,
+  Heart,
 } from "lucide-react";
 import {
   RhythmAnalysisResult,
@@ -39,6 +40,7 @@ import { StructureTimeline } from "./StructureTimeline";
 import { StructureAnalysisCard } from "./StructureAnalysisCard";
 import { InstrumentAnalysisCard } from "./InstrumentAnalysisCard";
 import { GenreAnalysisCard } from "./GenreAnalysisCard";
+import { MoodAnalysisCard } from "./MoodAnalysisCard";
 
 interface RhythmAnalysisViewProps {
   metadata: AudioFileMetadata;
@@ -50,6 +52,7 @@ interface RhythmAnalysisViewProps {
 
 type ViewTab =
   | "all"
+  | "mood"
   | "genre"
   | "instruments"
   | "structure"
@@ -84,6 +87,7 @@ export function RhythmAnalysisView({
   const structureResult = "structure" in analysis ? analysis.structure : null;
   const instrumentResult = "instruments" in analysis ? analysis.instruments : null;
   const genreResult = "genre" in analysis ? analysis.genre : null;
+  const moodResult = "mood" in analysis ? analysis.mood : null;
 
   // Audio event listeners
   useEffect(() => {
@@ -237,6 +241,12 @@ export function RhythmAnalysisView({
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
+            {moodResult && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-violet/15 border border-accent-violet/30 text-accent-cyan text-xs font-mono font-medium">
+                <Heart size={13} className="text-accent-violet" />
+                <span>Mood: {moodResult.primaryMood.label}</span>
+              </span>
+            )}
             {genreResult && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-cyan/15 border border-accent-cyan/30 text-accent-cyan text-xs font-mono font-medium">
                 <Compass size={13} className="text-accent-cyan" />
@@ -463,6 +473,20 @@ export function RhythmAnalysisView({
           >
             All Dimensions
           </button>
+          {moodResult && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("mood")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer ${
+                activeTab === "mood"
+                  ? "bg-accent-violet text-white font-semibold shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                  : "bg-white/5 text-text-muted hover:text-text-primary hover:bg-white/10"
+              }`}
+            >
+              <Heart size={13} />
+              <span>Mood & Emotion</span>
+            </button>
+          )}
           {genreResult && (
             <button
               type="button"
@@ -574,6 +598,13 @@ export function RhythmAnalysisView({
             <span>Rhythm & Tempo</span>
           </button>
         </div>
+
+        {/* --- SECTION: MUSICAL MOOD & EMOTIONAL CHARACTER (PHASE 13) --- */}
+        {moodResult && (activeTab === "all" || activeTab === "mood") && (
+          <div className="space-y-6 pt-2 animate-in fade-in duration-200">
+            <MoodAnalysisCard moodResult={moodResult} />
+          </div>
+        )}
 
         {/* --- SECTION: GENRE & MUSICAL STYLE ANALYSIS (PHASE 12) --- */}
         {genreResult && (activeTab === "all" || activeTab === "genre") && (

@@ -7,6 +7,7 @@ import {
   StructureAnalysisResult,
   InstrumentAnalysisResult,
   GenreAnalysisResult,
+  MoodAnalysisResult,
 } from "./types";
 import { extractOnsetEnvelope } from "./onset-detection";
 import { estimateTempo } from "./tempo";
@@ -25,6 +26,10 @@ import {
   analyzeGenreAndStyle,
   createEmptyGenreResult,
 } from "./genre-analysis";
+import {
+  analyzeMusicalMood,
+  createEmptyMoodResult,
+} from "./mood-analysis";
 
 export * from "./types";
 export * from "./onset-detection";
@@ -39,6 +44,7 @@ export * from "./melody-extraction";
 export * from "./structure-analysis";
 export * from "./instrument-analysis";
 export * from "./genre-analysis";
+export * from "./mood-analysis";
 
 export interface AnalyzeSongOptions {
   onProgress?: (progress: AnalysisProgress) => void;
@@ -328,10 +334,39 @@ export async function analyzeSongAudio(
     );
   }
 
-  // Stage 12: Complete
+  // Stage 12: Musical Mood & Emotional Character Analysis (Phase 13)
+  onProgress?.({
+    stage: "mood_analysis",
+    message: "Estimating energy, emotional valence, and expressive mood character...",
+    percent: 99,
+  });
+  await yieldToMain();
+
+  let mood: MoodAnalysisResult;
+  try {
+    mood = await analyzeMusicalMood(
+      { tempo, beats, key, chords, progression, melody, structure, instruments, genre },
+      {
+        onProgress: (pct, msg) => {
+          onProgress?.({
+            stage: "mood_analysis",
+            message: msg,
+            percent: 98 + Math.round((pct / 100) * 1.5),
+          });
+        },
+      }
+    );
+  } catch (moodErr) {
+    console.error("Mood analysis error, proceeding with fallback:", moodErr);
+    mood = createEmptyMoodResult(
+      "Musical mood and emotional character analysis could not be resolved on this audio signal."
+    );
+  }
+
+  // Stage 13: Complete
   onProgress?.({
     stage: "complete",
-    message: "Full acoustic, tonal, harmonic, melodic, structural, timbral, and genre analysis complete.",
+    message: "Full acoustic, tonal, harmonic, melodic, structural, timbral, genre, and mood analysis complete.",
     percent: 100,
   });
   await yieldToMain();
@@ -348,6 +383,7 @@ export async function analyzeSongAudio(
     structure,
     instruments,
     genre,
+    mood,
     duration,
     analyzedSampleCount: audioBuffer.length,
     analysisTimeMs: Math.round(endTime - startTime),

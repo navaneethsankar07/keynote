@@ -49,6 +49,13 @@ import {
   SectionStyleVariation,
   StyleTraitRadar,
   GenreAnalysisResult,
+  MoodEnergyLevel,
+  MoodValenceTone,
+  MoodArousalIntensity,
+  MoodConfidenceLevel,
+  MoodDescriptor,
+  SectionMoodTrajectory,
+  MoodAnalysisResult,
 } from "@/lib/audio-analysis/types";
 
 export interface AudioFileMetadata {
@@ -132,4 +139,11 @@ export type {
   SectionStyleVariation,
   StyleTraitRadar,
   GenreAnalysisResult,
+  MoodEnergyLevel,
+  MoodValenceTone,
+  MoodArousalIntensity,
+  MoodConfidenceLevel,
+  MoodDescriptor,
+  SectionMoodTrajectory,
+  MoodAnalysisResult,
 };

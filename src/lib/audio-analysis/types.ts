@@ -105,6 +105,7 @@ export interface FullSongAnalysisResult {
   structure: StructureAnalysisResult;
   instruments: InstrumentAnalysisResult;
   genre: GenreAnalysisResult;
+  mood: MoodAnalysisResult;
   duration: number;
   analyzedSampleCount: number;
   analysisTimeMs: number;
@@ -185,6 +186,7 @@ export type AnalysisStage =
   | "structure_analysis"
   | "instrument_analysis"
   | "genre_analysis"
+  | "mood_analysis"
   | "complete";
 
 export type ChordQuality =
@@ -578,4 +580,64 @@ export interface GenreAnalysisResult {
   hasSectionVariation: boolean;
   analysisSummary: string;
   methodologyNote: string;
+}
+
+/* ==========================================================================
+   Musical Mood & Emotional Character Analysis Types (Phase 13)
+   ========================================================================== */
+
+export type MoodEnergyLevel = "low" | "moderate" | "high";
+export type MoodValenceTone = "positive" | "neutral" | "negative" | "ambiguous";
+export type MoodArousalIntensity = "calm" | "moderate" | "intense";
+export type MoodConfidenceLevel = "high" | "moderate" | "low" | "speculative" | "uncertain";
+
+export interface MoodDescriptor {
+  label: string; // e.g. "Uplifting", "Melancholic", "Energetic", "Calm", "Dramatic", "Reflective"
+  category: "primary" | "secondary" | "subtle";
+  score: number; // 0.0 - 1.0
+  supportingCues: string[];
+}
+
+export interface SectionMoodTrajectory {
+  sectionId: string;
+  sectionName: string;
+  startTime: number;
+  endTime: number;
+  energyLevel: MoodEnergyLevel;
+  valenceTone: MoodValenceTone;
+  arousalIntensity: MoodArousalIntensity;
+  dominantMood: string;
+  relativeEnergy: number; // 0.0 - 1.0
+  relativeArousal: number; // 0.0 - 1.0
+}
+
+export interface MoodAnalysisResult {
+  primaryMood: MoodDescriptor;
+  secondaryMoods: MoodDescriptor[];
+  dimensions: {
+    energy: {
+      score: number; // 0.0 - 1.0
+      level: MoodEnergyLevel;
+      explanation: string;
+    };
+    valence: {
+      score: number; // 0.0 - 1.0
+      tone: MoodValenceTone;
+      explanation: string;
+    };
+    arousal: {
+      score: number; // 0.0 - 1.0
+      intensity: MoodArousalIntensity;
+      explanation: string;
+    };
+  };
+  supportingAcousticFeatures: string[];
+  contrastingNuances: string[];
+  sectionTrajectory: SectionMoodTrajectory[];
+  hasSectionProgression: boolean;
+  confidence: number; // 0.0 - 1.0
+  confidenceLevel: MoodConfidenceLevel;
+  isAmbiguous: boolean;
+  analysisSummary: string;
+  perceptualDisclaimer: string;
 }
