@@ -7,11 +7,11 @@ import {
   AnalyzerWorkflowState,
   AudioFileMetadata,
   AudioValidationError,
-  RhythmAnalysisResult,
+  FullSongAnalysisResult,
   AnalysisProgress,
 } from "@/types/analyzer";
 import { validateAndDecodeAudio } from "@/lib/audio-utils";
-import { analyzeRhythmAndTempo } from "@/lib/audio-analysis";
+import { analyzeSongAudio } from "@/lib/audio-analysis";
 import { AnalyzerHeader } from "./AnalyzerHeader";
 import { InputModeSelector } from "./InputModeSelector";
 import { AudioDropzone } from "./AudioDropzone";
@@ -28,7 +28,7 @@ export function AnalyzerView() {
   const [validationError, setValidationError] = useState<AudioValidationError | null>(null);
 
   // Analysis state
-  const [analysisResult, setAnalysisResult] = useState<RhythmAnalysisResult | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<FullSongAnalysisResult | null>(null);
   const [analysisProgress, setAnalysisProgress] = useState<AnalysisProgress | null>(null);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
 
@@ -118,7 +118,7 @@ export function AnalyzerView() {
         ctx.close().catch(() => {});
       }
 
-      const result = await analyzeRhythmAndTempo(buffer, {
+      const result = await analyzeSongAudio(buffer, {
         onProgress: (p) => setAnalysisProgress(p),
       });
 
@@ -129,7 +129,7 @@ export function AnalyzerView() {
       setAnalysisError(
         err instanceof Error
           ? err.message
-          : "Rhythm and tempo analysis could not be completed on this file."
+          : "Song acoustic and tonal analysis could not be completed on this file."
       );
       setWorkflowState("ready");
     }

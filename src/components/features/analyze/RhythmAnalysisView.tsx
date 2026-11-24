@@ -16,17 +16,31 @@ import {
   RefreshCw,
   Sliders,
   Sparkles,
+  Music2,
+  Layers,
+  Repeat,
 } from "lucide-react";
-import { RhythmAnalysisResult, AudioFileMetadata } from "@/types/analyzer";
+import {
+  RhythmAnalysisResult,
+  FullSongAnalysisResult,
+  AudioFileMetadata,
+} from "@/types/analyzer";
 import { formatDuration } from "@/lib/audio-utils";
+import { KeyAnalysisCard } from "./KeyAnalysisCard";
+import { ChromaVisualizer } from "./ChromaVisualizer";
+import { ChordTimeline } from "./ChordTimeline";
+import { ChordAnalysisCard } from "./ChordAnalysisCard";
+import { ChordProgressionView } from "./ChordProgressionView";
 
 interface RhythmAnalysisViewProps {
   metadata: AudioFileMetadata;
-  analysis: RhythmAnalysisResult;
+  analysis: FullSongAnalysisResult | RhythmAnalysisResult;
   onBackToPreview: () => void;
   onReanalyze: () => void;
   onReset: () => void;
 }
+
+type ViewTab = "all" | "progressions" | "chords" | "tonality" | "rhythm";
 
 export function RhythmAnalysisView({
   metadata,
@@ -42,9 +56,13 @@ export function RhythmAnalysisView({
   const [volume, setVolume] = useState(1.0);
   const [isMuted, setIsMuted] = useState(false);
   const [hoverTime, setHoverTime] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<ViewTab>("all");
 
   const duration = metadata.duration || analysis.duration || 1;
   const { tempo, beats } = analysis;
+  const keyResult = "key" in analysis ? analysis.key : null;
+  const chordResult = "chords" in analysis ? analysis.chords : null;
+  const progressionResult = "progression" in analysis ? analysis.progression : null;
 
   // Audio event listeners
   useEffect(() => {
@@ -114,18 +132,20 @@ export function RhythmAnalysisView({
     }
   };
 
-  const seekToTime = useCallback((time: number) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const clamped = Math.max(0, Math.min(duration, time));
-    audio.currentTime = clamped;
-    setCurrentTime(clamped);
-  }, [duration]);
+  const seekToTime = useCallback(
+    (time: number) => {
+      const audio = audioRef.current;
+      if (!audio) return;
+      const clamped = Math.max(0, Math.min(duration, time));
+      audio.currentTime = clamped;
+      setCurrentTime(clamped);
+    },
+    [duration]
+  );
 
   // Find the active beat index based on current playback time
   const currentBeatIndex = useMemo(() => {
     if (!beats.beatTimestamps.length) return -1;
-    // Find closest or last passed beat
     let idx = -1;
     for (let i = 0; i < beats.beatTimestamps.length; i++) {
       if (beats.beatTimestamps[i] <= currentTime) {
@@ -140,8 +160,8 @@ export function RhythmAnalysisView({
   const progressRatio = duration > 0 ? currentTime / duration : 0;
   const peaks = metadata.peaks && metadata.peaks.length > 0 ? metadata.peaks : Array(100).fill(0.3);
 
-  // Confidence styling badge
-  const confidenceBadge = useMemo(() => {
+  // Confidence styling badge for Tempo
+  const tempoConfidenceBadge = useMemo(() => {
     switch (tempo.confidence) {
       case "high":
         return {
@@ -167,7 +187,7 @@ export function RhythmAnalysisView({
     }
   }, [tempo.confidence, tempo.confidenceScore]);
 
-  const ConfidenceIcon = confidenceBadge.icon;
+  const TempoConfidenceIcon = tempoConfidenceBadge.icon;
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-300">
@@ -185,163 +205,42 @@ export function RhythmAnalysisView({
         <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/10">
           <div>
             <span className="text-[10px] font-mono uppercase tracking-wider text-accent-cyan">
-              Acoustic Signal Analysis • Phase 5
+              DSP Audio Intelligence • Phases 5, 6 & 7
             </span>
             <h2 className="font-display text-xl sm:text-2xl font-bold text-text-primary">
-              Rhythm & Tempo Analysis
+              Full Song Analysis Results
             </h2>
             <p className="text-xs font-mono text-text-muted mt-0.5 truncate max-w-sm sm:max-w-md">
               {metadata.fileName}
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-violet/15 border border-accent-violet/30 text-accent-violet text-xs font-mono font-medium">
+          <div className="flex flex-wrap items-center gap-2.5">
+            {keyResult && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-cyan/15 border border-accent-cyan/30 text-accent-cyan text-xs font-mono font-medium">
+                <Music2 size={13} />
+                <span>Key: {keyResult.key}</span>
+              </span>
+            )}
+            {chordResult && chordResult.dominantChord && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent-violet/15 border border-accent-violet/30 text-accent-violet text-xs font-mono font-medium">
+                <Layers size={13} className="text-accent-cyan" />
+                <span>Anchor: {chordResult.dominantChord}</span>
+              </span>
+            )}
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-text-secondary text-xs font-mono font-medium">
               <Sparkles size={13} className="text-accent-cyan" />
-              <span>Analyzed in {analysis.analysisTimeMs}ms</span>
+              <span>{analysis.analysisTimeMs}ms</span>
             </span>
           </div>
         </div>
 
-        {/* Primary Metrics Grid: Tempo + Regularity */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Main Tempo (BPM) Card */}
-          <div className="rounded-2xl border border-white/10 bg-surface-elevated/80 p-5 sm:p-6 space-y-4 relative overflow-hidden">
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-xs font-mono uppercase text-text-muted">
-                <Gauge size={15} className="text-accent-violet" />
-                <span>Estimated Tempo</span>
-              </span>
-
-              <span
-                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-xs font-mono ${confidenceBadge.colorClass}`}
-              >
-                <ConfidenceIcon size={12} />
-                <span>{confidenceBadge.label}</span>
-                <span className="font-bold opacity-80">({confidenceBadge.percent})</span>
-              </span>
-            </div>
-
-            <div className="flex items-baseline gap-2">
-              <span className="font-display text-5xl sm:text-6xl font-bold tracking-tight text-text-primary">
-                {tempo.bpm > 0 ? tempo.bpm : "—"}
-              </span>
-              <span className="text-base sm:text-lg font-mono font-bold text-accent-cyan">
-                BPM
-              </span>
-            </div>
-
-            <p className="text-xs text-text-secondary leading-relaxed border-t border-white/5 pt-3">
-              {tempo.confidenceReason}
-            </p>
-
-            {/* Alternative Interpretation Callout (Half-time / Double-time) */}
-            {tempo.alternativeBpm && (
-              <div className="rounded-xl border border-cyan-500/20 bg-cyan-950/25 p-3 text-xs space-y-1">
-                <div className="flex items-center justify-between font-mono">
-                  <span className="text-accent-cyan font-semibold">
-                    Alternative: {tempo.alternativeBpm} BPM
-                  </span>
-                  <span className="text-[10px] text-text-muted">
-                    {tempo.alternativeLabel}
-                  </span>
-                </div>
-                <p className="text-[11px] text-text-secondary leading-normal">
-                  Identified secondary harmonic peak in autocorrelation. In rhythmic styles, pulse may be felt at this half/double meter.
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Rhythm & Meter Regularity Card */}
-          <div className="rounded-2xl border border-white/10 bg-surface-elevated/80 p-5 sm:p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-xs font-mono uppercase text-text-muted">
-                <Activity size={15} className="text-accent-cyan" />
-                <span>Rhythm Telemetry</span>
-              </span>
-
-              <span className="text-xs font-mono text-accent-violet font-semibold">
-                {beats.regularityScore >= 0.8
-                  ? "Metronomic Precision"
-                  : beats.regularityScore >= 0.5
-                  ? "Expressive Timing"
-                  : "Variable / Loose Pulse"}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 pt-1">
-              <div className="rounded-xl border border-white/5 bg-black/30 p-3 space-y-1">
-                <span className="text-[10px] font-mono uppercase text-text-muted">
-                  Detected Beats
-                </span>
-                <p className="font-display text-xl font-bold text-text-primary">
-                  {beats.totalBeats}
-                </p>
-                <span className="text-[10px] font-mono text-text-muted block">
-                  Across {formatDuration(duration)}
-                </span>
-              </div>
-
-              <div className="rounded-xl border border-white/5 bg-black/30 p-3 space-y-1">
-                <span className="text-[10px] font-mono uppercase text-text-muted">
-                  Beat Interval
-                </span>
-                <p className="font-display text-xl font-bold text-accent-cyan">
-                  {beats.averageIntervalMs}
-                  <span className="text-xs font-mono ml-1 font-normal">ms</span>
-                </p>
-                <span className="text-[10px] font-mono text-text-muted block">
-                  ~{(beats.averageIntervalMs / 1000).toFixed(3)}s / beat
-                </span>
-              </div>
-
-              <div className="rounded-xl border border-white/5 bg-black/30 p-3 space-y-1">
-                <span className="text-[10px] font-mono uppercase text-text-muted">
-                  Beat Regularity
-                </span>
-                <p className="font-display text-xl font-bold text-text-primary">
-                  {Math.round(beats.regularityScore * 100)}%
-                </p>
-                <span className="text-[10px] font-mono text-text-muted block">
-                  Pulse consistency
-                </span>
-              </div>
-
-              <div className="rounded-xl border border-white/5 bg-black/30 p-3 space-y-1">
-                <span className="text-[10px] font-mono uppercase text-text-muted">
-                  First Beat Offset
-                </span>
-                <p className="font-display text-xl font-bold text-text-primary">
-                  {beats.firstBeatOffset.toFixed(2)}s
-                </p>
-                <span className="text-[10px] font-mono text-text-muted block">
-                  Initial downbeat
-                </span>
-              </div>
-            </div>
-
-            {/* Live Synchronized Beat Counter */}
-            <div className="rounded-xl border border-white/5 bg-surface/50 p-2.5 flex items-center justify-between text-xs font-mono">
-              <span className="text-text-muted">Active Playback Pulse:</span>
-              <span className="text-accent-cyan font-bold flex items-center gap-1.5">
-                <span className={`h-2 w-2 rounded-full ${isPlaying ? "bg-accent-cyan animate-ping" : "bg-white/20"}`} />
-                <span>
-                  {currentBeatIndex >= 0
-                    ? `Beat ${currentBeatIndex + 1} of ${beats.totalBeats}`
-                    : "Playback Idle"}
-                </span>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* --- INTERACTIVE BEAT TIMELINE & WAVEFORM --- */}
-        <div className="space-y-3 pt-2">
+        {/* --- INTERACTIVE BEAT TIMELINE & WAVEFORM PLAYER --- */}
+        <div className="space-y-3 pt-1">
           <div className="flex items-center justify-between text-xs font-mono">
             <span className="text-text-muted flex items-center gap-1.5">
               <Sliders size={13} className="text-accent-violet" />
-              <span>Waveform with Detected Beat Markers (Click to Seek)</span>
+              <span>Waveform & Beat Alignment (Click to Seek)</span>
             </span>
             <div className="flex items-center gap-2">
               <span className="text-accent-cyan font-bold">{formatDuration(currentTime)}</span>
@@ -505,6 +404,251 @@ export function RhythmAnalysisView({
             </div>
           </div>
         </div>
+
+        {/* View Selection Tabs */}
+        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/10">
+          <button
+            type="button"
+            onClick={() => setActiveTab("all")}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer ${
+              activeTab === "all"
+                ? "bg-accent-violet text-white font-semibold shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                : "bg-white/5 text-text-muted hover:text-text-primary hover:bg-white/10"
+            }`}
+          >
+            All Dimensions
+          </button>
+          {progressionResult && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("progressions")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer ${
+                activeTab === "progressions"
+                  ? "bg-accent-violet text-white font-semibold shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                  : "bg-white/5 text-text-muted hover:text-text-primary hover:bg-white/10"
+              }`}
+            >
+              <Repeat size={13} />
+              <span>Progressions & Harmony</span>
+            </button>
+          )}
+          {chordResult && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("chords")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer ${
+                activeTab === "chords"
+                  ? "bg-accent-violet text-white font-semibold shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                  : "bg-white/5 text-text-muted hover:text-text-primary hover:bg-white/10"
+              }`}
+            >
+              <Layers size={13} />
+              <span>Chord Timeline</span>
+            </button>
+          )}
+          {keyResult && (
+            <button
+              type="button"
+              onClick={() => setActiveTab("tonality")}
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer ${
+                activeTab === "tonality"
+                  ? "bg-accent-violet text-white font-semibold shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                  : "bg-white/5 text-text-muted hover:text-text-primary hover:bg-white/10"
+              }`}
+            >
+              <Music2 size={13} />
+              <span>Key & Tonality</span>
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setActiveTab("rhythm")}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer ${
+              activeTab === "rhythm"
+                ? "bg-accent-violet text-white font-semibold shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+                : "bg-white/5 text-text-muted hover:text-text-primary hover:bg-white/10"
+            }`}
+          >
+            <Activity size={13} />
+            <span>Rhythm & Tempo</span>
+          </button>
+        </div>
+
+        {/* --- SECTION 1: CHORD PROGRESSION & HARMONIC ANALYSIS (PHASE 8) --- */}
+        {progressionResult && (activeTab === "all" || activeTab === "progressions") && (
+          <div className="space-y-6 pt-2 animate-in fade-in duration-200">
+            <ChordProgressionView
+              progression={progressionResult}
+              currentTime={currentTime}
+              onSeek={seekToTime}
+            />
+          </div>
+        )}
+
+        {/* --- SECTION 2: CHORD TIMELINE & HARMONY (PHASE 7) --- */}
+        {chordResult && (activeTab === "all" || activeTab === "chords") && (
+          <div className="space-y-6 pt-2 animate-in fade-in duration-200">
+            {/* Chord Timeline Component with Playback Sync */}
+            <ChordTimeline
+              chordResult={chordResult}
+              currentTime={currentTime}
+              duration={duration}
+              onSeek={seekToTime}
+            />
+
+            {/* Chord Analysis Card */}
+            <ChordAnalysisCard chordResult={chordResult} />
+          </div>
+        )}
+
+        {/* --- SECTION 2: KEY & TONALITY (PHASE 6) --- */}
+        {keyResult && (activeTab === "all" || activeTab === "tonality") && (
+          <div className="space-y-6 pt-2 animate-in fade-in duration-200">
+            {/* Key & Scale Card */}
+            <KeyAnalysisCard keyResult={keyResult} />
+
+            {/* Pitch-Class Chroma Visualizer */}
+            <ChromaVisualizer keyResult={keyResult} />
+          </div>
+        )}
+
+        {/* --- SECTION 3: RHYTHM & TEMPO (PHASE 5) --- */}
+        {(activeTab === "all" || activeTab === "rhythm") && (
+          <div className="space-y-6 pt-2 animate-in fade-in duration-200">
+            {/* Primary Metrics Grid: Tempo + Regularity */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Main Tempo (BPM) Card */}
+              <div className="rounded-2xl border border-white/10 bg-surface-elevated/80 p-5 sm:p-6 space-y-4 relative overflow-hidden">
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-xs font-mono uppercase text-text-muted">
+                    <Gauge size={15} className="text-accent-violet" />
+                    <span>Estimated Tempo</span>
+                  </span>
+
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-xs font-mono ${tempoConfidenceBadge.colorClass}`}
+                  >
+                    <TempoConfidenceIcon size={12} />
+                    <span>{tempoConfidenceBadge.label}</span>
+                    <span className="font-bold opacity-80">({tempoConfidenceBadge.percent})</span>
+                  </span>
+                </div>
+
+                <div className="flex items-baseline gap-2">
+                  <span className="font-display text-5xl sm:text-6xl font-bold tracking-tight text-text-primary">
+                    {tempo.bpm > 0 ? tempo.bpm : "—"}
+                  </span>
+                  <span className="text-base sm:text-lg font-mono font-bold text-accent-cyan">
+                    BPM
+                  </span>
+                </div>
+
+                <p className="text-xs text-text-secondary leading-relaxed border-t border-white/5 pt-3">
+                  {tempo.confidenceReason}
+                </p>
+
+                {/* Alternative Interpretation Callout (Half-time / Double-time) */}
+                {tempo.alternativeBpm && (
+                  <div className="rounded-xl border border-cyan-500/20 bg-cyan-950/25 p-3 text-xs space-y-1">
+                    <div className="flex items-center justify-between font-mono">
+                      <span className="text-accent-cyan font-semibold">
+                        Alternative: {tempo.alternativeBpm} BPM
+                      </span>
+                      <span className="text-[10px] text-text-muted">
+                        {tempo.alternativeLabel}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-text-secondary leading-normal">
+                      Identified secondary harmonic peak in autocorrelation. In rhythmic styles, pulse may be felt at this half/double meter.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Rhythm & Meter Regularity Card */}
+              <div className="rounded-2xl border border-white/10 bg-surface-elevated/80 p-5 sm:p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-xs font-mono uppercase text-text-muted">
+                    <Activity size={15} className="text-accent-cyan" />
+                    <span>Rhythm Telemetry</span>
+                  </span>
+
+                  <span className="text-xs font-mono text-accent-violet font-semibold">
+                    {beats.regularityScore >= 0.8
+                      ? "Metronomic Precision"
+                      : beats.regularityScore >= 0.5
+                      ? "Expressive Timing"
+                      : "Variable / Loose Pulse"}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-1">
+                  <div className="rounded-xl border border-white/5 bg-black/30 p-3 space-y-1">
+                    <span className="text-[10px] font-mono uppercase text-text-muted">
+                      Detected Beats
+                    </span>
+                    <p className="font-display text-xl font-bold text-text-primary">
+                      {beats.totalBeats}
+                    </p>
+                    <span className="text-[10px] font-mono text-text-muted block">
+                      Across {formatDuration(duration)}
+                    </span>
+                  </div>
+
+                  <div className="rounded-xl border border-white/5 bg-black/30 p-3 space-y-1">
+                    <span className="text-[10px] font-mono uppercase text-text-muted">
+                      Beat Interval
+                    </span>
+                    <p className="font-display text-xl font-bold text-accent-cyan">
+                      {beats.averageIntervalMs}
+                      <span className="text-xs font-mono ml-1 font-normal">ms</span>
+                    </p>
+                    <span className="text-[10px] font-mono text-text-muted block">
+                      ~{(beats.averageIntervalMs / 1000).toFixed(3)}s / beat
+                    </span>
+                  </div>
+
+                  <div className="rounded-xl border border-white/5 bg-black/30 p-3 space-y-1">
+                    <span className="text-[10px] font-mono uppercase text-text-muted">
+                      Beat Regularity
+                    </span>
+                    <p className="font-display text-xl font-bold text-text-primary">
+                      {Math.round(beats.regularityScore * 100)}%
+                    </p>
+                    <span className="text-[10px] font-mono text-text-muted block">
+                      Pulse consistency
+                    </span>
+                  </div>
+
+                  <div className="rounded-xl border border-white/5 bg-black/30 p-3 space-y-1">
+                    <span className="text-[10px] font-mono uppercase text-text-muted">
+                      First Beat Offset
+                    </span>
+                    <p className="font-display text-xl font-bold text-text-primary">
+                      {beats.firstBeatOffset.toFixed(2)}s
+                    </p>
+                    <span className="text-[10px] font-mono text-text-muted block">
+                      Initial downbeat
+                    </span>
+                  </div>
+                </div>
+
+                {/* Live Synchronized Beat Counter */}
+                <div className="rounded-xl border border-white/5 bg-surface/50 p-2.5 flex items-center justify-between text-xs font-mono">
+                  <span className="text-text-muted">Active Playback Pulse:</span>
+                  <span className="text-accent-cyan font-bold flex items-center gap-1.5">
+                    <span className={`h-2 w-2 rounded-full ${isPlaying ? "bg-accent-cyan animate-ping" : "bg-white/20"}`} />
+                    <span>
+                      {currentBeatIndex >= 0
+                        ? `Beat ${currentBeatIndex + 1} of ${beats.totalBeats}`
+                        : "Playback Idle"}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Action Buttons Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-white/10">

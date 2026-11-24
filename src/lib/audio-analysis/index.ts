@@ -1,27 +1,43 @@
-import { RhythmAnalysisResult, AnalysisProgress } from "./types";
+import {
+  RhythmAnalysisResult,
+  AnalysisProgress,
+  FullSongAnalysisResult,
+  ChordAnalysisResult,
+} from "./types";
 import { extractOnsetEnvelope } from "./onset-detection";
 import { estimateTempo } from "./tempo";
 import { trackBeats } from "./beat-tracking";
+import { extractChromaDistribution } from "./chroma";
+import { detectMusicalKey } from "./key-detection";
+import { detectChords } from "./chord-detection";
+import { analyzeChordProgression } from "./progression-analysis";
 
 export * from "./types";
 export * from "./onset-detection";
 export * from "./tempo";
 export * from "./beat-tracking";
+export * from "./chroma";
+export * from "./key-detection";
+export * from "./chord-templates";
+export * from "./chord-detection";
+export * from "./progression-analysis";
 
-export interface AnalyzeRhythmOptions {
+export interface AnalyzeSongOptions {
   onProgress?: (progress: AnalysisProgress) => void;
   minBpm?: number;
   maxBpm?: number;
 }
 
+export type AnalyzeRhythmOptions = AnalyzeSongOptions;
+
 /**
- * Executes full client-side Rhythm and Tempo analysis on an AudioBuffer.
+ * Executes full client-side Rhythm, Tempo, Key, Scale, and Chord Timeline analysis on an AudioBuffer.
  * Processes in non-blocking async micro-tasks to preserve 60fps UI responsiveness.
  */
-export async function analyzeRhythmAndTempo(
+export async function analyzeSongAudio(
   audioBuffer: AudioBuffer,
-  options: AnalyzeRhythmOptions = {}
-): Promise<RhythmAnalysisResult> {
+  options: AnalyzeSongOptions = {}
+): Promise<FullSongAnalysisResult> {
   const startTime = performance.now();
   const { onProgress, minBpm = 50, maxBpm = 220 } = options;
 
@@ -29,52 +45,114 @@ export async function analyzeRhythmAndTempo(
 
   // 1. Validation
   const duration = audioBuffer.duration;
-  if (!duration || duration < 1.0) {
-    throw new Error("Audio file duration is too short for rhythm analysis (minimum 1.0 second required).");
+  if (!duration || duration < 0.5) {
+    throw new Error(
+      "Audio file duration is too short for analysis (minimum 0.5 second required)."
+    );
   }
 
-  // Stage 1: Onset Detection
+  // Stage 1: Onset Detection (Rhythm)
   onProgress?.({
     stage: "onset_detection",
     message: "Extracting acoustic onset strength envelope...",
-    percent: 25,
+    percent: 15,
   });
   await yieldToMain();
 
   const onsets = extractOnsetEnvelope(audioBuffer);
 
   if (onsets.isSilent) {
-    throw new Error("Audio signal contains negligible energy or complete silence. No rhythm detected.");
+    throw new Error(
+      "Audio signal contains negligible energy or complete silence. No rhythm, tonality, or chords detected."
+    );
   }
 
-  // Stage 2: Periodicity & Tempo Estimation
+  // Stage 2: Periodicity & Tempo Estimation (Rhythm)
   onProgress?.({
     stage: "tempo_estimation",
     message: "Calculating periodicity and estimating tempo (BPM)...",
-    percent: 60,
+    percent: 32,
   });
   await yieldToMain();
 
   const tempo = estimateTempo(onsets, { minBpm, maxBpm });
 
-  if (tempo.bpm === 0) {
-    throw new Error(tempo.confidenceReason || "Could not detect a stable periodic tempo in the audio.");
-  }
-
-  // Stage 3: Beat Tracking & Grid Alignment
+  // Stage 3: Beat Tracking & Grid Alignment (Rhythm)
   onProgress?.({
     stage: "beat_tracking",
     message: "Tracking and aligning beat grid with acoustic transients...",
-    percent: 85,
+    percent: 48,
   });
   await yieldToMain();
 
   const beats = trackBeats(onsets, tempo.beatIntervalSeconds);
 
-  // Stage 4: Complete
+  // Stage 4: Chroma / Pitch-Class Distribution (Tonality)
+  onProgress?.({
+    stage: "chroma_extraction",
+    message: "Extracting 12-pitch-class chromatic energy spectrum...",
+    percent: 64,
+  });
+  await yieldToMain();
+
+  const chroma = extractChromaDistribution(audioBuffer);
+
+  // Stage 5: Musical Key & Scale Detection (Tonality)
+  onProgress?.({
+    stage: "key_detection",
+    message: "Evaluating tonal key profiles & diatonic scale correlation...",
+    percent: 78,
+  });
+  await yieldToMain();
+
+  const key = detectMusicalKey(chroma);
+
+  // Stage 6: Chord Detection & Chord Timeline Segmentation (Harmony)
+  onProgress?.({
+    stage: "chord_detection",
+    message: "Analyzing chord roots, qualities, and timeline...",
+    percent: 85,
+  });
+  await yieldToMain();
+
+  let chords: ChordAnalysisResult;
+  try {
+    chords = await detectChords(audioBuffer, {
+      onProgress: (pct, msg) => {
+        onProgress?.({
+          stage: "chord_detection",
+          message: msg,
+          percent: 78 + Math.round((pct / 100) * 12),
+        });
+      },
+    });
+  } catch (chordErr) {
+    console.error("Chord analysis error, proceeding with fallback:", chordErr);
+    chords = {
+      segments: [],
+      uniqueChords: [],
+      dominantChord: null,
+      totalSegments: 0,
+      averageConfidence: 0,
+      harmonicRhythmBps: 0,
+      analysisSummary: "Chord detection could not be resolved on this audio signal.",
+    };
+  }
+
+  // Stage 7: Chord Progression & Harmonic Analysis (Phase 8)
+  onProgress?.({
+    stage: "progression_analysis",
+    message: "Identifying recurring progressions, transitions & Roman numerals...",
+    percent: 95,
+  });
+  await yieldToMain();
+
+  const progression = analyzeChordProgression(chords.segments, key, duration);
+
+  // Stage 8: Complete
   onProgress?.({
     stage: "complete",
-    message: "Rhythm analysis complete.",
+    message: "Full acoustic, tonal, and harmonic analysis complete.",
     percent: 100,
   });
   await yieldToMain();
@@ -84,8 +162,28 @@ export async function analyzeRhythmAndTempo(
   return {
     tempo,
     beats,
+    key,
+    chords,
+    progression,
     duration,
     analyzedSampleCount: audioBuffer.length,
     analysisTimeMs: Math.round(endTime - startTime),
+  };
+}
+
+/**
+ * Preserved for backwards compatibility with Phase 5 callers.
+ */
+export async function analyzeRhythmAndTempo(
+  audioBuffer: AudioBuffer,
+  options: AnalyzeRhythmOptions = {}
+): Promise<RhythmAnalysisResult> {
+  const full = await analyzeSongAudio(audioBuffer, options);
+  return {
+    tempo: full.tempo,
+    beats: full.beats,
+    duration: full.duration,
+    analyzedSampleCount: full.analyzedSampleCount,
+    analysisTimeMs: full.analysisTimeMs,
   };
 }

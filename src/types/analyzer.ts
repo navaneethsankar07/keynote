@@ -1,4 +1,23 @@
-import { RhythmAnalysisResult, AnalysisProgress } from "@/lib/audio-analysis/types";
+import {
+  RhythmAnalysisResult,
+  AnalysisProgress,
+  FullSongAnalysisResult,
+  KeyAnalysisResult,
+  KeyCandidate,
+  PitchClass,
+  TonalMode,
+  KeyConfidence,
+  ChordSegment,
+  ChordAnalysisResult,
+  ChordQuality,
+  ChordConfidence,
+  ProgressionAnalysisResult,
+  ProgressionPattern,
+  ProgressionOccurrence,
+  ChordTransition,
+  ChordDistributionItem,
+  HarmonicDegree,
+} from "@/lib/audio-analysis/types";
 
 export interface AudioFileMetadata {
   file: File;
@@ -30,6 +49,23 @@ export interface AudioValidationError {
   message: string;
 }
 
-export type { RhythmAnalysisResult, AnalysisProgress };
-
-
+export type {
+  RhythmAnalysisResult,
+  AnalysisProgress,
+  FullSongAnalysisResult,
+  KeyAnalysisResult,
+  KeyCandidate,
+  PitchClass,
+  TonalMode,
+  KeyConfidence,
+  ChordSegment,
+  ChordAnalysisResult,
+  ChordQuality,
+  ChordConfidence,
+  ProgressionAnalysisResult,
+  ProgressionPattern,
+  ProgressionOccurrence,
+  ChordTransition,
+  ChordDistributionItem,
+  HarmonicDegree,
+};
